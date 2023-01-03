@@ -1,0 +1,80 @@
+[build-system]
+requires = [
+    "setuptools>=63",
+    "setuptools_scm[toml]>7.0.0",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kiara_plugin.streamlit"
+description = "Streamlit UI and widgets for kiara"
+authors = [
+    {name = "Markus Binsteiner", email = "markus@frkl.io"}
+]
+readme = "README.md"
+requires-python = ">=3.8"
+keywords = ["kiara", "streamlit"]
+license = {text = "AGPL-3.0-only"}
+classifiers = [
+    "Framework :: Django",
+    "Programming Language :: Python :: 3",
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11"
+]
+dependencies = [
+    "kiara>=0.4.22",
+    "kiara_plugin.core_types>=0.4.12",
+    "streamlit>=1.16.0",
+    "streamlit-option-menu>=0.3.2",
+    "streamlit-aggrid>=0.3.3"
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+dev_documentation = [
+    "kiara[dev_documentation]"
+]
+dev_testing = [
+    "kiara[dev_testing]",
+    "types-setuptools",
+    "sqlalchemy-stubs"
+]
+dev_utils = [
+    "kiara[dev_utils]"
+]
+dev_all = [
+    "kiara[dev_all]"
+]
+
+[project.urls]
+homepage = "https://github.com/DHARPA-Project/kiara_plugin.streamlit"
+documentation = "https://DHARPA-Project.github.io/kiara_plugin.streamlit"
+repository = "https://github.com/DHARPA-Project/kiara_plugin.streamlit"
+
+[tool.black]
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | external
+)/
+'''
+
+[tool.setuptools_scm]
+write_to = "src/kiara_plugin/streamlit/version.txt"

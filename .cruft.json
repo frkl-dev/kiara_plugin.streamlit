@@ -1,0 +1,18 @@
+{
+  "template": "https://github.com/DHARPA-Project/kiara_plugin.develop.git",
+  "commit": "1d42cef85d7646d690df07481ac330b5d1a96d53",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "full_name": "Markus Binsteiner",
+      "email": "markus@frkl.io",
+      "project_name": "streamlit",
+      "project_slug": "streamlit",
+      "project_short_description": "Streamlit UI and widgets for kiara",
+      "github_user": "DHARPA-Project",
+      "anaconda_user": "dharpa",
+      "_template": "https://github.com/DHARPA-Project/kiara_plugin.develop.git"
+    }
+  },
+  "directory": null
+}
