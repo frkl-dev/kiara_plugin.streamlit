@@ -105,3 +105,4 @@ For details (and other, minor targets), check the ``Makefile``.
 ## Copyright & license
 
 This project is AGPL v3 licensed, for the license text please check the [LICENSE](/LICENSE) file in this repository.
+Copyright (c) 2023, Markus Binsteiner

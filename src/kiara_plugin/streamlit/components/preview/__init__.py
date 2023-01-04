@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import uuid
 from abc import abstractmethod
-from typing import Union
+from typing import Mapping, Union
 
 from kiara import Value
 from kiara.registries.data import ValueLink
@@ -125,5 +125,59 @@ class ValueListPreview(KiaraComponent):
 
             component.render_preview(st=preview_column, key=key, value=value)
 
-    def _render_preview(self, st: DeltaGenerator, key: str, value: Value):
-        st.write(str(value))
+    # def _render_preview(self, st: DeltaGenerator, key: str, value: Value):
+    #     st.write(str(value))
+
+
+class ValuesPreview(KiaraComponent):
+
+    _component_name = "values_preview"
+
+    def _render(
+        self,
+        st: DeltaGenerator,
+        key: str,
+        values: Mapping[str, Value],
+        ratio_preview: int = 3,
+    ):
+
+        if not values:
+            st.write("-- no values --")
+            return
+
+        max_columns = 4
+
+        if max_columns > len(values):
+            max_columns = len(values)
+
+        field_names = sorted(values.keys())
+        tabs = st.tabs(field_names)
+        selected = None
+        for idx, field in enumerate(field_names):
+
+            value = values[field]
+            component = self.kiara.get_preview_component(value.data_type_name)
+            if component is None:
+                component = self.kiara.get_preview_component("any")
+            left, center, right = tabs[idx].columns([1, 4, 1])
+
+            select = left.button("Select", key=f"{key}_select_{idx}")
+            component.render_preview(st=center, key=key, value=value)
+
+            right.write("Save value")
+            alias = right.text_input("alias", value="", key=f"{key}_alias_{idx}")
+            save = right.button("Save", disabled=not alias, key=f"{key}_save_{idx}")
+
+            if save and alias:
+                store_result = self.api.store_value(value=value, aliases=alias)
+                if store_result.error:
+                    right.error(store_result.error)
+                else:
+                    right.success("Value saved")
+            if select:
+                selected = field
+
+        if selected:
+            return values[selected]
+        else:
+            return None

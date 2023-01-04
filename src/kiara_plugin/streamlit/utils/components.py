@@ -8,7 +8,12 @@ from streamlit.delta_generator import DeltaGenerator
 
 
 def create_list_component(
-    st: DeltaGenerator, key: str, title: str, items: List[str], height=400
+    st: DeltaGenerator,
+    key: str,
+    title: str,
+    items: List[str],
+    height=400,
+    default: Union[str, None] = None,
 ) -> Union[None, str]:
 
     list_items = pd.DataFrame({title: items})

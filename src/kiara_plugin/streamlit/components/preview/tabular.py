@@ -51,6 +51,13 @@ class DatabasePreview(PreviewComponent):
         db: KiaraDatabase = value.data
         tabs = st.tabs(db.table_names)
 
+        for idx, table_name in enumerate(db.table_names):
+            # TODO: this is probably not ideal, as it always loads all tables because
+            # of how tabs are implemented in streamlit
+            # maybe there is an easy way to do this better, otherwise, maybe not use tabs
+            table = db.get_table_as_pandas_df(table_name)
+            tabs[idx].dataframe(table, use_container_width=True)
+
 
 class DatabasePreview(PreviewComponent):
 

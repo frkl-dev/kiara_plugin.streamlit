@@ -24,3 +24,6 @@ TEMPLATES_BASE_DIR = os.path.join(KIARA_STREAMLIT_RESOURCES_FOLDER, "templates")
 ONBOARD_MAKER_KEY = "__ONBOARD__"
 
 PROFILE_KEYWORD = "style"
+
+
+NO_VALUE_MARKER = "-- no value --"

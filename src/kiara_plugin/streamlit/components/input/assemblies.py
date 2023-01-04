@@ -27,6 +27,49 @@ class InputAssemblyComponent(KiaraComponent):
         func = getattr(self, method_name, fields)
         return func(st, key, fields, *args, **kwargs)
 
+    def render_all(
+        self,
+        st: DeltaGenerator,
+        key: str,
+        fields: Mapping[str, ValueSchema],
+        *args,
+        **kwargs,
+    ) -> ValueMap:
+
+        max_columns = kwargs.pop("max_columns", 3)
+
+        if not fields:
+            return construct_valuemap(kiara=self.api, values={})
+
+        if not max_columns:
+            num_columns = len(fields)
+        else:
+            if len(fields) >= max_columns:
+                num_columns = max_columns
+            else:
+                num_columns = len(fields)
+
+        columns = st.columns(num_columns)
+        values = {}
+        for idx, field_name in enumerate(fields.keys()):
+            schema = fields[field_name]
+            help = None
+            if schema.doc.is_set:
+                help = schema.doc.full_doc
+            data_type_name = schema.type
+            _key = f"op_input_{key}_{field_name}_req"
+            comp = self.kiara.get_input_component(data_type_name)
+
+            column_idx = idx % num_columns
+            r = comp.render_input_field(
+                columns[column_idx], _key, field_name, schema, help=help
+            )
+
+            values[field_name] = r
+
+        result = construct_valuemap(kiara=self.api, values=values)
+        return result
+
     def render_default(
         self,
         st: DeltaGenerator,
@@ -38,7 +81,8 @@ class InputAssemblyComponent(KiaraComponent):
 
         required: Dict[str, ValueSchema] = {}
         optional: Dict[str, ValueSchema] = {}
-        max_columns = kwargs.pop("max_columns", 4)
+        max_columns = kwargs.pop("max_columns", 3)
+        optional_expanded = kwargs.pop("optional_expanded", True)
 
         for input_name, input_schema in fields.items():
             if input_schema.is_required():
@@ -46,34 +90,35 @@ class InputAssemblyComponent(KiaraComponent):
             else:
                 optional[input_name] = input_schema
 
-        if not max_columns:
-            num_columns = len(required)
-        else:
-            if len(required) >= max_columns:
-                num_columns = max_columns
-            else:
-                num_columns = len(required)
-
-        columns = st.columns(num_columns)
         values = {}
-        for idx, field_name in enumerate(required.keys()):
-            schema = required[field_name]
-            help = None
-            if schema.doc.is_set:
-                help = schema.doc.full_doc
-            data_type_name = schema.type
-            _key = f"op_input_{key}_{field_name}_req"
-            comp = self.kiara.get_input_component(data_type_name)
+        if required:
+            if not max_columns:
+                num_columns = len(required)
+            else:
+                if len(required) >= max_columns:
+                    num_columns = max_columns
+                else:
+                    num_columns = len(required)
 
-            column_idx = idx % num_columns
-            r = comp.render_input_field(
-                columns[column_idx], _key, field_name, help=help
-            )
+            columns = st.columns(num_columns)
+            for idx, field_name in enumerate(required.keys()):
+                schema = required[field_name]
+                help = None
+                if schema.doc.is_set:
+                    help = schema.doc.full_doc
+                data_type_name = schema.type
+                _key = f"op_input_{key}_{field_name}_req"
+                comp = self.kiara.get_input_component(data_type_name)
 
-            values[field_name] = r
+                column_idx = idx % num_columns
+                r = comp.render_input_field(
+                    columns[column_idx], _key, field_name, schema, help=help
+                )
+
+                values[field_name] = r
 
         if optional:
-            opt_expander = st.expander("Optional inputs")
+            opt_expander = st.expander("Optional inputs", expanded=optional_expanded)
 
             if not max_columns:
                 num_columns = len(optional)
@@ -93,12 +138,17 @@ class InputAssemblyComponent(KiaraComponent):
                 if schema.doc.is_set:
                     help = schema.doc.full_doc
 
+                if idx >= num_columns:
+                    if idx % num_columns == 0:
+                        # opt_expander.markdown("---")
+                        opt_columns = opt_expander.columns(num_columns)
+
                 data_type_name = schema.type
                 _key = f"op_input_{key}_{field_name}_opt"
                 comp = self.kiara.get_input_component(data_type_name)
                 column_idx = idx % num_columns
                 r = comp.render_input_field(
-                    opt_columns[column_idx], _key, field_name, help=help
+                    opt_columns[column_idx], _key, field_name, schema, help=help
                 )
                 values[field_name] = r
         result = construct_valuemap(kiara=self.api, values=values)
@@ -119,3 +169,18 @@ class OperationInputs(InputAssemblyComponent):
         # TODO: check argument
         op = self.api.get_operation(op_name)
         return op.inputs_schema
+
+
+class InputFields(InputAssemblyComponent):
+
+    _component_name = "input_fields"
+
+    def get_input_fields(self, *args, **kwargs) -> Mapping[str, ValueSchema]:
+        fields = kwargs.get("fields", None)
+        if not fields and args:
+            fields = args[0]
+
+        if not fields:
+            return {}
+        else:
+            return fields

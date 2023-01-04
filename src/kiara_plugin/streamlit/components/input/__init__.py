@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 import abc
 import uuid
-from typing import TYPE_CHECKING, Iterable, Union
+from typing import TYPE_CHECKING, Any, Iterable, Union
 
+from kiara import ValueSchema
+from kiara.defaults import SpecialValue
 from streamlit.delta_generator import DeltaGenerator, Value
 
 from kiara_plugin.streamlit.components import KiaraComponent
+from kiara_plugin.streamlit.defaults import NO_VALUE_MARKER
 
 if TYPE_CHECKING:
     from kiara_plugin.streamlit import KiaraStreamlit
@@ -30,7 +33,13 @@ class InputComponent(KiaraComponent):
 
     @abc.abstractmethod
     def render_input_field(
-        self, st: DeltaGenerator, key: str, label: str, *args, **kwargs
+        self,
+        st: DeltaGenerator,
+        key: str,
+        label: str,
+        schema: Union[ValueSchema, None],
+        *args,
+        **kwargs,
     ):
         pass
 
@@ -41,6 +50,9 @@ class InputComponent(KiaraComponent):
         label = kwargs.pop("label", None)
         if label is None:
             label = self.get_default_label()
+
+        if "schema" not in kwargs.keys():
+            kwargs["schema"] = None
 
         value = self.render_input_field(st, key, label, *args, **kwargs)
         if not value:
@@ -71,8 +83,16 @@ class DefaultInputComponent(InputComponent):
         return "any"
 
     def render_input_field(
-        self, st: DeltaGenerator, key: str, label: str, *args, **kwargs
+        self,
+        st: DeltaGenerator,
+        key: str,
+        label: str,
+        schema: Union[ValueSchema, None],
+        *args,
+        **kwargs,
     ) -> Union[Value, None, str, uuid.UUID]:
+
+        label = label.split("__")[-1]
 
         data_types = set(kwargs.pop("data_types", []))
         data_type = kwargs.pop("data_type", None)
@@ -97,7 +117,7 @@ class DefaultInputComponent(InputComponent):
             inp_comp = self.kiara.get_input_component(dt)
             if inp_comp and inp_comp.__class__ != self.__class__:
                 return inp_comp.render_input_field(
-                    st, _key_selectbox, label, *args, **kwargs
+                    st, _key_selectbox, label, schema, *args, **kwargs
                 )
 
         has_alias = kwargs.pop("has_alias", True)
@@ -105,19 +125,60 @@ class DefaultInputComponent(InputComponent):
             data_types=list(_data_types), has_alias=has_alias
         )
 
-        with_preview = kwargs.get("preview", "auto")
+        optional = False
+        default = None
+        if schema:
+            if schema.default not in [
+                SpecialValue.NO_VALUE,
+                SpecialValue.NOT_SET,
+                None,
+            ]:
+                default = schema.default
+            optional = schema.optional
+
+        display_type = kwargs.pop("display_type", None)
+        format_func = None
+        if len(data_types) != 1 and (display_type is None or display_type):
+
+            def format_func(v: Any) -> str:
+                if v == NO_VALUE_MARKER:
+                    return v
+                return f"{v} ({available_values[v].data_type_name})"
+
+        if optional:
+            options = [NO_VALUE_MARKER] + list(available_values.keys())
+        else:
+            options = list(available_values.keys())
+
+        idx = 0
+        if default is not None and default in options:
+            idx = options.index(default)
+
+        with_preview = kwargs.pop("preview", "auto")
 
         if with_preview == "auto":
             with_preview = "checkbox"
 
         if not with_preview or with_preview == "false":
             result = st.selectbox(
-                label=label, options=available_values, key=_key_selectbox, **kwargs
+                label=label,
+                options=options,
+                key=_key_selectbox,
+                format_func=format_func,
+                index=idx,
+                **kwargs,
             )
         else:
             result = st.selectbox(
-                label=label, options=available_values, key=_key_selectbox, **kwargs
+                label=label,
+                options=options,
+                key=_key_selectbox,
+                format_func=format_func,
+                index=idx,
+                **kwargs,
             )
+            if result == NO_VALUE_MARKER:
+                result = None
             if with_preview == "checkbox":
                 if result is None:
                     disabled = True
