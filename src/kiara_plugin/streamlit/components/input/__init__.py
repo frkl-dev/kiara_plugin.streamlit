@@ -2,7 +2,7 @@
 import abc
 import copy
 import uuid
-from typing import TYPE_CHECKING, Any, Iterable, List, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Callable, Iterable, List, TypeVar, Union
 
 from kiara import Value, ValueSchema
 from kiara.defaults import SpecialValue
@@ -181,7 +181,7 @@ class DefaultInputComponent(InputComponent):
             optional = options.value_schema.optional
 
         display_type = options.display_value_type
-        format_func = None
+        format_func: Callable = str
         if len(data_types) != 1 and (display_type is None or display_type):
 
             def format_func(v: Any) -> str:
@@ -212,6 +212,7 @@ class DefaultInputComponent(InputComponent):
                 index=idx,
             )
         else:
+
             result = st.selectbox(
                 label=options.label,
                 options=_item_options,
@@ -222,6 +223,7 @@ class DefaultInputComponent(InputComponent):
             if result == NO_VALUE_MARKER:
                 result = None
             if with_preview == "checkbox":
+                _key = options.create_key("preview", result)
                 if result is None:
                     disabled = True
                 else:
@@ -233,16 +235,17 @@ class DefaultInputComponent(InputComponent):
                     comp = self.get_component("preview")
                     if hasattr(st, "__enter__"):
                         with st:
-                            comp.render_func(st)(comp)
+                            comp.render_func(st)(key=_key, value=result)
                     else:
-                        comp.render_func(st)(comp)
+                        comp.render_func(st)(key=_key, value=result)
             elif with_preview:
                 if result is not None:
+                    _key = options.create_key("preview", result)
                     comp = self.get_component("preview")
                     if hasattr(st, "__enter__"):
                         with st:
-                            comp.render_func(st)(comp)
+                            comp.render_func(st)(key=_key, value=result)
                     else:
-                        comp.render_func(st)(comp)
+                        comp.render_func(st)(key=_key, value=result)
 
         return result

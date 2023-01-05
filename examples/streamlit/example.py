@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 import streamlit as st
 
-st.set_page_config(layout="wide")
-
 import kiara_plugin.streamlit as kst
 
+st.set_page_config(layout="wide")
 kst.init()
-
-st.kiara.test()
 
 # st.kiara.select_value(data_type="table", preview="checkbox")
 #
@@ -15,7 +12,7 @@ st.kiara.test()
 # if inp:
 #     st.write(inp.data)
 
-op_inputs = st.kiara.operation_inputs("table.cut_column")
+op_inputs = st.kiara.operation_inputs(operation_id="table.cut_column")
 # op_inputs: ValueMap = st.kiara.operation_inputs("preprocess.tokens_array")
 for k, v in op_inputs.get_all_value_data().items():
     st.write("-----")

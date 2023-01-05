@@ -49,7 +49,6 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
     def kiara(self) -> "KiaraStreamlit":
         return self._kiara_streamlit
 
-    @property
     def default_key(self) -> str:
         return f"key_{self.__class__.__name__}"
 
@@ -77,7 +76,7 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
             kwargs[key] = arg
 
         if "key" not in kwargs.keys():
-            kwargs["key"] = self.default_key
+            kwargs["key"] = self.default_key()
 
         options = self.__class__._options(**kwargs)
 

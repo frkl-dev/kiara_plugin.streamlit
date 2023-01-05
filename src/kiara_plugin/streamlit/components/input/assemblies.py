@@ -10,7 +10,7 @@ from pydantic import Field
 from streamlit.delta_generator import DeltaGenerator
 
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
-from kiara_plugin.streamlit.components.input import InputComponent, InputOptions
+from kiara_plugin.streamlit.components.input import DefaultInputOptions, InputComponent
 
 
 class AssemblyOptions(ComponentOptions):
@@ -52,7 +52,6 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
     def render_all(
         self,
         st: DeltaGenerator,
-        key: str,
         fields: Mapping[str, ValueSchema],
         options: ASSEMBLY_OPTIONS_TYPE,
     ) -> ValueMap:
@@ -78,11 +77,11 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
             if schema.doc.is_set:
                 help = schema.doc.full_doc
             data_type_name = schema.type
-            _key = f"op_input_{key}_{field_name}_req"
+            _key = options.create_key("op_input", "req", "all", field_name)
             comp: InputComponent = self.kiara.get_input_component(data_type_name)
 
             column_idx = idx % num_columns
-            input_opts = InputOptions(
+            input_opts = DefaultInputOptions(
                 key=_key, label=field_name, value_schema=schema, help=help
             )
             r = comp.render_input_field(columns[column_idx], input_opts)
@@ -95,7 +94,6 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
     def render_default(
         self,
         st: DeltaGenerator,
-        key: str,
         fields: Mapping[str, ValueSchema],
         options: AssemblyOptions,
     ) -> ValueMap:
@@ -129,11 +127,11 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
                 if schema.doc.is_set:
                     help = schema.doc.full_doc
                 data_type_name = schema.type
-                _key = f"op_input_{key}_{field_name}_req"
+                _key = options.create_key("op_input", "req", "default", field_name)
                 comp = self.kiara.get_input_component(data_type_name)
 
                 column_idx = idx % num_columns
-                input_opts = InputOptions(
+                input_opts = DefaultInputOptions(
                     key=_key, label=field_name, value_schema=schema, help=help
                 )
 
@@ -156,22 +154,19 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
 
             for idx, field_name in enumerate(optional.keys()):
                 schema = optional[field_name]
-                # desc = schema.doc.description
-                # doc = schema.doc.doc
                 help = None
                 if schema.doc.is_set:
                     help = schema.doc.full_doc
 
                 if idx >= num_columns:
                     if idx % num_columns == 0:
-                        # opt_expander.markdown("---")
                         opt_columns = opt_expander.columns(num_columns)
 
                 data_type_name = schema.type
-                _key = f"op_input_{key}_{field_name}_opt"
+                _key = options.create_key("op_input", "opt", "default", field_name)
                 comp = self.kiara.get_input_component(data_type_name)
                 column_idx = idx % num_columns
-                input_opts = InputOptions(
+                input_opts = DefaultInputOptions(
                     key=_key, label=field_name, value_schema=schema, help=help
                 )
 

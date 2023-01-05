@@ -2,6 +2,7 @@
 import abc
 from typing import Any
 
+from kiara.defaults import SpecialValue
 from streamlit.delta_generator import DeltaGenerator
 
 from kiara_plugin.streamlit.components.input import InputComponent, InputOptions
@@ -54,7 +55,10 @@ class BooleanInput(ScalarInput):
     ):
 
         inp = st.checkbox(
-            label=options.label, key=options.key, value=options.get_default()
+            label=options.label,
+            key=options.key,
+            value=options.get_default(),
+            help=options.help,
         )
         return inp
 
@@ -77,8 +81,11 @@ class StringInput(ScalarInput):
         options: InputOptions,
     ):
 
+        default = options.get_default()
+        if default in [None, SpecialValue.NOT_SET, SpecialValue.NO_VALUE]:
+            default = ""
         txt = st.text_input(
-            label=options.label, key=options.key, value=options.get_default()
+            label=options.label, key=options.key, value=default, help=options.help
         )
         return txt
 
@@ -113,11 +120,14 @@ class IntegerInput(ScalarInput):
 
         if style == "default":
             number = st.number_input(
-                label=options.label, key=options.key, value=default
+                label=options.label, key=options.key, value=default, help=options.help
             )
         elif style == "text_input":
             number_str = st.text_input(
-                label=options.label, key=options.key, value=str(default)
+                label=options.label,
+                key=options.key,
+                value=str(default),
+                help=options.help,
             )
             try:
                 number = int(number_str)
@@ -159,11 +169,14 @@ class FloatInput(ScalarInput):
 
         if style == "default":
             number = st.number_input(
-                label=options.label, key=options.key, value=default
+                label=options.label, key=options.key, value=default, help=options.help
             )
         elif style == "text_input":
             number_str = st.text_input(
-                label=options.label, key=options.key, value=str(default)
+                label=options.label,
+                key=options.key,
+                value=str(default),
+                help=options.help,
             )
             try:
                 number = float(number_str)
