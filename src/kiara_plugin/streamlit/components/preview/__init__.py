@@ -4,7 +4,6 @@ from abc import abstractmethod
 from typing import List, Mapping, Union
 
 from kiara import Value
-from kiara.registries.data import ValueLink
 from pydantic import Field
 from streamlit.delta_generator import DeltaGenerator
 
@@ -14,7 +13,7 @@ from kiara_plugin.streamlit.utils.components import create_list_component
 
 class PreviewOptions(ComponentOptions):
 
-    value: Union[str, uuid.UUID, ValueLink] = Field(description="The value to preview.")
+    value: Union[str, uuid.UUID, Value] = Field(description="The value to preview.")
     height: Union[int, None] = Field(
         description="The height of the preview.", default=None
     )
