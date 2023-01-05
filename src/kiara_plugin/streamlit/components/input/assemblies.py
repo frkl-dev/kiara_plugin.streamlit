@@ -28,6 +28,9 @@ ASSEMBLY_OPTIONS_TYPE = TypeVar("ASSEMBLY_OPTIONS_TYPE", bound=AssemblyOptions)
 
 
 class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
+
+    _options = AssemblyOptions  # type: ignore
+
     @abc.abstractmethod
     def get_input_fields(
         self, options: ASSEMBLY_OPTIONS_TYPE
@@ -187,6 +190,7 @@ class OperationInputsOptions(AssemblyOptions):
 class OperationInputs(InputAssemblyComponent):
 
     _component_name = "operation_inputs"
+    _options = OperationInputsOptions  # type: ignore
 
     def get_input_fields(
         self, options: OperationInputsOptions
@@ -204,6 +208,7 @@ class InputFieldsOptions(AssemblyOptions):
 class InputFields(InputAssemblyComponent):
 
     _component_name = "input_fields"
+    _options = InputFieldsOptions  # type: ignore
 
     def get_input_fields(
         self, options: InputFieldsOptions

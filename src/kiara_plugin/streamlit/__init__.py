@@ -6,7 +6,6 @@ import warnings
 from typing import Union
 
 import streamlit as st
-import streamlit_nested_layout  # noqa
 from kiara.context import KiaraContextConfig, KiaraRuntimeConfig
 from kiara.utils.class_loading import (
     KiaraEntryPointItem,
@@ -16,6 +15,7 @@ from kiara.utils.class_loading import (
     find_pipeline_base_path_for_module,
 )
 
+import kiara_plugin.streamlit.utils.monkey_patches  # noqa
 from kiara_plugin.streamlit.streamlit import KiaraStreamlit
 from kiara_plugin.streamlit.utils.class_loading import (
     find_kiara_streamlit_components_under,

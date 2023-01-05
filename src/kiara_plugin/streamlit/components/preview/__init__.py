@@ -24,7 +24,7 @@ class PreviewOptions(ComponentOptions):
 
 class PreviewComponent(KiaraComponent[PreviewOptions]):
 
-    _options = PreviewOptions
+    _options = PreviewOptions  # type: ignore
 
     @classmethod
     @abstractmethod
@@ -98,9 +98,10 @@ class PreviewListOptions(ComponentOptions):
     )
 
 
-class ValueList(KiaraComponent):
+class ValueList(KiaraComponent[PreviewListOptions]):
 
     _component_name = "value_list"
+    _options = PreviewListOptions
 
     def _render(
         self, st: DeltaGenerator, options: PreviewListOptions
@@ -123,9 +124,10 @@ class ValueList(KiaraComponent):
         return selected_alias
 
 
-class ValueListPreview(KiaraComponent):
+class ValueListPreview(KiaraComponent[PreviewListOptions]):
 
     _component_name = "value_list_preview"
+    _options = PreviewListOptions
 
     def _render(
         self,
@@ -159,9 +161,10 @@ class ValuesPreviewOptions(ComponentOptions):
     values: Mapping[str, Value] = Field(description="The values to display.")
 
 
-class ValuesPreview(KiaraComponent):
+class ValuesPreview(KiaraComponent[ValuesPreviewOptions]):
 
     _component_name = "values_preview"
+    _options = ValuesPreviewOptions
 
     def _render(
         self,

@@ -4,7 +4,7 @@ import os
 import shutil
 import uuid
 from pathlib import Path
-from typing import Dict, Mapping, Set, Union
+from typing import Dict, Mapping, Union
 
 import streamlit as st
 from kiara import Kiara, KiaraAPI
@@ -159,7 +159,6 @@ class KiaraStreamlit(object):
         self._component_mgmt = ComponentMgmt(
             kiara_streamlit=self, example_base_dir=None
         )
-        self._avail_kiara_methods: Set[str] = set((x for x in dir(Kiara)))
 
         self._temp_dir = os.path.join(
             kiara_stremalit_app_dirs.user_cache_dir, str(uuid.uuid4())
@@ -178,17 +177,13 @@ class KiaraStreamlit(object):
         # if item in ["api", "components", "get_component"]:
         #     return getattr(self, item)
 
-        if item in self._avail_kiara_methods:
-            return getattr(self.kiara, item)
+        comp = self.get_component(item)
+        if not comp:
+            raise AttributeError(
+                f"Kiara context object does not have component '{item}'."
+            )
 
-        else:
-            comp = self.get_component(item)
-            if not comp:
-                raise AttributeError(
-                    f"Kiara context object does not have component '{item}'."
-                )
-
-            return comp.render_func()
+        return comp.render_func()
 
     # def add_component(self, name: str, component: KiaraComponent):
     #

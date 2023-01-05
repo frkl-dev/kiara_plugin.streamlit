@@ -45,6 +45,9 @@ INPUT_OPTIONS_TYPE = TypeVar("INPUT_OPTIONS_TYPE", bound=InputOptions)
 
 
 class InputComponent(KiaraComponent[INPUT_OPTIONS_TYPE]):
+
+    _options = InputOptions  # type: ignore
+
     @classmethod
     @abc.abstractmethod
     def get_data_type(cls) -> str:
@@ -103,7 +106,7 @@ class DefaultInputOptions(InputOptions):
 class DefaultInputComponent(InputComponent):
 
     _component_name = "value_input"
-    _options = DefaultInputOptions
+    _options = DefaultInputOptions  # type: ignore
 
     def __init__(
         self,

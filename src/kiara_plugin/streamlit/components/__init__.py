@@ -58,7 +58,7 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
         if st is None:
             st = self._st
 
-        return partial(self._render, st)
+        return partial(self.render, st)
 
     def render(self, st: DeltaGenerator, *args, **kwargs) -> Any:
 
@@ -75,6 +75,9 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
                 raise Exception(f"Duplicate value for key '{key}'.")
 
             kwargs[key] = arg
+
+        if "key" not in kwargs.keys():
+            kwargs["key"] = self.default_key
 
         options = self.__class__._options(**kwargs)
 
