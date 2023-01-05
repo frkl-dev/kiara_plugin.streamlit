@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """Top-level package for kiara_plugin.streamlit."""
-import warnings
-
-warnings.simplefilter(action="ignore", category=FutureWarning)
-
 import os
+import warnings
 from typing import Union
 
 import streamlit as st
@@ -19,13 +16,15 @@ from kiara.utils.class_loading import (
     find_pipeline_base_path_for_module,
 )
 
-__author__ = """Markus Binsteiner"""
-__email__ = "markus@frkl.io"
-
 from kiara_plugin.streamlit.streamlit import KiaraStreamlit
 from kiara_plugin.streamlit.utils.class_loading import (
     find_kiara_streamlit_components_under,
 )
+
+__author__ = """Markus Binsteiner"""
+__email__ = "markus@frkl.io"
+warnings.simplefilter(action="ignore", category=FutureWarning)  # noqa
+
 
 KIARA_METADATA = {
     "authors": [{"name": __author__, "email": __email__}],
