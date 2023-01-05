@@ -53,11 +53,16 @@ class BooleanInput(ScalarInput):
         st: DeltaGenerator,
         options: InputOptions,
     ):
+        default = options.get_default()
+        if default in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
+            default = False
+        else:
+            default = bool(default)
 
         inp = st.checkbox(
             label=options.label,
             key=options.key,
-            value=options.get_default(),
+            value=default,
             help=options.help,
         )
         return inp
@@ -113,7 +118,7 @@ class IntegerInput(ScalarInput):
             style = "default"
 
         default = options.get_default()
-        if default is None:
+        if default in [None, SpecialValue.NOT_SET, SpecialValue.NO_VALUE]:
             default = 0
         else:
             default = int(default)
@@ -162,7 +167,7 @@ class FloatInput(ScalarInput):
             style = "default"
 
         default = options.get_default()
-        if default is None:
+        if default in [None, SpecialValue.NOT_SET, SpecialValue.NO_VALUE]:
             default = 0.0
         else:
             default = float(default)

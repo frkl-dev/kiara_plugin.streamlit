@@ -26,8 +26,11 @@ class ComponentOptions(BaseModel):
 
     def create_key(self, *args) -> str:
 
-        _key = "_".join(args)
-        return f"{self.key}_{_key}"
+        if args:
+            _key = "_".join(args)
+            return f"{self.key}_{_key}"
+        else:
+            return self.key
 
 
 COMP_OPTIONS_TYPE = TypeVar("COMP_OPTIONS_TYPE", bound=ComponentOptions)

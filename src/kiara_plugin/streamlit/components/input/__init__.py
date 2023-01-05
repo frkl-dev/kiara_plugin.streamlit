@@ -223,7 +223,10 @@ class DefaultInputComponent(InputComponent):
             if result == NO_VALUE_MARKER:
                 result = None
             if with_preview == "checkbox":
-                _key = options.create_key("preview", result)
+                if result:
+                    _key = options.create_key("preview", result)
+                else:
+                    _key = options.create_key("preview", "no_value")
                 if result is None:
                     disabled = True
                 else:

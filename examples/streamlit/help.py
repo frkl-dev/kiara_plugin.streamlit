@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import streamlit as st
 
-st.set_page_config(layout="wide")
-
 import kiara_plugin.streamlit as kst
+
+st.set_page_config(layout="wide")
 
 kst.init()
 
@@ -11,4 +11,5 @@ kst.init()
 # st.kiara.operation_info()
 # st.kiara.module_type_info()
 # st.kiara.kiara_api_help()
-st.kiara.kiara_component_help()
+# st.kiara.kiara_component_help()
+st.kiara.operation_info("table.cut_column")

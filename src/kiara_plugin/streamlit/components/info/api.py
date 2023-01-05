@@ -139,16 +139,20 @@ class KiaraOperationInfoComponent(KiaraInfoComponent):
 
         comp = self.get_component("fields_info")
         st.markdown("##### Inputs")
-        opts = FieldsInfoOptions(
+        # opts = FieldsInfoOptions(
+        #     key=options.create_key("inputs"), fields=item.operation.inputs_schema
+        # )
+        comp.render_func(st)(
             key=options.create_key("inputs"), fields=item.operation.inputs_schema
         )
-        comp.render_func(st)(opts)
 
         st.markdown("##### Outputs")
-        opts = FieldsInfoOptions(
+        # opts = FieldsInfoOptions(
+        #     key=options.create_key("outputs"), fields=item.operation.outputs_schema
+        # )
+        comp.render_func(st)(
             key=options.create_key("outputs"), fields=item.operation.outputs_schema
         )
-        comp.render_func(st)(opts)
 
     def render_all_info(  # type: ignore
         self, st: DeltaGenerator, key: str, items: OperationGroupInfo, options: InfoCompOptions  # type: ignore

@@ -92,7 +92,7 @@ class NextStepComponent(DynamicWorkflowComponent):
                 if match:
                     ops.append(op_id)
         else:
-            ops = operations.item_infos.keys()
+            ops = list(operations.item_infos.keys())
 
         selected = left.selectbox(
             label="Operation",
@@ -104,7 +104,7 @@ class NextStepComponent(DynamicWorkflowComponent):
             right.write("")
             with right:
                 with st.expander("Operation details", expanded=False):
-                    st.kiara.operation_info(operation_id=selected)
+                    self.kiara_streamlit.operation_info(selected)
             left.write(operations[selected].documentation.description)
             return operations[selected]
         else:

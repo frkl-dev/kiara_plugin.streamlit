@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import Tuple, Union
+from typing import List, Union
 
 from kiara import Value
 from kiara.interfaces.python_api import OperationInfo
@@ -121,6 +121,7 @@ class DynamicWorkflow(KiaraComponent):
             selected = st.selectbox(
                 label="Select input", options=list(matches.keys()), key=key
             )
+            assert selected is not None
             name = generate_pipeline_endpoint_name(pipeline_step.step_id, selected)
         else:
             name = generate_pipeline_endpoint_name(
@@ -252,9 +253,7 @@ class DynamicWorkflow(KiaraComponent):
         )
         return selected_value
 
-    def write_columns(
-        self, st: DeltaGenerator
-    ) -> Tuple[DeltaGenerator, DeltaGenerator]:
+    def write_columns(self, st: DeltaGenerator) -> List[DeltaGenerator]:
 
         columns = st.columns((LEFT_COLUMN, RIGHT_COLUMN))
         return columns
@@ -277,7 +276,7 @@ class DynamicWorkflow(KiaraComponent):
             # Users the option to change the initial value
 
             with left:
-                init_value: Value = st.kiara.value_input(
+                init_value: Value = self.kiara_streamlit.value_input(
                     label="**Select initial value**", preview=False
                 )
 
@@ -285,7 +284,7 @@ class DynamicWorkflow(KiaraComponent):
             right.write("")
             with right.expander("Value preview", expanded=False):
                 if init_value:
-                    st.kiara.preview(init_value)
+                    self.kiara_streamlit.preview(init_value)
                 else:
                     st.write("-- no value --")
 
@@ -304,7 +303,7 @@ class DynamicWorkflow(KiaraComponent):
             with right.expander("Value preview", expanded=False):
                 if current_value:
                     assert session.initial_value is not None
-                    st.kiara.preview(session.initial_value)
+                    self.kiara_streamlit.preview(session.initial_value)
 
         self.write_separator(st)
 
@@ -409,7 +408,7 @@ class DynamicWorkflow(KiaraComponent):
 
         process = right.button("Process")
         if process:
-            with st.spinner("Processing..."):
+            with st.spinner("Processing..."):  # type: ignore
                 try:
                     session.last_step_processed = True
                     job_ids, errors = session.workflow.process_steps()
