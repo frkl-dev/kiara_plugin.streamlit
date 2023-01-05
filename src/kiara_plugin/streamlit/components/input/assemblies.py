@@ -1,45 +1,63 @@
 # -*- coding: utf-8 -*-
 import abc
-from typing import Dict, Mapping
+import uuid
+from typing import Dict, Mapping, TypeVar, Union
 
 from kiara import ValueMap, ValueSchema
+from kiara.registries.data import ValueLink
 from kiara.utils.values import construct_valuemap
+from pydantic import Field
 from streamlit.delta_generator import DeltaGenerator
 
-from kiara_plugin.streamlit.components import KiaraComponent
-from kiara_plugin.streamlit.defaults import PROFILE_KEYWORD
+from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
+from kiara_plugin.streamlit.components.input import InputComponent, InputOptions
 
 
-class InputAssemblyComponent(KiaraComponent):
+class AssemblyOptions(ComponentOptions):
+
+    profile: str = Field(
+        description="The name of the profile that renders the assembly.",
+        default="default",
+    )
+    max_columns: int = Field(
+        description="The maximum number of columns to use for the assembly.", default=3
+    )
+
+
+ASSEMBLY_OPTIONS_TYPE = TypeVar("ASSEMBLY_OPTIONS_TYPE", bound=AssemblyOptions)
+
+
+class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
     @abc.abstractmethod
-    def get_input_fields(self, *args, **kwargs) -> Mapping[str, ValueSchema]:
+    def get_input_fields(
+        self, options: ASSEMBLY_OPTIONS_TYPE
+    ) -> Mapping[str, ValueSchema]:
         pass
 
-    def _render(self, st: DeltaGenerator, key: str, *args, **kwargs):
+    def _render(self, st: DeltaGenerator, options: ASSEMBLY_OPTIONS_TYPE):
 
-        profile = kwargs.pop(PROFILE_KEYWORD, "default")
+        profile = options.profile
 
         method_name = f"render_{profile}"
         if not hasattr(self, method_name):
             raise Exception(f"No input fields render profile '{profile}' available.'")
 
-        fields = self.get_input_fields(*args, **kwargs)
-        func = getattr(self, method_name, fields)
-        return func(st, key, fields, *args, **kwargs)
+        fields = self.get_input_fields(options=options)
+        func = getattr(self, method_name)
+        return func(st, fields, options=options)
 
     def render_all(
         self,
         st: DeltaGenerator,
         key: str,
         fields: Mapping[str, ValueSchema],
-        *args,
-        **kwargs,
+        options: ASSEMBLY_OPTIONS_TYPE,
     ) -> ValueMap:
 
-        max_columns = kwargs.pop("max_columns", 3)
+        max_columns = options.max_columns
 
         if not fields:
-            return construct_valuemap(kiara=self.api, values={})
+            return construct_valuemap(kiara_api=self.api, values={})
 
         if not max_columns:
             num_columns = len(fields)
@@ -50,7 +68,7 @@ class InputAssemblyComponent(KiaraComponent):
                 num_columns = len(fields)
 
         columns = st.columns(num_columns)
-        values = {}
+        values: Dict[str, Union[None, ValueLink, str, uuid.UUID]] = {}
         for idx, field_name in enumerate(fields.keys()):
             schema = fields[field_name]
             help = None
@@ -58,16 +76,17 @@ class InputAssemblyComponent(KiaraComponent):
                 help = schema.doc.full_doc
             data_type_name = schema.type
             _key = f"op_input_{key}_{field_name}_req"
-            comp = self.kiara.get_input_component(data_type_name)
+            comp: InputComponent = self.kiara.get_input_component(data_type_name)
 
             column_idx = idx % num_columns
-            r = comp.render_input_field(
-                columns[column_idx], _key, field_name, schema, help=help
+            input_opts = InputOptions(
+                key=_key, label=field_name, value_schema=schema, help=help
             )
+            r = comp.render_input_field(columns[column_idx], input_opts)
 
             values[field_name] = r
 
-        result = construct_valuemap(kiara=self.api, values=values)
+        result = construct_valuemap(kiara_api=self.api, values=values)
         return result
 
     def render_default(
@@ -75,14 +94,14 @@ class InputAssemblyComponent(KiaraComponent):
         st: DeltaGenerator,
         key: str,
         fields: Mapping[str, ValueSchema],
-        *args,
-        **kwargs,
+        options: AssemblyOptions,
     ) -> ValueMap:
 
         required: Dict[str, ValueSchema] = {}
         optional: Dict[str, ValueSchema] = {}
-        max_columns = kwargs.pop("max_columns", 3)
-        optional_expanded = kwargs.pop("optional_expanded", True)
+        max_columns = options.max_columns
+
+        optional_expanded = True
 
         for input_name, input_schema in fields.items():
             if input_schema.is_required():
@@ -111,9 +130,11 @@ class InputAssemblyComponent(KiaraComponent):
                 comp = self.kiara.get_input_component(data_type_name)
 
                 column_idx = idx % num_columns
-                r = comp.render_input_field(
-                    columns[column_idx], _key, field_name, schema, help=help
+                input_opts = InputOptions(
+                    key=_key, label=field_name, value_schema=schema, help=help
                 )
+
+                r = comp.render_input_field(columns[column_idx], input_opts)
 
                 values[field_name] = r
 
@@ -147,40 +168,44 @@ class InputAssemblyComponent(KiaraComponent):
                 _key = f"op_input_{key}_{field_name}_opt"
                 comp = self.kiara.get_input_component(data_type_name)
                 column_idx = idx % num_columns
-                r = comp.render_input_field(
-                    opt_columns[column_idx], _key, field_name, schema, help=help
+                input_opts = InputOptions(
+                    key=_key, label=field_name, value_schema=schema, help=help
                 )
+
+                r = comp.render_input_field(opt_columns[column_idx], input_opts)
                 values[field_name] = r
-        result = construct_valuemap(kiara=self.api, values=values)
+        result = construct_valuemap(kiara_api=self.api, values=values)
         return result
+
+
+class OperationInputsOptions(AssemblyOptions):
+    operation_id: str = Field(
+        description="The id of the operation to render the inputs for."
+    )
 
 
 class OperationInputs(InputAssemblyComponent):
 
     _component_name = "operation_inputs"
 
-    def get_input_fields(self, *args, **kwargs) -> Mapping[str, ValueSchema]:
-        op_name = None
-        if "operation" in kwargs.keys():
-            op_name = kwargs["operation"]
-        if not op_name and args:
-            op_name = args[0]
+    def get_input_fields(
+        self, options: OperationInputsOptions
+    ) -> Mapping[str, ValueSchema]:
 
         # TODO: check argument
-        op = self.api.get_operation(op_name)
+        op = self.api.get_operation(options.operation_id)
         return op.inputs_schema
+
+
+class InputFieldsOptions(AssemblyOptions):
+    fields: Mapping[str, ValueSchema] = Field(description="The fields to render.")
 
 
 class InputFields(InputAssemblyComponent):
 
     _component_name = "input_fields"
 
-    def get_input_fields(self, *args, **kwargs) -> Mapping[str, ValueSchema]:
-        fields = kwargs.get("fields", None)
-        if not fields and args:
-            fields = args[0]
-
-        if not fields:
-            return {}
-        else:
-            return fields
+    def get_input_fields(
+        self, options: InputFieldsOptions
+    ) -> Mapping[str, ValueSchema]:
+        return options.fields

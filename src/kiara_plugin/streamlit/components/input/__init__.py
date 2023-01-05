@@ -1,20 +1,50 @@
 # -*- coding: utf-8 -*-
 import abc
+import copy
 import uuid
-from typing import TYPE_CHECKING, Any, Iterable, Union
+from typing import TYPE_CHECKING, Any, Iterable, List, TypeVar, Union
 
-from kiara import ValueSchema
+from kiara import Value, ValueSchema
 from kiara.defaults import SpecialValue
-from streamlit.delta_generator import DeltaGenerator, Value
+from kiara.registries.data import ValueLink
+from pydantic import Field
+from streamlit.delta_generator import DeltaGenerator
 
-from kiara_plugin.streamlit.components import KiaraComponent
-from kiara_plugin.streamlit.defaults import NO_VALUE_MARKER
+from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
+from kiara_plugin.streamlit.defaults import NO_LABEL_MARKER, NO_VALUE_MARKER
 
 if TYPE_CHECKING:
     from kiara_plugin.streamlit import KiaraStreamlit
 
 
-class InputComponent(KiaraComponent):
+class InputOptions(ComponentOptions):
+
+    label: str = Field(
+        description="The label to use for the input field.", default=NO_LABEL_MARKER
+    )
+    smart_label: bool = Field(
+        description="Whether to try to shorten the label.", default=True
+    )
+    value_schema: Union[None, ValueSchema] = Field(
+        description="The schema for the value in question."
+    )
+    help: Union[str, None] = Field(
+        description="The help to display for this input field."
+    )
+    display_style: str = Field(
+        description="The display style to use for this input field.", default="default"
+    )
+
+    def get_default(self) -> Any:
+        if self.value_schema is None:
+            return None
+        return copy.deepcopy(self.value_schema.default)
+
+
+INPUT_OPTIONS_TYPE = TypeVar("INPUT_OPTIONS_TYPE", bound=InputOptions)
+
+
+class InputComponent(KiaraComponent[INPUT_OPTIONS_TYPE]):
     @classmethod
     @abc.abstractmethod
     def get_data_type(cls) -> str:
@@ -35,35 +65,45 @@ class InputComponent(KiaraComponent):
     def render_input_field(
         self,
         st: DeltaGenerator,
-        key: str,
-        label: str,
-        schema: Union[ValueSchema, None],
-        *args,
-        **kwargs,
-    ):
+        options: INPUT_OPTIONS_TYPE,
+    ) -> Union[ValueLink, None, str, uuid.UUID]:
         pass
 
     def _render(
-        self, st: DeltaGenerator, key: str, *args, **kwargs
+        self, st: DeltaGenerator, options: INPUT_OPTIONS_TYPE
     ) -> Union[Value, None]:
 
-        label = kwargs.pop("label", None)
-        if label is None:
-            label = self.get_default_label()
+        if options.label == NO_LABEL_MARKER:
+            options.label = self.get_default_label()
 
-        if "schema" not in kwargs.keys():
-            kwargs["schema"] = None
-
-        value = self.render_input_field(st, key, label, *args, **kwargs)
+        value = self.render_input_field(st, options=options)
         if not value:
             return None
+        else:
+            return self.api.get_value(value)
 
-        return self.api.get_value(value)
+
+class DefaultInputOptions(InputOptions):
+
+    data_types: Union[str, List[str], None] = Field(
+        description="The data types to display as selection.", default=None
+    )
+    value_has_alias: bool = Field(
+        description="Whether the values to present need to have a registered alias.",
+        default=True,
+    )
+    display_value_type: Union[bool, None] = Field(
+        description="Whether to display the data type in the list.", default=None
+    )
+    preview: str = Field(
+        description="The preview to use for the value.", default="auto"
+    )
 
 
 class DefaultInputComponent(InputComponent):
 
     _component_name = "value_input"
+    _options = DefaultInputOptions
 
     def __init__(
         self,
@@ -85,58 +125,59 @@ class DefaultInputComponent(InputComponent):
     def render_input_field(
         self,
         st: DeltaGenerator,
-        key: str,
-        label: str,
-        schema: Union[ValueSchema, None],
-        *args,
-        **kwargs,
-    ) -> Union[Value, None, str, uuid.UUID]:
+        options: DefaultInputOptions,
+    ) -> Union[ValueLink, None, str, uuid.UUID]:
 
-        label = label.split("__")[-1]
+        if options.smart_label:
+            options.label = options.label.split("__")[-1]
 
-        data_types = set(kwargs.pop("data_types", []))
-        data_type = kwargs.pop("data_type", None)
-        if data_type:
-            data_types.add(data_type)
-
-        _data_types = None
-        if data_types:
-            if self._data_types:
-                raise Exception("'data_types' argument not allowed for this component.")
-            _data_types = data_types
+        if options.data_types is None:
+            data_types: List[str] = []
+        elif isinstance(options.data_types, str):
+            data_types = [options.data_types]
         else:
-            _data_types = self._data_types
-            if not _data_types:
-                _data_types = [self.get_data_type()]
+            data_types = options.data_types
 
-        _key = "_".join(sorted(_data_types))
-        _key_selectbox = f"value_select_{key}_{_key}"
+        if self._data_types and data_types:
+            raise Exception("'data_types' argument not allowed for this component.")
 
-        if len(_data_types) == 1:
-            dt = next(iter(_data_types))
+        if not data_types:
+            if self._data_types is None:
+                data_types = []
+            else:
+                data_types = list(self._data_types)
+
+        if not data_types:
+            data_types.append(self.get_data_type())
+
+        _key = options.create_key(*sorted(data_types))
+        _key_selectbox = f"{_key}_value_select_{_key}"
+
+        if len(data_types) == 1:
+            dt = data_types[0]
             inp_comp = self.kiara.get_input_component(dt)
             if inp_comp and inp_comp.__class__ != self.__class__:
-                return inp_comp.render_input_field(
-                    st, _key_selectbox, label, schema, *args, **kwargs
-                )
+                copy_options = options.copy()
+                copy_options.key = _key_selectbox
+                return inp_comp.render_input_field(st, options=copy_options)
 
-        has_alias = kwargs.pop("has_alias", True)
+        has_alias = options.value_has_alias
         available_values = self.api.list_aliases(
-            data_types=list(_data_types), has_alias=has_alias
+            data_types=list(data_types), has_alias=has_alias
         )
 
         optional = False
         default = None
-        if schema:
-            if schema.default not in [
+        if options.value_schema:
+            if options.value_schema.default not in [
                 SpecialValue.NO_VALUE,
                 SpecialValue.NOT_SET,
                 None,
             ]:
-                default = schema.default
-            optional = schema.optional
+                default = options.value_schema.default
+            optional = options.value_schema.optional
 
-        display_type = kwargs.pop("display_type", None)
+        display_type = options.display_value_type
         format_func = None
         if len(data_types) != 1 and (display_type is None or display_type):
 
@@ -146,36 +187,34 @@ class DefaultInputComponent(InputComponent):
                 return f"{v} ({available_values[v].data_type_name})"
 
         if optional:
-            options = [NO_VALUE_MARKER] + list(available_values.keys())
+            _item_options = [NO_VALUE_MARKER] + list(available_values.keys())
         else:
-            options = list(available_values.keys())
+            _item_options = list(available_values.keys())
 
         idx = 0
         if default is not None and default in options:
-            idx = options.index(default)
+            idx = _item_options.index(default)
 
-        with_preview = kwargs.pop("preview", "auto")
+        with_preview = options.preview
 
         if with_preview == "auto":
             with_preview = "checkbox"
 
-        if not with_preview or with_preview == "false":
+        if not with_preview or with_preview.lower() in ["false", "no"]:
             result = st.selectbox(
-                label=label,
-                options=options,
+                label=options.label,
+                options=_item_options,
                 key=_key_selectbox,
                 format_func=format_func,
                 index=idx,
-                **kwargs,
             )
         else:
             result = st.selectbox(
-                label=label,
-                options=options,
+                label=options.label,
+                options=_item_options,
                 key=_key_selectbox,
                 format_func=format_func,
                 index=idx,
-                **kwargs,
             )
             if result == NO_VALUE_MARKER:
                 result = None
@@ -188,30 +227,19 @@ class DefaultInputComponent(InputComponent):
                     "Preview", key=f"preview_{_key_selectbox}", disabled=disabled
                 )
                 if show_preview:
+                    comp = self.get_component("preview")
                     if hasattr(st, "__enter__"):
                         with st:
-                            self.kiara.preview(result)
+                            comp.render_func(st)(comp)
                     else:
-                        self.kiara.preview(result)
+                        comp.render_func(st)(comp)
             elif with_preview:
                 if result is not None:
+                    comp = self.get_component("preview")
                     if hasattr(st, "__enter__"):
                         with st:
-                            self.kiara.preview(result)
+                            comp.render_func(st)(comp)
                     else:
-                        self.kiara.preview(result)
+                        comp.render_func(st)(comp)
 
         return result
-
-
-# class TableInput(InputComponent):
-#
-#     @classmethod
-#     def get_data_type(cls) -> str:
-#         return "table"
-#
-#     def _render_onboarding(self, st: DeltaGenerator, key: str, *args, **kwargs):
-#         pass
-#
-#     def _render_preview(self, st: DeltaGenerator, key: str, value: Value):
-#         pass

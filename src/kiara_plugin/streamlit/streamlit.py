@@ -13,7 +13,7 @@ from kiara.context import KiaraContextConfig, KiaraRuntimeConfig
 from kiara_plugin.streamlit.components import KiaraComponent
 from kiara_plugin.streamlit.components.input import InputComponent
 from kiara_plugin.streamlit.components.preview import PreviewComponent
-from kiara_plugin.streamlit.defaults import EXAMPLE_BASE_DIR, kiara_stremalit_app_dirs
+from kiara_plugin.streamlit.defaults import kiara_stremalit_app_dirs
 from kiara_plugin.streamlit.utils.class_loading import (
     find_all_kiara_streamlit_components,
 )
@@ -23,36 +23,38 @@ class ComponentMgmt(object):
     def __init__(
         self,
         kiara_streamlit: "KiaraStreamlit",
-        example_base_dir: Union[str, Path] = EXAMPLE_BASE_DIR,
+        example_base_dir: Union[str, Path, None] = None,
     ):
 
         self._kiara_streamlit: KiaraStreamlit = kiara_streamlit
-        self._exapmle_base_dir: Path = example_base_dir
+        self._exapmle_base_dir: Union[str, None, Path] = example_base_dir
+
         self._components: Union[Dict[str, KiaraComponent], None] = None
         self._preview_components: Union[
-            Dict[str, Dict[str, KiaraComponent]], None
+            Dict[str, Dict[str, PreviewComponent]], None
         ] = None
-        self._input_components: Union[Dict[str, KiaraComponent], None] = None
+        self._input_components: Union[Dict[str, InputComponent], None] = None
 
     def add_component(self, name: str, component: KiaraComponent):
 
         if name in self.components:
             raise ValueError(f"Component with name '{name}' already exists.")
 
-        self.components[name] = component
+        self.components[name] = component  # type: ignore
 
     def get_component(self, name: str) -> Union[KiaraComponent, None]:
         return self.components.get(name, None)
 
     def get_preview_component(
         self, data_type: str, preview_name: Union[str, None] = None
-    ) -> Union[KiaraComponent, None]:
+    ) -> PreviewComponent:
 
         all_previews = self.preview_components.get(data_type, None)
         if not all_previews:
-            return None
+            raise Exception(f"No preview component found for data type: '{data_type}'")
         if preview_name and preview_name not in all_previews.keys():
-            return None
+            raise Exception(f"No preview component found for data type: '{data_type}'")
+
         if not preview_name:
             if len(all_previews) > 1:
                 if "default" not in all_previews.keys():
@@ -63,10 +65,18 @@ class ComponentMgmt(object):
                     preview_name = "default"
             else:
                 preview_name = next(iter(all_previews.keys()))
-        return all_previews[preview_name]
+        result = all_previews.get(preview_name, None)
 
-    def get_input_component(self, data_type: str) -> Union[KiaraComponent, None]:
-        return self.input_components.get(data_type, None)
+        if not result:
+            raise Exception(f"No preview component found for data type: '{data_type}'")
+        else:
+            return result
+
+    def get_input_component(self, data_type: str) -> InputComponent:
+        result = self.input_components.get(data_type, None)
+        if result is None:
+            raise Exception(f"No input component found for data type: '{data_type}'")
+        return result
 
     @property
     def components(self) -> Mapping[str, KiaraComponent]:
@@ -75,8 +85,8 @@ class ComponentMgmt(object):
             return self._components
 
         components = {}
-        preview_components = {}
-        input_components = {}
+        preview_components: Dict[str, Dict[str, PreviewComponent]] = {}
+        input_components: Dict[str, InputComponent] = {}  # type: ignore
 
         base_input_cls = None
         for name, cls in find_all_kiara_streamlit_components().items():
@@ -96,7 +106,7 @@ class ComponentMgmt(object):
                     raise ValueError(
                         f"Can't register component for data type '{data_type}' and preview name '{preview_name}': more than one component registered."
                     )
-                preview_components.setdefault(data_type, {})[preview_name] = instance
+                preview_components.setdefault(data_type, {})[preview_name] = instance  # type: ignore
 
             if issubclass(cls, InputComponent):
                 data_type = cls.get_data_type()
@@ -104,7 +114,7 @@ class ComponentMgmt(object):
                     raise Exception(
                         f"Multiple input components for data type: {data_type}"
                     )
-                input_components[data_type] = instance
+                input_components[data_type] = instance  # type: ignore
 
         for data_type in self._kiara_streamlit.api.data_type_names:
 
@@ -116,7 +126,7 @@ class ComponentMgmt(object):
 
                 _name = f"select_{data_type}"
                 components[_name] = _comp
-                input_components[data_type] = _comp
+                input_components[data_type] = _comp  # type: ignore
 
         self._components = components
         self._preview_components = preview_components
@@ -124,16 +134,16 @@ class ComponentMgmt(object):
         return self._components
 
     @property
-    def preview_components(self) -> Mapping[str, Mapping[str, KiaraComponent]]:
+    def preview_components(self) -> Mapping[str, Mapping[str, PreviewComponent]]:
         if self._preview_components is None:
             self.components  # noqa
-        return self._preview_components
+        return self._preview_components  # type: ignore
 
     @property
-    def input_components(self) -> Mapping[str, KiaraComponent]:
+    def input_components(self) -> Mapping[str, InputComponent]:
         if self._input_components is None:
             self.components  # noqa
-        return self._input_components
+        return self._input_components  # type: ignore
 
 
 class KiaraStreamlit(object):
@@ -147,7 +157,7 @@ class KiaraStreamlit(object):
         self._runtime_config: Union[None, KiaraRuntimeConfig] = runtime_config
 
         self._component_mgmt = ComponentMgmt(
-            kiara_streamlit=self, example_base_dir=EXAMPLE_BASE_DIR
+            kiara_streamlit=self, example_base_dir=None
         )
         self._avail_kiara_methods: Set[str] = set((x for x in dir(Kiara)))
 
@@ -205,10 +215,12 @@ class KiaraStreamlit(object):
 
     def get_preview_component(
         self, data_type: str, preview_name: Union[str, None] = None
-    ) -> Union[PreviewComponent, None]:
-        return self._component_mgmt.get_preview_component(data_type=data_type)
+    ) -> PreviewComponent:
+        return self._component_mgmt.get_preview_component(
+            data_type=data_type, preview_name=preview_name
+        )
 
-    def get_input_component(self, data_type: str) -> Union[KiaraComponent, None]:
+    def get_input_component(self, data_type: str) -> InputComponent:
         return self._component_mgmt.get_input_component(data_type=data_type)
 
     # def wants_onboarding(self) -> bool:
@@ -219,7 +231,9 @@ class KiaraStreamlit(object):
     #         st.session_state.pop(ONBOARD_MAKER_KEY, None)
     #         return False
 
-    def get_component(self, component_name: str) -> Union[InputComponent, None]:
+    def get_component(self, component_name: str) -> KiaraComponent:
 
         component = self._component_mgmt.get_component(component_name)
+        if not component:
+            raise Exception(f"No component availble for name: {component_name}")
         return component

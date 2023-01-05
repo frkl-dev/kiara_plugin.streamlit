@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-from kiara import Value
 from kiara_plugin.tabular.models.array import KiaraArray
 from kiara_plugin.tabular.models.db import KiaraDatabase
 from kiara_plugin.tabular.models.table import KiaraTable
 from streamlit.delta_generator import DeltaGenerator
 
-from kiara_plugin.streamlit.components.preview import PreviewComponent
+from kiara_plugin.streamlit.components.preview import PreviewComponent, PreviewOptions
 
 
 class ArrayPreview(PreviewComponent):
@@ -16,9 +15,10 @@ class ArrayPreview(PreviewComponent):
     def get_data_type(cls) -> str:
         return "array"
 
-    def render_preview(self, st: DeltaGenerator, key: str, value: Value):
+    def render_preview(self, st: DeltaGenerator, options: PreviewOptions):
 
-        table: KiaraArray = value.data
+        _value = self.api.get_value(options.value)
+        table: KiaraArray = _value.data
 
         st.dataframe(table.to_pandas(), use_container_width=True)
 
@@ -31,9 +31,10 @@ class TablePreview(PreviewComponent):
     def get_data_type(cls) -> str:
         return "table"
 
-    def render_preview(self, st: DeltaGenerator, key: str, value: Value):
+    def render_preview(self, st: DeltaGenerator, options: PreviewOptions):
 
-        table: KiaraTable = value.data
+        _value = self.api.get_value(options.value)
+        table: KiaraTable = _value.data
 
         st.dataframe(table.to_pandas(), use_container_width=True)
 
@@ -46,10 +47,11 @@ class DatabasePreview(PreviewComponent):
     def get_data_type(cls) -> str:
         return "database"
 
-    def render_preview(self, st: DeltaGenerator, key: str, value: Value):
+    def render_preview(self, st: DeltaGenerator, options: PreviewOptions):
 
-        db: KiaraDatabase = value.data
-        tabs = st.tabs(db.table_names)
+        _value = self.api.get_value(options.value)
+        db: KiaraDatabase = _value.data
+        tabs = st.tabs(list(db.table_names))
 
         for idx, table_name in enumerate(db.table_names):
             # TODO: this is probably not ideal, as it always loads all tables because
@@ -59,7 +61,7 @@ class DatabasePreview(PreviewComponent):
             tabs[idx].dataframe(table, use_container_width=True)
 
 
-class DatabasePreview(PreviewComponent):
+class NetworkDataPreview(PreviewComponent):
 
     _component_name = "network_data_preview"
 
@@ -67,10 +69,11 @@ class DatabasePreview(PreviewComponent):
     def get_data_type(cls) -> str:
         return "network_data"
 
-    def render_preview(self, st: DeltaGenerator, key: str, value: Value):
+    def render_preview(self, st: DeltaGenerator, options: PreviewOptions):
 
-        db: KiaraDatabase = value.data
-        tabs = st.tabs(db.table_names)
+        _value = self.api.get_value(options.value)
+        db: KiaraDatabase = _value.data
+        tabs = st.tabs(list(db.table_names))
 
         for idx, table_name in enumerate(db.table_names):
             # TODO: this is probably not ideal, as it always loads all tables because

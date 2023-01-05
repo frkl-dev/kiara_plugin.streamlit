@@ -1,19 +1,26 @@
 # -*- coding: utf-8 -*-
+from typing import Union
+
+from pydantic import Field
 from streamlit.delta_generator import DeltaGenerator
 
-from kiara_plugin.streamlit.components import KiaraComponent
+from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 from kiara_plugin.streamlit.utils.components import create_list_component
 
 
-class HelpComponent(KiaraComponent):
+class HelpCompOptions(ComponentOptions):
+
+    attribute: Union[str, None] = Field(description="The attribute to show help for.")
+
+
+class HelpComponent(KiaraComponent[HelpCompOptions]):
 
     _component_name = "help"
+    _options = HelpCompOptions
 
-    def _render(self, st: DeltaGenerator, key: str, *args, **kwargs):
+    def _render(self, st: DeltaGenerator, options: HelpCompOptions):
 
-        attribute = kwargs.pop("attribute", None)
-        if not attribute and args:
-            attribute = args[0]
+        attribute = options.attribute
 
         if not attribute:
             component_tab, api_tab = st.tabs(["components", "kiara_api"])
@@ -28,8 +35,8 @@ class HelpComponent(KiaraComponent):
         elif attribute in self.kiara.components.keys():
             component = self.kiara.components[attribute]
             try:
-                _key = f"component_help_{key}_{attribute}"
-                component._render(st=st, key=_key)
+                _key = options.create_key("component_help", attribute)
+                component.render_func(st)(key=_key)
             except Exception as e:
                 st.error(e)
                 import traceback
@@ -41,7 +48,7 @@ class KiaraComponentHelpComponent(KiaraComponent):
 
     _component_name = "kiara_component_help"
 
-    def _render(self, st: DeltaGenerator, key: str, *args, **kwargs):
+    def _render(self, st: DeltaGenerator, options: ComponentOptions):
 
         components = self.kiara.components
 
@@ -51,17 +58,17 @@ class KiaraComponentHelpComponent(KiaraComponent):
             key=str.lower,
         )
 
-        _key = f"component_help_{key}_selection_list"
+        _key = options.create_key("component", "help", "selection_list")
         selected_component = create_list_component(
-            st=left, title="Components", items=items, key=key
+            st=left, title="Components", items=items, key=_key
         )
 
         if selected_component in sorted(components.keys()):
             component = components[selected_component]
             with right:
                 try:
-                    _key = f"component_help_{key}_{selected_component}"
-                    component._render(st=st, key=_key)
+                    _key = options.create_key("component", "help", selected_component)
+                    component.render_func(st)(key=_key)
                 except Exception as e:
                     st.error(e)
                     import traceback

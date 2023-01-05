@@ -1,30 +1,26 @@
 # -*- coding: utf-8 -*-
 import abc
-from typing import Union
+from typing import Any
 
-from kiara import ValueSchema
 from streamlit.delta_generator import DeltaGenerator
 
-from kiara_plugin.streamlit.components.input import InputComponent
-from kiara_plugin.streamlit.defaults import PROFILE_KEYWORD
+from kiara_plugin.streamlit.components.input import InputComponent, InputOptions
 
 
 class ScalarInput(InputComponent):
+    @classmethod
     def get_default_label(cls) -> str:
         return "Provide value"
 
     def render_input_field(
         self,
         st: DeltaGenerator,
-        key: str,
-        label: str,
-        schema: Union[ValueSchema, None],
-        *args,
-        **kwargs,
+        options: InputOptions,
     ):
+        if options.smart_label:
+            options.label = options.label.split("__")[-1]
 
-        label = label.split("__")[-1]
-        scalar = self.render_scalar_input(st, key, label, schema, *args, **kwargs)
+        scalar = self.render_scalar_input(st, options=options)
         if scalar is None:
             return None
         value = self.api.register_data(scalar, data_type=self.get_data_type())
@@ -34,12 +30,8 @@ class ScalarInput(InputComponent):
     def render_scalar_input(
         self,
         st: DeltaGenerator,
-        key: str,
-        label: str,
-        schema: Union[ValueSchema, None],
-        *args,
-        **kwargs,
-    ) -> any:
+        options: InputOptions,
+    ) -> Any:
         pass
 
 
@@ -51,25 +43,19 @@ class BooleanInput(ScalarInput):
     def get_data_type(cls) -> str:
         return "boolean"
 
+    @classmethod
     def get_default_label(cls) -> str:
         return "Check enabled"
 
     def render_scalar_input(
         self,
         st: DeltaGenerator,
-        key: str,
-        label: str,
-        schema: ValueSchema,
-        *args,
-        **kwargs,
+        options: InputOptions,
     ):
 
-        if "value" not in kwargs.keys():
-            value = schema and schema.default is True
-        else:
-            value = kwargs["value"]
-
-        inp = st.checkbox(label=label, key=key, value=value, **kwargs)
+        inp = st.checkbox(
+            label=options.label, key=options.key, value=options.get_default()
+        )
         return inp
 
 
@@ -81,28 +67,19 @@ class StringInput(ScalarInput):
     def get_data_type(cls) -> str:
         return "string"
 
+    @classmethod
     def get_default_label(cls) -> str:
         return "Enter text"
 
     def render_scalar_input(
         self,
         st: DeltaGenerator,
-        key: str,
-        label: str,
-        schema: Union[ValueSchema, None],
-        *args,
-        **kwargs,
+        options: InputOptions,
     ):
 
-        if "value" not in kwargs.keys():
-            if schema and isinstance(schema.default, str):
-                value = schema.default
-            else:
-                value = ""
-        else:
-            value = kwargs["value"]
-
-        txt = st.text_input(label=label, key=key, value=value, **kwargs)
+        txt = st.text_input(
+            label=options.label, key=options.key, value=options.get_default()
+        )
         return txt
 
 
@@ -114,39 +91,36 @@ class IntegerInput(ScalarInput):
     def get_data_type(cls) -> str:
         return "integer"
 
+    @classmethod
     def get_default_label(cls) -> str:
         return "Enter integer"
 
     def render_scalar_input(
         self,
         st: DeltaGenerator,
-        key: str,
-        label: str,
-        schema: Union[ValueSchema, None],
-        *args,
-        **kwargs,
+        options: InputOptions,
     ):
 
-        style = kwargs.pop(PROFILE_KEYWORD, None)
+        style = options.display_style
         if not style:
             style = "default"
 
-        default = kwargs.pop("value", None)
+        default = options.get_default()
         if default is None:
-            if schema and isinstance(schema.default, int):
-                default = schema.default
-            else:
-                default = 0
+            default = 0
         else:
             default = int(default)
 
         if style == "default":
-            number = st.number_input(label=label, key=key, value=default, **kwargs)
+            number = st.number_input(
+                label=options.label, key=options.key, value=default
+            )
         elif style == "text_input":
-            value = str(default)
-            number = st.text_input(label=label, key=key, value=value, **kwargs)
+            number_str = st.text_input(
+                label=options.label, key=options.key, value=str(default)
+            )
             try:
-                number = int(number)
+                number = int(number_str)
             except Exception:
                 number = None
         else:
@@ -163,39 +137,36 @@ class FloatInput(ScalarInput):
     def get_data_type(cls) -> str:
         return "float"
 
+    @classmethod
     def get_default_label(cls) -> str:
         return "Enter float"
 
     def render_scalar_input(
         self,
         st: DeltaGenerator,
-        key: str,
-        label: str,
-        schema: Union[ValueSchema, None],
-        *args,
-        **kwargs,
+        options: InputOptions,
     ):
 
-        style = kwargs.pop("style", None)
+        style = options.display_style
         if not style:
             style = "default"
 
-        default = kwargs.pop("value", None)
+        default = options.get_default()
         if default is None:
-            if schema and isinstance(schema.default, float):
-                default = schema.default
-            else:
-                default = 0.0
+            default = 0.0
         else:
             default = float(default)
 
         if style == "default":
-            number = st.number_input(label=label, key=key, value=default, **kwargs)
+            number = st.number_input(
+                label=options.label, key=options.key, value=default
+            )
         elif style == "text_input":
-            value = str(default)
-            number = st.text_input(label=label, key=key, value=value, **kwargs)
+            number_str = st.text_input(
+                label=options.label, key=options.key, value=str(default)
+            )
             try:
-                number = int(number)
+                number = float(number_str)
             except Exception:
                 number = None
         else:

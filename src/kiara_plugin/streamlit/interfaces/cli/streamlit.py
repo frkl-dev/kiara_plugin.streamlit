@@ -26,9 +26,9 @@ def run(ctx):
 
 @streamlit.command("list-components")
 @click.pass_context
-def run(ctx):
+def list_components(ctx):
     """List all available streamlit components."""
 
     kiara_streamlit = KiaraStreamlit()
-
-    dbg(kiara_streamlit.components)
+    print(kiara_streamlit)
+    # dbg(kiara_streamlit.components)
