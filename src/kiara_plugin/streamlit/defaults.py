@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-import importlib
-
+import importlib_resources
 from appdirs import AppDirs
 
 kiara_stremalit_app_dirs = AppDirs("kiara-streamlit", "dharpa")
 
-KIARA_STREAMLIT_RESOURCES_FOLDER = importlib.resources.files(  # type: ignore
+KIARA_STREAMLIT_RESOURCES_FOLDER = importlib_resources.files(  # type: ignore
     "kiara_plugin.streamlit"
 ).joinpath("resources")
 
