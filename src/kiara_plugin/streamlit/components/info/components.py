@@ -26,14 +26,14 @@ class HelpComponent(KiaraComponent[HelpCompOptions]):
             component_tab, api_tab = st.tabs(["components", "kiara_api"])
 
             with api_tab:
-                self.kiara.kiara_api_help()
+                self.kiara_streamlit.kiara_api_help()
             with component_tab:
-                self.kiara.kiara_component_help()
+                self.kiara_streamlit.kiara_component_help()
 
         elif attribute in self.api.doc.keys():
             st.markdown(self.api.doc[attribute])
-        elif attribute in self.kiara.components.keys():
-            component = self.kiara.components[attribute]
+        elif attribute in self.kiara_streamlit.components.keys():
+            component = self.kiara_streamlit.components[attribute]
             try:
                 _key = options.create_key("component_help", attribute)
                 component.render_func(st)(key=_key)
@@ -50,7 +50,7 @@ class KiaraComponentHelpComponent(KiaraComponent):
 
     def _render(self, st: DeltaGenerator, options: ComponentOptions):
 
-        components = self.kiara.components
+        components = self.kiara_streamlit.components
 
         left, right = st.columns([1, 3])
         items = sorted(

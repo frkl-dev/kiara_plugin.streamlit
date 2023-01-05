@@ -15,12 +15,12 @@ from kiara_plugin.streamlit.components.input import DefaultInputOptions, InputCo
 
 class AssemblyOptions(ComponentOptions):
 
+    max_columns: int = Field(
+        description="The maximum number of columns to use for the assembly.", default=3
+    )
     profile: str = Field(
         description="The name of the profile that renders the assembly.",
         default="default",
-    )
-    max_columns: int = Field(
-        description="The maximum number of columns to use for the assembly.", default=3
     )
 
 
@@ -78,7 +78,9 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
                 help = schema.doc.full_doc
             data_type_name = schema.type
             _key = options.create_key("op_input", "req", "all", field_name)
-            comp: InputComponent = self.kiara.get_input_component(data_type_name)
+            comp: InputComponent = self.kiara_streamlit.get_input_component(
+                data_type_name
+            )
 
             column_idx = idx % num_columns
             input_opts = DefaultInputOptions(
@@ -128,7 +130,7 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
                     help = schema.doc.full_doc
                 data_type_name = schema.type
                 _key = options.create_key("op_input", "req", "default", field_name)
-                comp = self.kiara.get_input_component(data_type_name)
+                comp = self.kiara_streamlit.get_input_component(data_type_name)
 
                 column_idx = idx % num_columns
                 input_opts = DefaultInputOptions(
@@ -164,7 +166,7 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
 
                 data_type_name = schema.type
                 _key = options.create_key("op_input", "opt", "default", field_name)
-                comp = self.kiara.get_input_component(data_type_name)
+                comp = self.kiara_streamlit.get_input_component(data_type_name)
                 column_idx = idx % num_columns
                 input_opts = DefaultInputOptions(
                     key=_key, label=field_name, value_schema=schema, help=help

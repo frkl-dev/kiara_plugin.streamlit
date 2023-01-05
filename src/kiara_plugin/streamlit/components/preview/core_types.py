@@ -61,3 +61,16 @@ class FileBundlePreview(PreviewComponent):
         st.dataframe(table, use_container_width=True)
 
         return
+
+
+class NonePreview(PreviewComponent):
+
+    _component_name = "none_preview"
+
+    @classmethod
+    def get_data_type(self) -> str:
+        return "none"
+
+    def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
+
+        st.write("-- value not set --")

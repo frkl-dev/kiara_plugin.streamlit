@@ -19,20 +19,20 @@ if TYPE_CHECKING:
 
 class InputOptions(ComponentOptions):
 
-    label: str = Field(
-        description="The label to use for the input field.", default=NO_LABEL_MARKER
+    display_style: str = Field(
+        description="The display style to use for this input field.", default="default"
     )
     smart_label: bool = Field(
         description="Whether to try to shorten the label.", default=True
     )
-    value_schema: Union[None, ValueSchema] = Field(
-        description="The schema for the value in question."
+    label: str = Field(
+        description="The label to use for the input field.", default=NO_LABEL_MARKER
     )
     help: Union[str, None] = Field(
         description="The help to display for this input field."
     )
-    display_style: str = Field(
-        description="The display style to use for this input field.", default="default"
+    value_schema: Union[None, ValueSchema] = Field(
+        description="The schema for the value in question."
     )
 
     def get_default(self) -> Any:
@@ -88,18 +88,18 @@ class InputComponent(KiaraComponent[INPUT_OPTIONS_TYPE]):
 
 class DefaultInputOptions(InputOptions):
 
-    data_types: Union[str, List[str], None] = Field(
-        description="The data types to display as selection.", default=None
-    )
     value_has_alias: bool = Field(
         description="Whether the values to present need to have a registered alias.",
         default=True,
     )
+    preview: str = Field(
+        description="The preview to use for the value.", default="auto"
+    )
     display_value_type: Union[bool, None] = Field(
         description="Whether to display the data type in the list.", default=None
     )
-    preview: str = Field(
-        description="The preview to use for the value.", default="auto"
+    data_types: Union[str, List[str], None] = Field(
+        description="The data types to display as selection.", default=None
     )
 
 
@@ -158,7 +158,7 @@ class DefaultInputComponent(InputComponent):
 
         if len(data_types) == 1:
             dt = data_types[0]
-            inp_comp = self.kiara.get_input_component(dt)
+            inp_comp = self.kiara_streamlit.get_input_component(dt)
             if inp_comp and inp_comp.__class__ != self.__class__:
                 copy_options = options.copy()
                 copy_options.key = _key_selectbox

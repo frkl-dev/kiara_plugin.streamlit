@@ -13,13 +13,13 @@ from kiara_plugin.streamlit.utils.components import create_list_component
 
 class PreviewOptions(ComponentOptions):
 
-    value: Union[str, uuid.UUID, Value] = Field(description="The value to preview.")
     height: Union[int, None] = Field(
         description="The height of the preview.", default=None
     )
     display_style: str = Field(
         description="The display style to use for this preview.", default="default"
     )
+    value: Union[str, uuid.UUID, Value] = Field(description="The value to preview.")
 
 
 class PreviewComponent(KiaraComponent[PreviewOptions]):
@@ -146,10 +146,10 @@ class ValueListPreview(KiaraComponent[PreviewListOptions]):
 
         if selected_alias:
             value = self.api.get_value(selected_alias)
-            component = self.kiara.get_preview_component(value.data_type_name)
+            component = self.kiara_streamlit.get_preview_component(value.data_type_name)
 
             if component is None:
-                component = self.kiara.get_preview_component("any")
+                component = self.kiara_streamlit.get_preview_component("any")
 
             pr_opts = PreviewOptions(key=options.create_key("preview"), value=value)
             component.render_preview(preview_column, options=pr_opts)
@@ -182,9 +182,9 @@ class ValuesPreview(KiaraComponent[ValuesPreviewOptions]):
         for idx, field in enumerate(field_names):
 
             value = options.values[field]
-            component = self.kiara.get_preview_component(value.data_type_name)
+            component = self.kiara_streamlit.get_preview_component(value.data_type_name)
             if component is None:
-                component = self.kiara.get_preview_component("any")
+                component = self.kiara_streamlit.get_preview_component("any")
             left, center, right = tabs[idx].columns([1, 4, 1])
 
             _key = options.create_key("select", f"{idx}_{field}")

@@ -2,7 +2,7 @@
 import abc
 import warnings
 from functools import partial
-from typing import Any, Callable, Generic, Type, TypeVar, Union
+from typing import Any, Callable, Generic, List, Type, TypeVar, Union
 
 import streamlit as st
 from pydantic import BaseModel, Field
@@ -46,7 +46,7 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
         return self._kiara_streamlit.api
 
     @property
-    def kiara(self) -> "KiaraStreamlit":
+    def kiara_streamlit(self) -> "KiaraStreamlit":
         return self._kiara_streamlit
 
     def default_key(self) -> str:
@@ -59,9 +59,16 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
 
         return partial(self.render, st)
 
-    def render(self, st: DeltaGenerator, *args, **kwargs) -> Any:
+    def get_option_names(self) -> List[str]:
 
         option_fields = list(self.__class__._options.__fields__.keys())
+        option_fields.reverse()
+        return option_fields
+
+    def render(self, st: DeltaGenerator, *args, **kwargs) -> Any:
+
+        option_fields = self.get_option_names()
+
         for idx, arg in enumerate(args):
             try:
                 key = option_fields[idx]
@@ -73,6 +80,8 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
             if key in kwargs.keys():
                 raise Exception(f"Duplicate value for key '{key}'.")
 
+            if key == "key":
+                continue
             kwargs[key] = arg
 
         if "key" not in kwargs.keys():

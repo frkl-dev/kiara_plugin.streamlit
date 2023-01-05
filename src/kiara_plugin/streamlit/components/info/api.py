@@ -243,6 +243,7 @@ class FieldsInfoOptions(ComponentOptions):
 class FieldsInfo(KiaraComponent[FieldsInfoOptions]):
 
     _component_name = "fields_info"
+    _options = FieldsInfoOptions
 
     def _render(self, st: DeltaGenerator, options: FieldsInfoOptions):
 
