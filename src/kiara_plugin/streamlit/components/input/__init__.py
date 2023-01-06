@@ -98,8 +98,8 @@ class DefaultInputOptions(InputOptions):
     display_value_type: Union[bool, None] = Field(
         description="Whether to display the data type in the list.", default=None
     )
-    data_types: Union[str, List[str], None] = Field(
-        description="The data types to display as selection.", default=None
+    data_type: Union[str, List[str], None] = Field(
+        description="The data type(s) to display as selection.", default=None
     )
 
 
@@ -134,12 +134,12 @@ class DefaultInputComponent(InputComponent):
         if options.smart_label:
             options.label = options.label.split("__")[-1]
 
-        if options.data_types is None:
+        if options.data_type is None:
             data_types: List[str] = []
-        elif isinstance(options.data_types, str):
-            data_types = [options.data_types]
+        elif isinstance(options.data_type, str):
+            data_types = [options.data_type]
         else:
-            data_types = options.data_types
+            data_types = options.data_type
 
         if self._data_types and data_types:
             raise Exception("'data_types' argument not allowed for this component.")
@@ -181,8 +181,13 @@ class DefaultInputComponent(InputComponent):
             optional = options.value_schema.optional
 
         display_type = options.display_value_type
+        if display_type is None and data_types != 1:
+            display_type = True
+        elif display_type is None:
+            display_type = False
+
         format_func: Callable = str
-        if len(data_types) != 1 and (display_type is None or display_type):
+        if display_type:
 
             def format_func(v: Any) -> str:
                 if v == NO_VALUE_MARKER:

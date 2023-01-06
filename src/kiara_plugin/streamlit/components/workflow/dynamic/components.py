@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import Dict, Tuple, TypeVar
+from typing import Dict, Tuple, TypeVar, Union
 
 from kiara import Value
 from pydantic import Field
@@ -50,9 +50,11 @@ class WriteStepComponent(DynamicWorkflowComponent):
 
 
 class NextStepOptions(DynamicWorkflowOptions):
+    class Config:
+        arbitrary_types_allowed = True
 
     value: Value = Field(description="The value to use for the next step.")
-    columns: Tuple[int, int] = Field(
+    columns: Union[Tuple[int, int], Tuple[DeltaGenerator, DeltaGenerator]] = Field(
         description="The column layout to use for the next step.", default=(1, 4)
     )
 
@@ -66,7 +68,10 @@ class NextStepComponent(DynamicWorkflowComponent):
 
         value = options.value
 
-        left, right = st.columns(options.columns)
+        if isinstance(options.columns[0], int):
+            left, right = st.columns(options.columns)
+        else:
+            left, right = options.columns
 
         operations = self.api.get_operations_info(input_types=value.data_type_name)
         all_tags = set()
@@ -74,44 +79,60 @@ class NextStepComponent(DynamicWorkflowComponent):
             all_tags.update(op.context.tags)
 
         left.markdown("**Select next step**")
-        expander = left.expander("Filter operations", expanded=False)
+
+        selectbox_placeholder = left.empty()
+
+        expander = left.expander("Filter available operations", expanded=False)
         with expander:
+            op_filter = st.text_input(
+                label="filter tokens",
+                value="",
+                key=options.create_key("filter", "value"),
+            )
             selected_tags = st.multiselect(
                 label="Tags", options=all_tags, key=options.create_key("tags")
             )
 
+        ops = dict(operations.item_infos)
+        if op_filter:
+            temp = {}
+            for op_id, op in ops.items():
+                if op_filter in op_id:
+                    temp[op_id] = op
+            ops = temp
         if selected_tags:
-            ops = []
-
-            for op_id, op in operations.item_infos.items():
+            temp = {}
+            for op_id, op in ops.items():
                 match = True
                 for tag in selected_tags:
                     if tag not in op.context.tags:
                         match = False
                         break
                 if match:
-                    ops.append(op_id)
-        else:
-            ops = list(operations.item_infos.keys())
+                    temp[op_id] = op
+            ops = temp
 
-        selected = left.selectbox(
-            label="Operation",
-            options=sorted(ops),
-            key=options.create_key("operation_select"),
-        )
-        if selected:
-            right.write("")
-            right.write("")
-            with right:
-                with st.expander("Operation details", expanded=False):
-                    self.kiara_streamlit.operation_info(selected)
-            left.write(operations[selected].documentation.description)
-            return operations[selected]
-        else:
-            return None
+        with selectbox_placeholder.container():
+            selected = st.selectbox(
+                label="Operation",
+                options=sorted(ops.keys()),
+                key=options.create_key("operation_select"),
+            )
+            if selected:
+                right.write("")
+                right.write("")
+                with right:
+                    with st.expander("Operation details", expanded=False):
+                        self.kiara_streamlit.operation_info(selected)
+                st.write(operations[selected].documentation.description)
+                return operations[selected]
+            else:
+                return None
 
 
 class StepInputFields(DynamicWorkflowComponent):
+    class Config:
+        arbitrary_types_allowed = True
 
     _component_name = "step_input_fields"
     _options = StepDetailsOptions
