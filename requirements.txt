@@ -1,2 +1,4 @@
+git+https://github.com/DHARPA-project/kiara@develop
 git+https://github.com/DHARPA-project/kiara_plugin.onboarding@develop
 git+https://github.com/DHARPA-project/kiara_plugin.streamlit@develop
+git+https://github.com/DHARPA-project/kiara_plugin.tabular@develop
