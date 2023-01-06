@@ -204,7 +204,7 @@ class ValuesPreview(KiaraComponent[ValuesPreviewOptions]):
             save = right.button("Save", disabled=not alias, key=_key)
 
             if save and alias:
-                store_result = self.api.store_value(value=value, aliases=alias)
+                store_result = self.api.store_value(value=value, alias=alias)
                 if store_result.error:
                     right.error(store_result.error)
                 else:

@@ -8,4 +8,5 @@ dependencies:
   - kiara_plugin.network_analysis
   - kiara_plugin.language_processing
   - pip:
+    - git+https://github.com/hostuser/kiara_plugin.onboarding@develop
     - git+https://github.com/hostuser/kiara_plugin.streamlit@develop

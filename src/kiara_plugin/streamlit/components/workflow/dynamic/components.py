@@ -2,6 +2,7 @@
 from typing import Dict, Tuple, TypeVar, Union
 
 from kiara import Value
+from kiara.models.module.operation import Operation
 from pydantic import Field
 from streamlit.delta_generator import DeltaGenerator
 
@@ -64,7 +65,9 @@ class NextStepComponent(DynamicWorkflowComponent):
     _component_name = "ask_next_step"
     _options = NextStepOptions
 
-    def _render(self, st: DeltaGenerator, options: NextStepOptions):
+    def _render(
+        self, st: DeltaGenerator, options: NextStepOptions
+    ) -> Tuple[Union[Operation, None], Union[str, None]]:
 
         value = options.value
 
@@ -125,9 +128,36 @@ class NextStepComponent(DynamicWorkflowComponent):
                     with st.expander("Operation details", expanded=False):
                         self.kiara_streamlit.operation_info(selected)
                 st.write(operations[selected].documentation.description)
-                return operations[selected]
+
+                field_name_placeholder = st.empty()
+                field_name_desc_placeholder = st.empty()
+
+                matches = {}
+                for field_name, schema in operations[
+                    selected
+                ].operation.inputs_schema.items():
+                    if schema.type == value.data_type_name:
+                        matches[field_name] = schema
+
+                field_name = None
+                if not matches:
+                    raise Exception(
+                        "No matching inputs found for value, this is most likely a bug."
+                    )
+                elif len(matches) == 1:
+                    field_name = field_name
+                else:
+                    field_name = field_name_placeholder.selectbox(
+                        label="Select input field to use for value",
+                        options=sorted(matches.keys()),
+                    )
+                    field_name_desc_placeholder.markdown(
+                        matches[field_name].doc.description
+                    )
+
+                return operations[selected], field_name
             else:
-                return None
+                return None, None
 
 
 class StepInputFields(DynamicWorkflowComponent):
@@ -146,6 +176,7 @@ class StepInputFields(DynamicWorkflowComponent):
         workflow = options.session.workflow
 
         fixed_input = options.session.values[idx]
+        assert len(fixed_input) == 1
         field_name = next(iter(fixed_input.keys()))
         value = fixed_input[field_name]
 

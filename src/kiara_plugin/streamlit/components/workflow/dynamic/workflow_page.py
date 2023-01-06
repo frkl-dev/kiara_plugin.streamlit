@@ -45,44 +45,21 @@ class DynamicWorkflow(KiaraComponent):
 
     def add_step(
         self,
-        st: DeltaGenerator,
-        key: str,
         workflow_session: DynamicWorkflowSession,
         operation: OperationInfo,
         value: Value,
+        field_name: str,
     ) -> None:
 
         print("ADD STEP")
 
-        idx = len(workflow_session.pipeline_steps)
         pipeline_step = workflow_session.workflow.add_step(
             operation=operation.operation.operation_id
         )
 
         workflow_session.pipeline_steps.append(pipeline_step.step_id)
 
-        matches = {}
-        for input_name, input_schema in operation.operation.inputs_schema.items():
-            if input_schema.type == value.data_type_name:
-                matches[input_name] = input_schema
-
-        if not matches:
-            raise Exception("Invalid input value, this is probably a bug.")
-        elif len(matches) > 1:
-            selected = st.selectbox(
-                label="Select input", options=list(matches.keys()), key=key
-            )
-            assert selected is not None
-            name = generate_pipeline_endpoint_name(pipeline_step.step_id, selected)
-        else:
-            name = generate_pipeline_endpoint_name(
-                pipeline_step.step_id, next(iter(matches.keys()))
-            )
-
-        workflow_session.values.setdefault(idx, {})[name] = value
-        workflow_session.workflow.set_input(name, value)
         workflow_session.last_step_processed = False
-        print(f"Last op: {operation.operation.operation_id}")
         workflow_session.last_operation = operation
 
     def write_step_desc(
@@ -120,9 +97,10 @@ class DynamicWorkflow(KiaraComponent):
                 field_name
             )
             outputs[field_name.split("__")[-1]] = value
+
         comp = self._kiara_streamlit.get_component("values_preview")
         selected_value = comp.render_func(st)(
-            key=f"{key}_preview_result_{field_name}", values=outputs
+            key=f"{key}_preview_result_{step_id}", values=outputs
         )
         return selected_value
 
@@ -138,6 +116,9 @@ class DynamicWorkflow(KiaraComponent):
     def _render(self, st: DeltaGenerator, options: DynamicWorkflowOptions):
 
         session: DynamicWorkflowSession = options.session
+        if session.workflow is None:
+            session.workflow = self.api.create_workflow()
+
         current_value: Union[None, Value] = session.current_value
 
         left, right = self.write_columns(st)
@@ -171,12 +152,17 @@ class DynamicWorkflow(KiaraComponent):
                     session.initial_value = init_value
                 current_value = init_value
         else:
-            left.write("**Initial value**")
-
+            assert session.initial_value is not None
+            left.markdown(f"**Initial value** ({session.initial_value.data_type_name})")
             with right.expander("Value preview", expanded=False):
                 if current_value:
                     assert session.initial_value is not None
                     self.kiara_streamlit.preview(session.initial_value)
+            reset = left.button("Reset")
+            if reset:
+                workflow = self.api.create_workflow()
+                options.session.reset(workflow)
+                st.experimental_rerun()
 
         self.write_separator(st)
 
@@ -208,7 +194,7 @@ class DynamicWorkflow(KiaraComponent):
 
                 right.write()
                 right.write()
-                left.markdown("**Current value**")
+                left.markdown(f"**Current value** ({current_value.data_type_name}))")
                 with right.expander("Preview", expanded=False):
                     self._kiara_streamlit.preview(
                         current_value, key=options.create_key("preview_current_value")
@@ -217,7 +203,7 @@ class DynamicWorkflow(KiaraComponent):
         # now we want to ask for the next operation to apply to the current value
         left, right = self.write_columns(st)
 
-        next_operation = self.kiara_streamlit.ask_next_step(
+        next_operation, field_name = self.kiara_streamlit.ask_next_step(
             columns=(left, right),
             value=current_value,
             session=session,
@@ -242,11 +228,10 @@ class DynamicWorkflow(KiaraComponent):
                 if not session.last_step_processed:
                     self.remove_last_step(workflow_session=session)
                 self.add_step(
-                    st=st,
                     workflow_session=session,
                     operation=next_operation,
                     value=current_value,
-                    key=options.create_key("add_step"),
+                    field_name=field_name,
                 )
                 st.experimental_rerun()
             else:
@@ -264,6 +249,14 @@ class DynamicWorkflow(KiaraComponent):
 
         assert pipeline_step
         assert current_value
+
+        name = generate_pipeline_endpoint_name(pipeline_step, field_name)
+        session.values[session.pipeline_steps.index(pipeline_step)] = {
+            name: current_value
+        }
+        session.workflow.clear_current_inputs_for_step(pipeline_step)
+
+        session.workflow.set_input(field_name=name, value=current_value)
 
         with right:
             _key = options.create_key("steP_input_fields", pipeline_step)

@@ -2,7 +2,7 @@
 from typing import Any, Dict
 
 from kiara.models.data_types import DictModel
-from kiara.models.filesystem import FileBundle
+from kiara.models.filesystem import FileBundle, FileModel
 from kiara.utils.json import orjson_dumps
 from streamlit.delta_generator import DeltaGenerator
 
@@ -59,6 +59,35 @@ class FileBundlePreview(PreviewComponent):
             table.setdefault("mime-type", []).append(file_info.mime_type)
 
         st.dataframe(table, use_container_width=True)
+
+        return
+
+
+class FilePreview(PreviewComponent):
+
+    _component_name = "file_preview"
+
+    @classmethod
+    def get_data_type(cls) -> str:
+        return "file"
+
+    def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
+
+        _value = self.api.get_value(options.value)
+        file_model: FileModel = _value.data
+
+        table: Dict[str, Any] = {"key": [], "value": []}
+        table["key"].append("path")
+        table["value"].append(file_model.path)
+        table["key"].append("size")
+        table["value"].append(file_model.size)
+        table["key"].append("mime-type")
+        table["value"].append(file_model.mime_type)
+        table["key"].append("content")
+        table["value"].append(file_model.read_text())
+        st.table(table)
+
+        # st.table(table, use_container_width=True)
 
         return
 

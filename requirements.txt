@@ -1,0 +1,2 @@
+git+https://github.com/hostuser/kiara_plugin.onboarding@develop
+git+https://github.com/hostuser/kiara_plugin.streamlit@develop
