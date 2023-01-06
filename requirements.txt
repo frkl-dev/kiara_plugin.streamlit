@@ -1,2 +1,2 @@
-git+https://github.com/hostuser/kiara_plugin.onboarding@develop
-git+https://github.com/hostuser/kiara_plugin.streamlit@develop
+git+https://github.com/DHARPA-project/kiara_plugin.onboarding@develop
+git+https://github.com/DHARPA-project/kiara_plugin.streamlit@develop
