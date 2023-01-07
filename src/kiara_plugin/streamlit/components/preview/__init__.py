@@ -212,13 +212,22 @@ class ValuesPreview(KiaraComponent[ValuesPreviewOptions]):
             right.write("")
             right.write("")
             right.write("Save value")
-            _key = options.create_key("alias", f"{idx}_{field}")
-            alias = right.text_input("alias", value="", key=_key)
-            _key = options.create_key("save", f"{idx}_{field}")
-            save = right.button("Save", disabled=not alias, key=_key)
+            with right.form("Save form"):
+                _key = options.create_key("alias", f"{idx}_{field}")
+                alias = self._st.text_input(
+                    "alias",
+                    value="",
+                    key=_key,
+                    placeholder="alias",
+                    label_visibility="hidden",
+                )
+                _key = options.create_key("save", f"{idx}_{field}")
+                save = self._st.form_submit_button("Save")
 
             if save and alias:
-                store_result = self.api.store_value(value=value, alias=alias)
+                store_result = self.api.store_value(
+                    value=value, alias=alias, allow_overwrite=False
+                )
                 if store_result.error:
                     right.error(store_result.error)
                 else:

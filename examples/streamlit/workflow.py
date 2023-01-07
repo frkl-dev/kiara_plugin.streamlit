@@ -11,13 +11,8 @@ kst = kiara_streamlit.init()
 with st.sidebar:
     context_changed = st.kiara.context_switch_control(allow_create=True, key="xxx")
 
-print(f"CONTEXT: {context_changed}")
-
-
 workflow_ref = "workflow"
 if workflow_ref not in st.session_state or context_changed:
-    st.write("CONTEXT CHANGED")
-    print("CONTEXT CHANGED")
     workflow = st.kiara.api.create_workflow()
     workflow_session: DynamicWorkflowSession = DynamicWorkflowSession(workflow=workflow)
     st.session_state[workflow_ref] = workflow_session

@@ -35,6 +35,9 @@ class DynamicWorkflowSession(BaseModel):
     last_operation: Union[None, OperationInfo] = Field(
         description="The last operation that was selected.", default=None
     )
+    current_outputs: Union[None, Dict[str, Value]] = Field(
+        description="The outputs of the last operation (if applicable).", default=None
+    )
 
     def reset(self, workflow: Workflow):
 
@@ -44,4 +47,5 @@ class DynamicWorkflowSession(BaseModel):
         self.pipeline_steps = []
         self.workflow = workflow
         self.last_step_processed = False
+        self.current_outputs = None
         self.last_operation = None

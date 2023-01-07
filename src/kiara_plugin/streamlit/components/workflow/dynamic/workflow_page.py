@@ -56,6 +56,7 @@ class DynamicWorkflow(KiaraComponent):
         workflow_session.pipeline_steps.append(pipeline_step.step_id)
 
         workflow_session.last_step_processed = False
+        workflow_session.current_outputs = None
         workflow_session.last_operation = operation
 
     def write_step_desc(
@@ -84,20 +85,25 @@ class DynamicWorkflow(KiaraComponent):
         step_id: str,
     ) -> Union[None, Value]:
 
-        step_fields = workflow_session.workflow.get_current_outputs_schema_for_step(
-            step_id
-        )
-        outputs = {}
-        for field_name in step_fields.keys():
-            value = workflow_session.workflow.current_output_values.get_value_obj(
-                field_name
+        if workflow_session.current_outputs is None:
+
+            step_fields = workflow_session.workflow.get_current_outputs_schema_for_step(
+                step_id
             )
-            smart_field_name = field_name.split("__")[-1]
-            outputs[smart_field_name] = value
+            outputs = {}
+            for field_name in step_fields.keys():
+                value = workflow_session.workflow.current_output_values.get_value_obj(
+                    field_name
+                )
+                smart_field_name = field_name.split("__")[-1]
+                outputs[smart_field_name] = value
+
+            workflow_session.current_outputs = outputs
 
         comp = self._kiara_streamlit.get_component("values_preview")
         selected_value = comp.render_func(st)(
-            key=f"{key}_preview_result_{step_id}", values=outputs
+            key=f"{key}_preview_result_{step_id}",
+            values=workflow_session.current_outputs,
         )
         return selected_value
 
@@ -271,6 +277,7 @@ class DynamicWorkflow(KiaraComponent):
             with st.spinner("Processing..."):  # type: ignore
                 try:
                     session.last_step_processed = True
+                    session.current_outputs = None
                     job_ids, errors = session.workflow.process_steps()
                 except Exception as e:
                     right.error(e)
