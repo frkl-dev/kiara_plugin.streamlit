@@ -68,15 +68,14 @@ class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
                     )
                     submitted = st.form_submit_button("Create")
 
+            current = self.api.current_context_name
             if submitted:
                 print(f"CREATING CONTEXT: {new_context_name}")
-                self.api.create_new_context(new_context_name, set_active=True)
+                self.api.create_new_context(new_context_name, set_active=False)
                 # self.set_session_var(options, "kiara_context", "context_name", value=new_context_name)
-                current = new_context_name
                 self.set_session_var(options, "kiara_context", "created", value=True)
                 force = new_context_name
             else:
-                current = self.api.current_context_name
                 self.set_session_var(options, "kiara_context", "created", value=False)
                 force = None
 
@@ -119,15 +118,15 @@ class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
         value_state_key = options.get_session_key(*key)
         widget_key = options.create_key(*key, "selectbox")
 
-        last_value = self.get_session_var(options, *key, default)
-
+        idx = 0
         if force is not None:
-            idx = items.index(force)
-        else:
-            if last_value is None:
-                idx = 0
+            self._st.session_state[widget_key] = force
+            idx = 0
+        elif widget_key not in self._st.session_state:
+            if default:
+                idx = items.index(default)
             else:
-                idx = items.index(last_value)
+                idx = 0
 
         if not label:
             label = "Select value"
@@ -138,8 +137,8 @@ class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
         result = st.selectbox(
             label=label,
             options=items,
-            index=idx,
             key=widget_key,
+            index=idx,
             on_change=_set_current_value,
             help=help,
             format_func=format_func,

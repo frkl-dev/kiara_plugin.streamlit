@@ -11,6 +11,20 @@ kst = kiara_streamlit.init()
 with st.sidebar:
     context_changed = st.kiara.context_switch_control(allow_create=True, key="xxx")
 
+print(f"CONTEXT: {context_changed}")
+
+
+workflow_ref = "workflow"
+if workflow_ref not in st.session_state or context_changed:
+    st.write("CONTEXT CHANGED")
+    print("CONTEXT CHANGED")
+    workflow = st.kiara.api.create_workflow()
+    workflow_session: DynamicWorkflowSession = DynamicWorkflowSession(workflow=workflow)
+    st.session_state[workflow_ref] = workflow_session
+
+else:
+    workflow_session = st.session_state[workflow_ref]
+
 if not st.kiara.api.get_alias_names():
     with st.spinner("Downloading example data ..."):
 
@@ -29,14 +43,5 @@ if not st.kiara.api.get_alias_names():
             },
         )
         st.kiara.api.store_value(value=result["file"], alias="journal_edges_file")
-
-workflow_ref = "workflow"
-if workflow_ref not in st.session_state or context_changed:
-    workflow = st.kiara.api.create_workflow()
-    workflow_session: DynamicWorkflowSession = DynamicWorkflowSession(workflow=workflow)
-    st.session_state[workflow_ref] = workflow_session
-    # st.experimental_rerun()
-else:
-    workflow_session = st.session_state[workflow_ref]
 
 st.kiara.workflow(workflow_session)

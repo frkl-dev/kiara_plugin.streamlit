@@ -49,8 +49,6 @@ class DynamicWorkflow(KiaraComponent):
         operation: OperationInfo,
     ) -> None:
 
-        print("ADD STEP")
-
         pipeline_step = workflow_session.workflow.add_step(
             operation=operation.operation.operation_id
         )
@@ -221,7 +219,6 @@ class DynamicWorkflow(KiaraComponent):
         else:
             operation_changed = True
 
-        print(f"OP CHANGED: {operation_changed}")
         if operation_changed:
             if next_operation:
                 if not session.last_step_processed:
