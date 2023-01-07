@@ -121,12 +121,14 @@ class NextStepComponent(DynamicWorkflowComponent):
                 options=sorted(ops.keys()),
                 key=options.create_key("operation_select"),
             )
+            show_op_details = st.checkbox("Show operation details", value=False)
             if selected:
                 right.write("")
                 right.write("")
-                with right:
-                    with st.expander("Operation details", expanded=False):
-                        self.kiara_streamlit.operation_info(selected)
+                if show_op_details:
+                    with right:
+                        with st.expander("Operation details", expanded=True):
+                            self.kiara_streamlit.operation_info(selected)
                 st.write(operations[selected].documentation.description)
 
                 field_name_placeholder = st.empty()
@@ -139,13 +141,12 @@ class NextStepComponent(DynamicWorkflowComponent):
                     if schema.type == value.data_type_name:
                         matches[field_name] = schema
 
-                field_name = None
                 if not matches:
                     raise Exception(
                         "No matching inputs found for value, this is most likely a bug."
                     )
                 elif len(matches) == 1:
-                    field_name = field_name
+                    field_name = next(iter(matches.keys()))
                 else:
                     field_name = field_name_placeholder.selectbox(
                         label="Select input field to use for value",

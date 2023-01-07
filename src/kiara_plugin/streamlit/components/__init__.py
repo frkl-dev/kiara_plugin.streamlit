@@ -26,11 +26,17 @@ class ComponentOptions(BaseModel):
 
     def create_key(self, *args) -> str:
 
-        if args:
-            _key = "_".join(args)
-            return f"{self.key}_{_key}"
-        else:
-            return self.key
+        base = ["kiara", self.key]
+        base.extend(args)
+        _key = "__".join(base)
+        return _key
+
+    def get_session_key(self, *key: str) -> str:
+
+        if not key:
+            raise Exception("No key provided.")
+        _key = [self.create_key(*key[0:-1]), "session_value", key[-1]]
+        return "__".join(_key)
 
 
 COMP_OPTIONS_TYPE = TypeVar("COMP_OPTIONS_TYPE", bound=ComponentOptions)
@@ -53,7 +59,26 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
         return self._kiara_streamlit
 
     def default_key(self) -> str:
-        return f"key_{self.__class__.__name__}"
+        return f"Component:{self.__class__.__name__}"
+
+    def get_session_var(
+        self, options: "ComponentOptions", *key: str, default: Any = None
+    ) -> Any:
+
+        session_key = options.get_session_key(*key)
+
+        if session_key not in self._st.session_state:
+            return default
+
+        value = self._st.session_state[session_key]
+        return value
+
+    def set_session_var(
+        self, options: "ComponentOptions", *key: str, value: Any
+    ) -> None:
+
+        session_key = options.get_session_key(*key)
+        self._st.session_state[session_key] = value
 
     def render_func(self, st: Union[DeltaGenerator, None] = None) -> Callable:
 

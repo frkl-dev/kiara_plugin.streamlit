@@ -7,8 +7,8 @@ from pathlib import Path
 from typing import Dict, Mapping, Union
 
 import streamlit as st
-from kiara import Kiara, KiaraAPI
-from kiara.context import KiaraContextConfig, KiaraRuntimeConfig
+from kiara import KiaraAPI
+from kiara.context import KiaraConfig, KiaraContextConfig, KiaraRuntimeConfig
 
 from kiara_plugin.streamlit.components import KiaraComponent
 from kiara_plugin.streamlit.components.input import InputComponent
@@ -196,11 +196,8 @@ class KiaraStreamlit(object):
     def api(self) -> KiaraAPI:
 
         if "__kiara_api__" not in st.session_state.keys():
-            kiara = Kiara(
-                config=self._context_config, runtime_config=self._runtime_config
-            )
-            print(f"KIARA CREATED: {kiara._id}")
-            kiara_api = KiaraAPI(kiara=kiara)
+            kc = KiaraConfig()
+            kiara_api = KiaraAPI(kc)
             st.session_state["__kiara_api__"] = kiara_api
         return st.session_state.__kiara_api__
 

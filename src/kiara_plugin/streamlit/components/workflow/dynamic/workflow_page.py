@@ -47,8 +47,6 @@ class DynamicWorkflow(KiaraComponent):
         self,
         workflow_session: DynamicWorkflowSession,
         operation: OperationInfo,
-        value: Value,
-        field_name: str,
     ) -> None:
 
         print("ADD STEP")
@@ -96,7 +94,8 @@ class DynamicWorkflow(KiaraComponent):
             value = workflow_session.workflow.current_output_values.get_value_obj(
                 field_name
             )
-            outputs[field_name.split("__")[-1]] = value
+            smart_field_name = field_name.split("__")[-1]
+            outputs[smart_field_name] = value
 
         comp = self._kiara_streamlit.get_component("values_preview")
         selected_value = comp.render_func(st)(
@@ -194,7 +193,7 @@ class DynamicWorkflow(KiaraComponent):
 
                 right.write()
                 right.write()
-                left.markdown(f"**Current value** ({current_value.data_type_name}))")
+                left.markdown(f"**Current value** ({current_value.data_type_name})")
                 with right.expander("Preview", expanded=False):
                     self._kiara_streamlit.preview(
                         current_value, key=options.create_key("preview_current_value")
@@ -230,8 +229,6 @@ class DynamicWorkflow(KiaraComponent):
                 self.add_step(
                     workflow_session=session,
                     operation=next_operation,
-                    value=current_value,
-                    field_name=field_name,
                 )
                 st.experimental_rerun()
             else:
@@ -249,6 +246,7 @@ class DynamicWorkflow(KiaraComponent):
 
         assert pipeline_step
         assert current_value
+        assert field_name
 
         name = generate_pipeline_endpoint_name(pipeline_step, field_name)
         session.values[session.pipeline_steps.index(pipeline_step)] = {
@@ -269,7 +267,7 @@ class DynamicWorkflow(KiaraComponent):
         except Exception as e:
             st.write(e)
 
-        left, right = self.write_columns(st)
+        # left, right = self.write_columns(st)
 
         process = right.button("Process")
         if process:

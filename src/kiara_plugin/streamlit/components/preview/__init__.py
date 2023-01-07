@@ -159,6 +159,10 @@ class ValueListPreview(KiaraComponent[PreviewListOptions]):
 
 class ValuesPreviewOptions(ComponentOptions):
     values: Mapping[str, Value] = Field(description="The values to display.")
+    add_value_types: bool = Field(
+        description="Whether to add the type of the value to the tab titles.",
+        default=True,
+    )
 
 
 class ValuesPreview(KiaraComponent[ValuesPreviewOptions]):
@@ -177,7 +181,17 @@ class ValuesPreview(KiaraComponent[ValuesPreviewOptions]):
             return None
 
         field_names = sorted(options.values.keys())
-        tabs = st.tabs(field_names)
+        if not options.add_value_types:
+            tab_names = field_names
+        else:
+            tab_names = sorted(
+                (
+                    f"{x} ({options.values[x].data_type_name})"
+                    for x in options.values.keys()
+                )
+            )
+
+        tabs = st.tabs(tab_names)
         selected = None
         for idx, field in enumerate(field_names):
 

@@ -92,6 +92,23 @@ class FilePreview(PreviewComponent):
         return
 
 
+class BooleanPreview(PreviewComponent):
+
+    _component_name = "boolean_preview"
+
+    @classmethod
+    def get_data_type(self) -> str:
+        return "boolean"
+
+    def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
+
+        _value = self.api.get_value(options.value)
+        if _value.data is True:
+            st.write("true")
+        else:
+            st.write("false")
+
+
 class NonePreview(PreviewComponent):
 
     _component_name = "none_preview"
