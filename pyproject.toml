@@ -35,7 +35,7 @@ dependencies = [
     "streamlit>=1.16.0",
     "streamlit-aggrid>=0.3.3",
     "importlib-resources",
-    "pyvis>="
+    "pyvis>=0.3.0"
 ]
 dynamic = ["version"]
 
