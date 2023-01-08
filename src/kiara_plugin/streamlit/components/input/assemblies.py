@@ -22,6 +22,9 @@ class AssemblyOptions(ComponentOptions):
         description="The name of the profile that renders the assembly.",
         default="default",
     )
+    smart_label: bool = Field(
+        description="Whether to try to shorten the label.", default=True
+    )
 
 
 ASSEMBLY_OPTIONS_TYPE = TypeVar("ASSEMBLY_OPTIONS_TYPE", bound=AssemblyOptions)
@@ -84,7 +87,11 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
 
             column_idx = idx % num_columns
             input_opts = DefaultInputOptions(
-                key=_key, label=field_name, value_schema=schema, help=help
+                key=_key,
+                label=field_name,
+                value_schema=schema,
+                help=help,
+                smart_label=options.smart_label,
             )
             r = comp.render_input_field(columns[column_idx], input_opts)
 
@@ -134,7 +141,11 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
 
                 column_idx = idx % num_columns
                 input_opts = DefaultInputOptions(
-                    key=_key, label=field_name, value_schema=schema, help=help
+                    key=_key,
+                    label=field_name,
+                    value_schema=schema,
+                    help=help,
+                    smart_label=options.smart_label,
                 )
 
                 r = comp.render_input_field(columns[column_idx], input_opts)
@@ -169,7 +180,11 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
                 comp = self.kiara_streamlit.get_input_component(data_type_name)
                 column_idx = idx % num_columns
                 input_opts = DefaultInputOptions(
-                    key=_key, label=field_name, value_schema=schema, help=help
+                    key=_key,
+                    label=field_name,
+                    value_schema=schema,
+                    help=help,
+                    smart_label=options.smart_label,
                 )
 
                 r = comp.render_input_field(opt_columns[column_idx], input_opts)

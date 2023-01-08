@@ -11,7 +11,7 @@ from kiara_plugin.streamlit.components import KiaraComponent
 from kiara_plugin.streamlit.components.workflow.dynamic import (
     LEFT_COLUMN,
     RIGHT_COLUMN,
-    DynamicWorkflowSession,
+    WorkflowSessionDynamic,
 )
 from kiara_plugin.streamlit.components.workflow.dynamic.components import (
     DynamicWorkflowOptions,
@@ -20,16 +20,25 @@ from kiara_plugin.streamlit.components.workflow.dynamic.components import (
 
 class DynamicWorkflow(KiaraComponent):
 
-    _component_name = "workflow"
+    _component_name = "workflow_dynamic"
     _options = DynamicWorkflowOptions
 
-    def remove_last_step(self, workflow_session: DynamicWorkflowSession) -> None:
+    def remove_last_step(self, workflow_session: WorkflowSessionDynamic) -> None:
 
         if workflow_session.pipeline_steps:
             idx = len(workflow_session.pipeline_steps) - 1
             last_step = workflow_session.pipeline_steps.pop()
             try:
-                workflow_session.values.pop(idx)
+                workflow_session.input_values.pop(idx)
+            except Exception:
+                pass
+            try:
+                workflow_session.operations.pop(idx)
+            except Exception:
+                pass
+
+            try:
+                workflow_session.output_values.pop(idx)
             except Exception:
                 pass
             workflow_session.workflow.clear_steps(last_step)
@@ -37,15 +46,15 @@ class DynamicWorkflow(KiaraComponent):
         workflow_session.last_step_processed = False
 
     def write_workflow_details(
-        self, st: DeltaGenerator, workflow_session: DynamicWorkflowSession
+        self, st: DeltaGenerator, workflow_session: WorkflowSessionDynamic
     ):
 
-        st.write(workflow_session.values)
+        st.write(workflow_session.input_values)
         st.write(workflow_session.pipeline_steps)
 
     def add_step(
         self,
-        workflow_session: DynamicWorkflowSession,
+        workflow_session: WorkflowSessionDynamic,
         operation: OperationInfo,
     ) -> None:
 
@@ -81,7 +90,7 @@ class DynamicWorkflow(KiaraComponent):
         self,
         st: DeltaGenerator,
         key: str,
-        workflow_session: DynamicWorkflowSession,
+        workflow_session: WorkflowSessionDynamic,
         step_id: str,
     ) -> Union[None, Value]:
 
@@ -100,7 +109,7 @@ class DynamicWorkflow(KiaraComponent):
 
             workflow_session.current_outputs = outputs
 
-        comp = self._kiara_streamlit.get_component("values_preview")
+        comp = self._kiara_streamlit.get_component("current_values_preview")
         selected_value = comp.render_func(st)(
             key=f"{key}_preview_result_{step_id}",
             values=workflow_session.current_outputs,
@@ -118,7 +127,7 @@ class DynamicWorkflow(KiaraComponent):
 
     def _render(self, st: DeltaGenerator, options: DynamicWorkflowOptions):
 
-        session: DynamicWorkflowSession = options.session
+        session: WorkflowSessionDynamic = options.session
         if session.workflow is None:
             session.workflow = self.api.create_workflow()
 
@@ -252,9 +261,12 @@ class DynamicWorkflow(KiaraComponent):
         assert field_name
 
         name = generate_pipeline_endpoint_name(pipeline_step, field_name)
-        session.values[session.pipeline_steps.index(pipeline_step)] = {
+        session.input_values[session.pipeline_steps.index(pipeline_step)] = {
             name: current_value
         }
+        session.operations[
+            session.pipeline_steps.index(pipeline_step)
+        ] = session.last_operation
         session.workflow.clear_current_inputs_for_step(pipeline_step)
 
         session.workflow.set_input(field_name=name, value=current_value)
@@ -285,6 +297,16 @@ class DynamicWorkflow(KiaraComponent):
                 for _step_id, error in errors.items():
                     right.error(error.error)
             _key = options.create_key("display_current_outputs")
+
+            step_fields = session.workflow.get_current_outputs_schema_for_step(
+                pipeline_step
+            )
+            temp = {}
+            for field_name in step_fields.keys():
+                value = session.workflow.current_output_values.get_value_obj(field_name)
+                temp[field_name] = value
+            session.output_values[session.pipeline_steps.index(pipeline_step)] = temp
+
             selected_value = self.display_current_outputs(
                 right, key=_key, workflow_session=session, step_id=pipeline_step
             )

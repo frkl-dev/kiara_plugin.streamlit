@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import uuid
 from abc import abstractmethod
-from typing import List, Mapping, Union
+from typing import List, Union
 
 from kiara import Value
 from pydantic import Field
@@ -155,87 +155,3 @@ class ValueListPreview(KiaraComponent[PreviewListOptions]):
             component.render_preview(preview_column, options=pr_opts)
 
         return selected_alias
-
-
-class ValuesPreviewOptions(ComponentOptions):
-    values: Mapping[str, Value] = Field(description="The values to display.")
-    add_value_types: bool = Field(
-        description="Whether to add the type of the value to the tab titles.",
-        default=True,
-    )
-
-
-class ValuesPreview(KiaraComponent[ValuesPreviewOptions]):
-
-    _component_name = "values_preview"
-    _options = ValuesPreviewOptions
-
-    def _render(
-        self,
-        st: DeltaGenerator,
-        options: ValuesPreviewOptions,
-    ) -> Union[Value, None]:
-
-        if not options.values:
-            st.write("-- no values --")
-            return None
-
-        field_names = sorted(options.values.keys())
-        if not options.add_value_types:
-            tab_names = field_names
-        else:
-            tab_names = sorted(
-                (
-                    f"{x} ({options.values[x].data_type_name})"
-                    for x in options.values.keys()
-                )
-            )
-
-        tabs = st.tabs(tab_names)
-        selected = None
-        for idx, field in enumerate(field_names):
-
-            value = options.values[field]
-            component = self.kiara_streamlit.get_preview_component(value.data_type_name)
-            if component is None:
-                component = self.kiara_streamlit.get_preview_component("any")
-            left, center, right = tabs[idx].columns([1, 4, 1])
-
-            _key = options.create_key("select", f"{idx}_{field}")
-            select = left.button("Select for next step", key=_key)
-            _key = options.create_key("preview", f"{idx}_{field}")
-            preview_opts = PreviewOptions(key=_key, value=value)
-            component.render_preview(st=center, options=preview_opts)
-            right.write("")
-            right.write("")
-            right.write("")
-            right.write("")
-            right.write("")
-            right.write("Save value")
-            with right.form("Save form"):
-                _key = options.create_key("alias", f"{idx}_{field}")
-                alias = self._st.text_input(
-                    "alias",
-                    value="",
-                    key=_key,
-                    placeholder="alias",
-                    label_visibility="hidden",
-                )
-                _key = options.create_key("save", f"{idx}_{field}")
-                save = self._st.form_submit_button("Save")
-
-            if save and alias:
-                store_result = self.api.store_value(
-                    value=value, alias=alias, allow_overwrite=False
-                )
-                if store_result.error:
-                    right.error(store_result.error)
-                else:
-                    right.success("Value saved")
-            if select:
-                selected = field
-
-        if selected:
-            return options.values[selected]
-        else:
-            return None

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import Dict, Tuple, TypeVar, Union
+from typing import Dict, Mapping, Tuple, TypeVar, Union
 
 from kiara import Value
 from kiara.models.module.operation import Operation
@@ -7,12 +7,13 @@ from pydantic import Field
 from streamlit.delta_generator import DeltaGenerator
 
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
-from kiara_plugin.streamlit.components.workflow.dynamic import DynamicWorkflowSession
+from kiara_plugin.streamlit.components.preview import PreviewOptions
+from kiara_plugin.streamlit.components.workflow.dynamic import WorkflowSessionDynamic
 
 
 class DynamicWorkflowOptions(ComponentOptions):
 
-    session: DynamicWorkflowSession = Field(description="The current workflow session.")
+    session: WorkflowSessionDynamic = Field(description="The current workflow session.")
 
 
 DYN_WORKFLOW_OPTIONS_TYPE = TypeVar(
@@ -22,7 +23,7 @@ DYN_WORKFLOW_OPTIONS_TYPE = TypeVar(
 
 class DynamicWorkflowComponent(KiaraComponent[DYN_WORKFLOW_OPTIONS_TYPE]):
 
-    _component_name = "dynamic_workflow"
+    # _component_name = "dynamic_workflow"
     _options = DynamicWorkflowOptions  # type: ignore
 
 
@@ -40,14 +41,29 @@ class WriteStepComponent(DynamicWorkflowComponent):
 
         idx = options.session.pipeline_steps.index(options.step_id)
 
-        st.markdown("### Inputs")
-        for field, value in options.session.values[idx].items():
-            st.markdown(f"#### Input: **{field}**")
-            # _key = options.create_key("input", "preview", field)
-            # self.kiara_streamlit.preview(key=_key, value=value)
-            comp = self.get_component("preview")
-            _key = options.create_key("input", "value", field)
-            comp.render_func(st)(key=_key, value=value)
+        with st.expander("Operation", expanded=False):
+            operation_id = options.session.operations[idx].operation.operation_id
+            st.kiara.operation_info(operation_id)
+
+        with st.expander("Inputs", expanded=False):
+            field_names = list(options.session.input_values[idx].keys())
+            tabs = st.tabs([x.split("__")[-1] for x in field_names])
+            for idx, field in enumerate(field_names):
+                # _key = options.create_key("input", "preview", field)
+                # self.kiara_streamlit.preview(key=_key, value=value)
+                comp = self.get_component("preview")
+                _key = options.create_key("input", "value", field)
+                value = options.session.input_values[idx][field]
+                comp.render_func(tabs[idx])(key=_key, value=value)
+
+        with st.expander("Outputs", expanded=False):
+            field_names = list(options.session.output_values[idx].keys())
+            tabs = st.tabs([x.split("__")[-1] for x in field_names])
+            for idx, field in enumerate(field_names):
+                comp = self.get_component("preview")
+                _key = options.create_key("output", "value", field)
+                value = options.session.output_values[idx][field]
+                comp.render_func(tabs[idx])(key=_key, value=value)
 
 
 class NextStepOptions(DynamicWorkflowOptions):
@@ -176,7 +192,7 @@ class StepInputFields(DynamicWorkflowComponent):
         idx = options.session.pipeline_steps.index(step_id)
         workflow = options.session.workflow
 
-        fixed_input = options.session.values[idx]
+        fixed_input = options.session.input_values[idx]
         assert len(fixed_input) == 1
         field_name = next(iter(fixed_input.keys()))
         value = fixed_input[field_name]
@@ -205,3 +221,87 @@ class StepInputFields(DynamicWorkflowComponent):
             result[k] = v
 
         return result
+
+
+class CurrentValuesPreviewOptions(ComponentOptions):
+    values: Mapping[str, Value] = Field(description="The values to display.")
+    add_value_types: bool = Field(
+        description="Whether to add the type of the value to the tab titles.",
+        default=True,
+    )
+
+
+class CurrentValuesPreview(KiaraComponent[CurrentValuesPreviewOptions]):
+
+    _component_name = "current_values_preview"
+    _options = CurrentValuesPreviewOptions
+
+    def _render(
+        self,
+        st: DeltaGenerator,
+        options: CurrentValuesPreviewOptions,
+    ) -> Union[Value, None]:
+
+        if not options.values:
+            st.write("-- no values --")
+            return None
+
+        field_names = sorted(options.values.keys())
+        if not options.add_value_types:
+            tab_names = field_names
+        else:
+            tab_names = sorted(
+                (
+                    f"{x} ({options.values[x].data_type_name})"
+                    for x in options.values.keys()
+                )
+            )
+
+        tabs = st.tabs(tab_names)
+        selected = None
+        for idx, field in enumerate(field_names):
+
+            value = options.values[field]
+            component = self.kiara_streamlit.get_preview_component(value.data_type_name)
+            if component is None:
+                component = self.kiara_streamlit.get_preview_component("any")
+            left, center, right = tabs[idx].columns([1, 4, 1])
+
+            _key = options.create_key("select", f"{idx}_{field}")
+            select = left.button("Select for next step", key=_key)
+            _key = options.create_key("preview", f"{idx}_{field}")
+            preview_opts = PreviewOptions(key=_key, value=value)
+            component.render_preview(st=center, options=preview_opts)
+            right.write("")
+            right.write("")
+            right.write("")
+            right.write("")
+            right.write("")
+            right.write("Save value")
+            with right.form(key=options.create_key("save_form", f"{idx}_{field}")):
+                _key = options.create_key("alias", f"{idx}_{field}")
+                alias = self._st.text_input(
+                    "alias",
+                    value="",
+                    key=_key,
+                    placeholder="alias",
+                    label_visibility="hidden",
+                )
+                _key = options.create_key("save", f"{idx}_{field}")
+                save = self._st.form_submit_button("Save")
+
+            if save and alias:
+                store_result = self.api.store_value(
+                    value=value, alias=alias, allow_overwrite=False
+                )
+                if store_result.error:
+                    right.error(store_result.error)
+                else:
+                    right.success("Value saved")
+            if select:
+                selected = field
+
+        if selected:
+            return options.values[selected]
+        else:
+            return None

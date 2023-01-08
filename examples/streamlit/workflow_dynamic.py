@@ -2,7 +2,7 @@
 import streamlit as st
 
 import kiara_plugin.streamlit as kiara_streamlit
-from kiara_plugin.streamlit.components.workflow.dynamic import DynamicWorkflowSession
+from kiara_plugin.streamlit.components.workflow.dynamic import WorkflowSessionDynamic
 
 st.set_page_config(layout="wide")
 
@@ -11,12 +11,11 @@ kst = kiara_streamlit.init()
 with st.sidebar:
     context_changed = st.kiara.context_switch_control(allow_create=True, key="xxx")
 
-workflow_ref = "workflow"
+workflow_ref = "workflow_dynamic"
 if workflow_ref not in st.session_state or context_changed:
     workflow = st.kiara.api.create_workflow()
-    workflow_session: DynamicWorkflowSession = DynamicWorkflowSession(workflow=workflow)
+    workflow_session: WorkflowSessionDynamic = WorkflowSessionDynamic(workflow=workflow)
     st.session_state[workflow_ref] = workflow_session
-
 else:
     workflow_session = st.session_state[workflow_ref]
 

@@ -3,15 +3,15 @@ from typing import Dict, List, Union
 
 from kiara import Value
 from kiara.interfaces.python_api import OperationInfo, Workflow
-from pydantic import BaseModel, Field
+from pydantic import Field
+
+from kiara_plugin.streamlit.components.workflow import WorkflowSession
 
 LEFT_COLUMN = 1
 RIGHT_COLUMN = 4
 
 
-class DynamicWorkflowSession(BaseModel):
-    class Config:
-        arbitrary_types_allowed = True
+class WorkflowSessionDynamic(WorkflowSession):
 
     initial_value: Union[None, Value] = Field(
         description="The initial value for workflow.", default=None
@@ -20,15 +20,21 @@ class DynamicWorkflowSession(BaseModel):
         description="The current value for the next step.", default=None
     )
 
-    values: Dict[int, Dict[str, Value]] = Field(
+    input_values: Dict[int, Dict[str, Value]] = Field(
         description="The values that are already set for this workflow.",
         default_factory=dict,
+    )
+    output_values: Dict[int, Dict[str, Value]] = Field(
+        description="The values that are already set for this workflow.",
+        default_factory=dict,
+    )
+    operations: Dict[int, OperationInfo] = Field(
+        description="The operations for each step.", default_factory=dict
     )
     pipeline_steps: List[str] = Field(
         description="The steps that were added to this workflow, in order.",
         default_factory=list,
     )
-    workflow: Workflow = Field(description="The workflow instance.")
     last_step_processed: bool = Field(
         description="Whether the last step was valid.", default=False
     )
@@ -43,7 +49,9 @@ class DynamicWorkflowSession(BaseModel):
 
         self.initial_value = None
         self.current_value = None
-        self.values = {}
+        self.input_values = {}
+        self.output_values = {}
+        self.operations = {}
         self.pipeline_steps = []
         self.workflow = workflow
         self.last_step_processed = False

@@ -34,7 +34,8 @@ dependencies = [
     "kiara_plugin.tabular>=0.4.17",
     "streamlit>=1.16.0",
     "streamlit-aggrid>=0.3.3",
-    "importlib-resources"
+    "importlib-resources",
+    "pyvis>="
 ]
 dynamic = ["version"]
 
