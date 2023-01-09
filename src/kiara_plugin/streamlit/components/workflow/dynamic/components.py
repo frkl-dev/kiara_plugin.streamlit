@@ -43,7 +43,9 @@ class WriteStepComponent(DynamicWorkflowComponent):
 
         with st.expander("Operation", expanded=False):
             operation_id = options.session.operations[idx].operation.operation_id
-            st.kiara.operation_info(operation_id)
+            st.kiara.operation_info(
+                operation_id, key=options.create_key(options.step_id, "operation_info")
+            )
 
         with st.expander("Inputs", expanded=False):
             field_names = list(options.session.input_values[idx].keys())
@@ -52,7 +54,7 @@ class WriteStepComponent(DynamicWorkflowComponent):
                 # _key = options.create_key("input", "preview", field)
                 # self.kiara_streamlit.preview(key=_key, value=value)
                 comp = self.get_component("preview")
-                _key = options.create_key("input", "value", field)
+                _key = options.create_key(options.step_id, "input", "value", field)
                 value = options.session.input_values[idx][field]
                 comp.render_func(tabs[idx])(key=_key, value=value)
 
@@ -61,7 +63,7 @@ class WriteStepComponent(DynamicWorkflowComponent):
             tabs = st.tabs([x.split("__")[-1] for x in field_names])
             for idx, field in enumerate(field_names):
                 comp = self.get_component("preview")
-                _key = options.create_key("output", "value", field)
+                _key = options.create_key(options.step_id, "output", "value", field)
                 value = options.session.output_values[idx][field]
                 comp.render_func(tabs[idx])(key=_key, value=value)
 

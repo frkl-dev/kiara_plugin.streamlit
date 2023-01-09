@@ -82,31 +82,29 @@ class NetworkDataPreview(PreviewComponent):
         tabs = st.tabs(tab_names)
 
         # graph
-        graph_types = ["non-directed", "directed"]
-        graph_type = tabs[0].radio(
-            "Graph type",
-            graph_types,
-            key=options.create_key("graph_type", "select", "radio"),
-        )
-        if graph_type == "non-directed":
-            graph = db.as_networkx_graph(nx.Graph)
-        else:
-            graph = db.as_networkx_graph(nx.DiGraph)
-
-        vis_graph = Network(
-            height="400px", width="100%", bgcolor="#222222", font_color="white"
-        )
-        vis_graph.from_nx(graph)
-        vis_graph.repulsion(
-            node_distance=420,
-            central_gravity=0.33,
-            spring_length=110,
-            spring_strength=0.10,
-            damping=0.95,
-        )
-
-        html = vis_graph.generate_html()
         with tabs[0]:
+
+            graph_types = ["non-directed", "directed"]
+            _key = options.create_key("graph_type", "select", "radio")
+            graph_type = st.radio("Graph type", graph_types, key=_key)
+            if graph_type == "non-directed":
+                graph = db.as_networkx_graph(nx.Graph)
+            else:
+                graph = db.as_networkx_graph(nx.DiGraph)
+
+            vis_graph = Network(
+                height="400px", width="100%", bgcolor="#222222", font_color="white"
+            )
+            vis_graph.from_nx(graph)
+            vis_graph.repulsion(
+                node_distance=420,
+                central_gravity=0.33,
+                spring_length=110,
+                spring_strength=0.10,
+                damping=0.95,
+            )
+
+            html = vis_graph.generate_html()
             components.html(html, height=435)
 
         for idx, table_name in enumerate(db.table_names, start=1):

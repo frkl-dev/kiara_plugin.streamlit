@@ -76,7 +76,7 @@ class DefaultPreviewComponent(PreviewComponent):
             data_type=_value.data_type_name, preview_name=preview_name
         )
         if component is not None:
-            component.render_func()(value=_value)
+            component.render_func(st)(value=_value, key=options.create_key("preview"))
         else:
             if isinstance(options.value, Value):
                 name = str(_value.value_id)
@@ -87,7 +87,11 @@ class DefaultPreviewComponent(PreviewComponent):
                 value=_value, target_format="string", use_pretty_print=True
             )
             st.text_area(
-                f"Value: {name}", value=renderable, disabled=True, height=height
+                f"Value: {name}",
+                value=renderable,
+                disabled=True,
+                height=height,
+                key=options.create_key("preview", "default"),
             )
 
 
