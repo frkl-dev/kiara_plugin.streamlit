@@ -83,7 +83,11 @@ class NetworkDataPreview(PreviewComponent):
 
         # graph
         graph_types = ["non-directed", "directed"]
-        graph_type = tabs[0].radio("Graph type", graph_types)
+        graph_type = tabs[0].radio(
+            "Graph type",
+            graph_types,
+            key=options.create_key("graph_type", "select", "radio"),
+        )
         if graph_type == "non-directed":
             graph = db.as_networkx_graph(nx.Graph)
         else:
