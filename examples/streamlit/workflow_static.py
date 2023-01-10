@@ -13,11 +13,19 @@ with st.sidebar:
     selected_context = st.kiara.context_switch_control(allow_create=True, key="xxx")
     context_changed = current != selected_context
 
-# pipeline = "create.network_data.from.files"
-pipeline = "/home/markus/projects/kiara/kiara.examples/examples/pipelines/topic_modeling/topic_modeling.yaml"
-workflow_ref = "workflow"
-if workflow_ref not in st.session_state or context_changed:
-    workflow = st.kiara.api.create_workflow(initial_pipeline=pipeline)
+pipeline = None
+if "selected_pipeline" in st.session_state:
+    pipeline = st.session_state["selected_pipeline"]
+
+with st.sidebar:
+    new_pipeline = st.kiara.select_pipeline()
+    st.session_state["selected_pipeline"] = new_pipeline
+
+# new_pipeline = "/home/markus/projects/kiara/kiara.examples/examples/pipelines/topic_modeling/topic_modeling.yaml"
+
+workflow_ref = "workflow_static"
+if workflow_ref not in st.session_state or context_changed or pipeline != new_pipeline:
+    workflow = st.kiara.api.create_workflow(initial_pipeline=new_pipeline)
     workflow_session: WorkflowSessionStatic = WorkflowSessionStatic(workflow=workflow)
     st.session_state[workflow_ref] = workflow_session
 
