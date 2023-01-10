@@ -2,7 +2,7 @@
 import abc
 import copy
 import uuid
-from typing import TYPE_CHECKING, Any, Callable, Iterable, List, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Callable, Iterable, List, Tuple, TypeVar, Union
 
 from kiara import Value, ValueSchema
 from kiara.defaults import SpecialValue
@@ -85,6 +85,24 @@ class InputComponent(KiaraComponent[INPUT_OPTIONS_TYPE]):
         else:
             return self.api.get_value(value)
 
+    def _create_session_store_callback(
+        self, options: ComponentOptions, *key, default=None
+    ) -> Tuple[Callable, str]:
+
+        _widget_key = options.create_key(*key)
+
+        current = self.get_session_var(options, *key, default=default)
+
+        if current is not None and _widget_key not in self._st.session_state:
+            self._st.session_state[_widget_key] = current
+
+        def callback():
+            self._st.session_state[
+                options.get_session_key(*key)
+            ] = self._st.session_state[_widget_key]
+
+        return callback, _widget_key
+
 
 class DefaultInputOptions(InputOptions):
 
@@ -154,13 +172,13 @@ class DefaultInputComponent(InputComponent):
             data_types.append(self.get_data_type())
 
         _key = options.create_key(*sorted(data_types))
-        _key_selectbox = f"{_key}_value_select_{_key}"
 
         if len(data_types) == 1:
             dt = data_types[0]
             inp_comp = self.kiara_streamlit.get_input_component(dt)
             if inp_comp and inp_comp.__class__ != self.__class__:
                 copy_options = options.copy()
+                _key_selectbox = f"{_key}_value_select_{_key}"
                 copy_options.key = _key_selectbox
                 return inp_comp.render_input_field(st, options=copy_options)
 
@@ -196,34 +214,37 @@ class DefaultInputComponent(InputComponent):
 
         if optional:
             _item_options = [NO_VALUE_MARKER] + list(available_values.keys())
+            if not default:
+                default = NO_VALUE_MARKER
         else:
             _item_options = list(available_values.keys())
-
-        idx = 0
-        if default is not None and default in options:
-            idx = _item_options.index(default)
 
         with_preview = options.preview
 
         if with_preview == "auto":
             with_preview = "checkbox"
 
+        callback, _select_key = self._create_session_store_callback(
+            options, "input", "value", "select", default=default
+        )
+
         if not with_preview or with_preview.lower() in ["false", "no"]:
             result = st.selectbox(
                 label=options.label,
                 options=_item_options,
-                key=_key_selectbox,
+                key=_select_key,
                 format_func=format_func,
-                index=idx,
+                on_change=callback,
+                help=options.help,
             )
         else:
-
             result = st.selectbox(
                 label=options.label,
                 options=_item_options,
-                key=_key_selectbox,
+                key=_select_key,
                 format_func=format_func,
-                index=idx,
+                on_change=callback,
+                help=options.help,
             )
             if result == NO_VALUE_MARKER:
                 result = None
@@ -237,7 +258,7 @@ class DefaultInputComponent(InputComponent):
                 else:
                     disabled = False
                 show_preview = st.checkbox(
-                    "Preview", key=f"preview_{_key_selectbox}", disabled=disabled
+                    "Preview", key=f"preview_{_select_key}", disabled=disabled
                 )
                 if show_preview:
                     comp = self.get_component("preview")

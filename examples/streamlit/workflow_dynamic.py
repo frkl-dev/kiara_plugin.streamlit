@@ -8,8 +8,10 @@ st.set_page_config(layout="wide")
 
 kst = kiara_streamlit.init()
 
+current = kst.api.current_context_name
 with st.sidebar:
-    context_changed = st.kiara.context_switch_control(allow_create=True, key="xxx")
+    selected_context = st.kiara.context_switch_control(allow_create=True, key="xxx")
+    context_changed = current != selected_context
 
 workflow_ref = "workflow_dynamic"
 if workflow_ref not in st.session_state or context_changed:

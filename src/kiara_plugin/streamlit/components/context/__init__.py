@@ -11,6 +11,9 @@ class ContextSwitchOptions(ComponentOptions):
     allow_create: bool = Field(
         description="Allow the user to create a new context.", default=False
     )
+    switch_to_selected: bool = Field(
+        description="Switch to the selected context.", default=True
+    )
 
 
 class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
@@ -96,11 +99,10 @@ class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
                 help="Select the active context.",
             )
 
-            if selected_context != current:
+            if selected_context != current and options.switch_to_selected:
                 self.api.set_active_context(selected_context)
-                return True
-            else:
-                return False
+
+            return selected_context
 
     def write_selectbox(
         self,

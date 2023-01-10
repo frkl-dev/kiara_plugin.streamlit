@@ -287,6 +287,7 @@ class DynamicWorkflow(KiaraComponent):
         process = right.button("Process")
         if process:
             with st.spinner("Processing..."):  # type: ignore
+                errors = {}
                 try:
                     session.last_step_processed = True
                     session.current_outputs = None

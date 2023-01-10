@@ -4,6 +4,7 @@ from typing import Any, Dict
 from kiara.models.data_types import DictModel
 from kiara.models.filesystem import FileBundle, FileModel
 from kiara.utils.json import orjson_dumps
+from kiara_plugin.core_types.models import ListModel
 from streamlit.delta_generator import DeltaGenerator
 
 from kiara_plugin.streamlit.components.preview import PreviewComponent, PreviewOptions
@@ -32,6 +33,36 @@ class DictPreview(PreviewComponent):
 
         try:
             json_str = orjson_dumps(dict_data.data_schema)
+        except Exception as e:
+            json_str = f"Error parsing schema: {e}"
+        schema.json(json_str)
+
+        return
+
+
+class ListPreview(PreviewComponent):
+
+    _component_name = "list_preview"
+
+    @classmethod
+    def get_data_type(cls) -> str:
+        return "list"
+
+    def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
+
+        _value = self.api.get_value(options.value)
+        list_data: ListModel = _value.data
+
+        data, schema = st.tabs(["Data", "Schema"])
+
+        try:
+            json_str = orjson_dumps(list_data.list_data)
+        except Exception as e:
+            json_str = f"Error parsing data: {e}"
+        data.json(json_str)
+
+        try:
+            json_str = orjson_dumps(list_data.item_schema)
         except Exception as e:
             json_str = f"Error parsing schema: {e}"
         schema.json(json_str)

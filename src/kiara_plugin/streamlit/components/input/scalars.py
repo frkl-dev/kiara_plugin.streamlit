@@ -24,7 +24,9 @@ class ScalarInput(InputComponent):
         scalar = self.render_scalar_input(st, options=options)
         if scalar is None:
             return None
-        value = self.api.register_data(scalar, data_type=self.get_data_type())
+        value = self.api.register_data(
+            scalar, data_type=self.get_data_type(), reuse_existing=True
+        )
         return value
 
     @abc.abstractmethod
@@ -59,11 +61,12 @@ class BooleanInput(ScalarInput):
         else:
             default = bool(default)
 
+        callback, _key = self._create_session_store_callback(
+            options, "input", "scalar", self.__class__.get_data_type(), default=default
+        )
+
         inp = st.checkbox(
-            label=options.label,
-            key=options.key,
-            value=default,
-            help=options.help,
+            label=options.label, key=_key, help=options.help, on_change=callback
         )
         return inp
 
@@ -89,8 +92,13 @@ class StringInput(ScalarInput):
         default = options.get_default()
         if default in [None, SpecialValue.NOT_SET, SpecialValue.NO_VALUE]:
             default = ""
+
+        callback, _key = self._create_session_store_callback(
+            options, "input", "scalar", self.__class__.get_data_type(), default=default
+        )
+
         txt = st.text_input(
-            label=options.label, key=options.key, value=default, help=options.help
+            label=options.label, key=_key, help=options.help, on_change=callback
         )
         return txt
 
@@ -119,19 +127,28 @@ class IntegerInput(ScalarInput):
 
         default = options.get_default()
         if default in [None, SpecialValue.NOT_SET, SpecialValue.NO_VALUE]:
-            default = 0
+            default = int(0)
         else:
             default = int(default)
 
+        callback, _key = self._create_session_store_callback(
+            options, "input", "scalar", self.__class__.get_data_type(), default=default
+        )
+
         if style == "default":
             number = st.number_input(
-                label=options.label, key=options.key, value=default, help=options.help
+                label=options.label,
+                key=_key,
+                help=options.help,
+                on_change=callback,
+                step=1,
             )
+
         elif style == "text_input":
             number_str = st.text_input(
                 label=options.label,
-                key=options.key,
-                value=str(default),
+                key=_key,
+                on_change=callback,
                 help=options.help,
             )
             try:
@@ -172,15 +189,23 @@ class FloatInput(ScalarInput):
         else:
             default = float(default)
 
+        callback, _key = self._create_session_store_callback(
+            options, "input", "scalar", self.__class__.get_data_type(), default=default
+        )
+
         if style == "default":
             number = st.number_input(
-                label=options.label, key=options.key, value=default, help=options.help
+                label=options.label,
+                key=_key,
+                on_change=callback,
+                help=options.help,
+                step=1.0,
             )
         elif style == "text_input":
             number_str = st.text_input(
                 label=options.label,
-                key=options.key,
-                value=str(default),
+                key=_key,
+                on_change=callback,
                 help=options.help,
             )
             try:

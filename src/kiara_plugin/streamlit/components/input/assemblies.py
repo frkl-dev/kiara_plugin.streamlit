@@ -114,13 +114,14 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
         optional_expanded = True
 
         for input_name, input_schema in fields.items():
-            if input_schema.is_required():
+            if not input_schema.optional:
                 required[input_name] = input_schema
             else:
                 optional[input_name] = input_schema
 
         values = {}
         if required:
+            req_expander = st.expander("Required inputs", expanded=True)
             if not max_columns:
                 num_columns = len(required)
             else:
@@ -129,7 +130,7 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
                 else:
                     num_columns = len(required)
 
-            columns = st.columns(num_columns)
+            columns = req_expander.columns(num_columns)
             for idx, field_name in enumerate(required.keys()):
                 schema = required[field_name]
                 help = None

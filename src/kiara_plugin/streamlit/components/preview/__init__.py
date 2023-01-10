@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import uuid
 from abc import abstractmethod
-from typing import List, Union
+from typing import List, Mapping, Union
 
-from kiara import Value
+from kiara import Value, ValueMap
 from pydantic import Field
 from streamlit.delta_generator import DeltaGenerator
 
@@ -159,3 +159,81 @@ class ValueListPreview(KiaraComponent[PreviewListOptions]):
             component.render_preview(preview_column, options=pr_opts)
 
         return selected_alias
+
+
+class ValueMapPreviewOptions(ComponentOptions):
+    values: Mapping[str, Union[str, uuid.UUID, Value]] = Field(
+        description="The values to display."
+    )
+    add_value_types: bool = Field(
+        description="Whether to add the type of the value to the tab titles.",
+        default=True,
+    )
+
+
+class ValueMapPreview(KiaraComponent[ValueMapPreviewOptions]):
+
+    _component_name = "value_map_preview"
+    _options = ValueMapPreviewOptions
+
+    def _render(
+        self,
+        st: DeltaGenerator,
+        options: ValueMapPreviewOptions,
+    ) -> Union[ValueMap, None]:
+
+        if not options.values:
+            st.write("-- no values --")
+            return None
+
+        _values = self.api.retrieve_value_map(options.values)
+
+        field_names = sorted(_values.keys())
+        if not options.add_value_types:
+            tab_names = field_names
+        else:
+            tab_names = sorted(
+                (f"{x} ({_values[x].data_type_name})" for x in _values.keys())
+            )
+
+        tabs = st.tabs(tab_names)
+        for idx, field in enumerate(field_names):
+
+            value = _values[field]
+            if not value.is_set:
+                tabs[idx].markdown("-- value not set --")
+            else:
+                component = self.kiara_streamlit.get_preview_component(
+                    value.data_type_name
+                )
+                if component is None:
+                    component = self.kiara_streamlit.get_preview_component("any")
+                center, right = tabs[idx].columns([4, 1])
+
+                _key = options.create_key("preview", f"{idx}_{field}")
+                preview_opts = PreviewOptions(key=_key, value=value)
+                component.render_preview(st=center, options=preview_opts)
+
+                right.write("Save value")
+                with right.form(key=options.create_key("save_form", f"{idx}_{field}")):
+                    _key = options.create_key("alias", f"{idx}_{field}")
+                    alias = self._st.text_input(
+                        "alias",
+                        value="",
+                        key=_key,
+                        placeholder="alias",
+                        label_visibility="hidden",
+                    )
+                    _key = options.create_key("save", f"{idx}_{field}")
+                    save = self._st.form_submit_button("Save")
+
+                if save and alias:
+                    store_result = self.api.store_value(
+                        value=value, alias=alias, allow_overwrite=False
+                    )
+                    if store_result.error:
+                        right.error(store_result.error)
+                    else:
+                        right.success("Value saved")
+
+        return _values

@@ -274,11 +274,7 @@ class CurrentValuesPreview(KiaraComponent[CurrentValuesPreviewOptions]):
             _key = options.create_key("preview", f"{idx}_{field}")
             preview_opts = PreviewOptions(key=_key, value=value)
             component.render_preview(st=center, options=preview_opts)
-            right.write("")
-            right.write("")
-            right.write("")
-            right.write("")
-            right.write("")
+
             right.write("Save value")
             with right.form(key=options.create_key("save_form", f"{idx}_{field}")):
                 _key = options.create_key("alias", f"{idx}_{field}")
