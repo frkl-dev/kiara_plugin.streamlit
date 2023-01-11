@@ -11,7 +11,6 @@ st.set_page_config(layout="wide")
 
 nltk.download("punkt")
 nltk.download("stopwords")
-nltk.download("corpus")
 
 kst = kiara_streamlit.init()
 
