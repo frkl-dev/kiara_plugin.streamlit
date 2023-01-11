@@ -10,6 +10,49 @@ st.set_page_config(layout="wide")
 
 kst = kiara_streamlit.init()
 
+EXPLANATION = """
+This is an example of how to render a pre-assembled pipeline as a workflow UI. All of this is rendered auto-matically, using the content of this pipeline:
+
+- https://github.com/DHARPA-Project/kiara_plugin.streamlit/blob/develop/examples/streamlit/pipelines/topic_modeling.yaml
+
+The whole experience is a bit clunky, which is par for the course for a fully-auto-rendered, interactive multi-page form like this. It'll be possible to augment the pipeline description I linked above with additional hints, which will improve the UI experience substantially (e.g. only present column names available in the selected table, instead of asking the user to input the column names free-form).
+
+Ad it is, I think this is still a good enough demo to show which UI components are generally necessary for users to make informed decisions, esp. the input/output previews are very important IMHO. Overall, I imagine something like this (in terms of functionality) to be a main part of the first version of our UI (also: a data-set management component, and data onboarding helpers).
+
+To try out this demo, there are a few inputs that are non obvious for now (for the reasons explained above), so here is a quick rundown what is happening:
+
+- General:
+   - a final UI would have also descriptions of what happens in every step/stage, and links to documentation, etc.
+   - the pipeline does some topic modeling on a text corpus
+   - a stage consists of one or several steps, grouped depending on when the first time is a user input is required for each step
+   - click process after you changed inputs, so the workflow can process intermediate outputs for each stage
+   - click 'Next step' after the process, to progress to the next stage
+
+- Stage 1
+
+   - Select the corpus (only 1 available for this demo, for now) -- this is basically just a folder with text files
+   - languages and stopword lists are not supported yet, so just leave them as they are
+
+- Stage 2
+
+   - this needs to know the names of the columns where the required data is, you can look that up in the 'Outputs (previous stages)' expander, or just use: 'content' for `extract_texts_column__column_name` and 'file_name' for `extract_filename_column__column_name`
+
+- Stage 3
+
+   - this stage tokenizes the text content, and extracts a date column from the file name column. This is a bit difficult to do right now, because the date parser is not very good and needs the start and end position of the word it should parse (file name in our case): just use '11' for `create_date_array__min_index` and '21' for `create_date_array__max_index`
+
+- Stage 4
+
+   - this stage pre-processes the tokens we computed in the previous stage, you can't do anything wrong. Just play a bit with the options and see how the result changes
+
+- Stage 5
+
+   - the final step, also nothing that can go wrong here. If you know about topic modeling, then the results will make sense, otherwise, probably not :)
+"""
+with st.expander("Notes (click to hide)", expanded=True):
+    st.markdown(EXPLANATION)
+
+
 current = kst.api.current_context_name
 with st.sidebar:
     selected_context = st.kiara.context_switch_control(allow_create=True, key="xxx")
@@ -59,5 +102,15 @@ if not st.kiara.api.get_alias_names():
             },
         )
         st.kiara.api.store_value(value=result["file"], alias="journal_edges_file")
+
+        result = st.kiara.api.run_job(
+            operation="download.file_bundle",
+            inputs={
+                "url": "https://github.com/DHARPA-Project/kiara.examples/archive/refs/heads/main.zip",
+                "sub_path": "kiara.examples-main/examples/data/text_corpus/data",
+            },
+        )
+        st.kiara.api.store_value(value=result["file_bundle"], alias="example_corpus")
+
 
 st.kiara.workflow(workflow_session)

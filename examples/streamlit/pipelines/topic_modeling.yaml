@@ -1,12 +1,8 @@
 pipeline_name: topic_modeling
 doc: Example topic-modeling end-to-end workflow.
 steps:
-  - module_type: import.file_bundle
-    step_id: import_text_corpus
-  - module_type: create.table.from.text_file_bundle
+  - module_type: create.table.from.file_bundle
     step_id: create_text_corpus
-    input_links:
-      text_file_bundle: import_text_corpus.file_bundle
   - module_type: table.cut_column
     step_id: extract_texts_column
     input_links:
@@ -38,7 +34,6 @@ steps:
 input_aliases:
   extract_texts_column.column_name: content_column_name
   extract_filename_column.column_name: filename_column_name
-  import_text_corpus.path: text_corpus_folder_path
   create_date_array.min_index: date_parse_min
   create_date_array.max_index: date_parse_max
   create_date_array.force_non_null: date_force_non_null
@@ -58,7 +53,6 @@ input_aliases:
   preprocess_corpus.remove_stopwords: remove_stopwords
 
 output_aliases:
-  import_text_corpus.file_bundle: text_corpus_file_bundle
   create_text_corpus.table: text_corpus_table
   extract_texts_column.array: content_array
   tokenize_content.tokens_array: tokenized_corpus
