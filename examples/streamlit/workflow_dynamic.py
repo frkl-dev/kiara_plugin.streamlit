@@ -8,6 +8,25 @@ st.set_page_config(layout="wide")
 
 kst = kiara_streamlit.init()
 
+EXPLANATION = """
+This is an example of how an exploratory data-science workflow could (not should!) look like in 'pure' UI (without code), usually you'd use notebook tech like Jupyter for that. Obviously there are limitations, but there is also some 'guidance' inbuilt (which those notebooks lack), because all the possible operations for the dataset you choose are pre-filtered for you. Also, it ships with the documentation about everything it can do, which is kinda nice.
+
+An alternative to this would be a node-based approach, something like the blender node editor ( https://www.youtube.com/watch?v=moKFSMJwpmE ) or  https://gimelstudio.github.io/.
+
+The prototype is a bit terse at the moment, and I haven't had time to think about guiding users through all this, so it might be that your initial experience is a bit confusing. But I figured it is probably not be a bad idea to expose you to this, because that way you can register with yourself the typical kind of problems new users would have, and that we are out to solve. I haven't implemented anything 'onboarding' yet (that's another one of the topics I plan to address with prototypes like this), so this thing has 2 datasets automatically included: 2 csv files that can be used to generate a network graph .
+
+If you use any of those (preferable the nodes one), you can convert it into a table and once you do that you'll have access to the 'table-related' operations, like 'cut-column', or an sql-query one, which are at lest semi-useful for playing around with.
+
+As contrast, check out the pipeline auto-rendered UI example:
+
+This had better usability by default for novice users, but obviously that would only work for one specific, pre-assembled scenario/pipeline, and there would be no freedom for the user to 'explore' by their own.
+
+Another thing I want to show in the future is the whole area of onboarding data into kiara, and making it usable and flexible enough to be useful. I think that's our biggest challenge, so I am still thinking about how to best do it.
+"""
+
+with st.expander("Notes (click to hide)", expanded=True):
+    st.markdown(EXPLANATION)
+
 current = kst.api.current_context_name
 with st.sidebar:
     selected_context = st.kiara.context_switch_control(allow_create=True, key="xxx")

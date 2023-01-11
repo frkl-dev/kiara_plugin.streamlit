@@ -8,6 +8,7 @@ from kiara_plugin.streamlit.components.workflow.static import WorkflowSessionSta
 
 st.set_page_config(layout="wide")
 
+
 kst = kiara_streamlit.init()
 
 EXPLANATION = """
@@ -86,6 +87,9 @@ else:
 
 if not st.kiara.api.get_alias_names():
     with st.spinner("Downloading example data ..."):
+        import nltk
+
+        nltk.download("punkt")
 
         result = st.kiara.api.run_job(
             operation="download.file",
