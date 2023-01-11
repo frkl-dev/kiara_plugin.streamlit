@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 
+import nltk
 import streamlit as st
 
 import kiara_plugin.streamlit as kiara_streamlit
@@ -8,6 +9,9 @@ from kiara_plugin.streamlit.components.workflow.static import WorkflowSessionSta
 
 st.set_page_config(layout="wide")
 
+nltk.download("punkt")
+nltk.download("stopwords")
+nltk.download("corpus")
 
 kst = kiara_streamlit.init()
 
@@ -87,9 +91,6 @@ else:
 
 if not st.kiara.api.get_alias_names():
     with st.spinner("Downloading example data ..."):
-        import nltk
-
-        nltk.download("punkt")
 
         result = st.kiara.api.run_job(
             operation="download.file",
