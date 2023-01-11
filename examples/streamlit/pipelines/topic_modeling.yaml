@@ -30,34 +30,3 @@ steps:
     step_id: generate_lda
     input_links:
       tokens_array: preprocess_corpus.tokens_array
-
-input_aliases:
-  extract_texts_column.column_name: content_column_name
-  extract_filename_column.column_name: filename_column_name
-  create_date_array.min_index: date_parse_min
-  create_date_array.max_index: date_parse_max
-  create_date_array.force_non_null: date_force_non_null
-  create_date_array.remove_tokens: date_remove_tokensl
-  tokenize_content.tokenize_by_word: tokenize_by_word
-  generate_lda.num_topics_min: num_topics_min
-  generate_lda.num_topics_max: num_topics_max
-  generate_lda.compute_coherence: compute_coherence
-  generate_lda.words_per_topic: words_per_topic
-  create_stopwords_list.languages: languages
-  create_stopwords_list.stopword_lists: stopword_lists
-  preprocess_corpus.to_lowercase: to_lowercase
-  preprocess_corpus.remove_alphanumeric: remove_alphanumeric
-  preprocess_corpus.remove_non_alpha: remove_non_alpha
-  preprocess_corpus.remove_all_numeric: remove_all_numeric
-  preprocess_corpus.remove_short_tokens: remove_short_tokens
-  preprocess_corpus.remove_stopwords: remove_stopwords
-
-output_aliases:
-  create_text_corpus.table: text_corpus_table
-  extract_texts_column.array: content_array
-  tokenize_content.tokens_array: tokenized_corpus
-  preprocess_corpus.tokens_array: preprocessed_corpus
-  generate_lda.topic_models: topic_models
-  generate_lda.coherence_map: coherence_map
-  generate_lda.coherence_table: coherence_table
-  create_date_array.date_array: date_array
