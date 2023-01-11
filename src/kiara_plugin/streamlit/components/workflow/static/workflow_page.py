@@ -51,7 +51,7 @@ class WorkflowStatic(KiaraComponent[StaticWorkflowOptions]):
                     outputs = workflow.pipeline.get_current_step_outputs(step)
                     all_outputs.update({f"{step}__{k}": v for k, v in outputs.items()})
 
-            with st.expander("Already processed outputs", expanded=False):
+            with st.expander("Outputs (previous stages)", expanded=False):
                 comp = self.get_component("stage_outputs_preview")
                 comp.render_func(st)(
                     session=session,
