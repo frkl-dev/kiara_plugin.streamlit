@@ -20,7 +20,7 @@ classifiers = [
     "Framework :: Django",
     "Programming Language :: Python :: 3",
     "Development Status :: 3 - Alpha",
-    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
@@ -30,8 +30,8 @@ classifiers = [
     "Programming Language :: Python :: 3.11"
 ]
 dependencies = [
-    "kiara>=0.4.24",
-    "kiara_plugin.tabular>=0.4.17",
+    "kiara>=0.4.25",
+    "kiara_plugin.tabular>=0.4.18",
     "streamlit>=1.16.0",
     "streamlit-aggrid>=0.3.3",
     "importlib-resources",
@@ -40,6 +40,11 @@ dependencies = [
 dynamic = ["version"]
 
 [project.optional-dependencies]
+all_plugins = [
+    "kiara_plugin.network_analysis>=0.4.7",
+    "kiara_plugin.language_processing>0.4.9",
+    "kiara_plugin.onboarding>=0.4.1"
+]
 dev_documentation = [
     "kiara[dev_documentation]"
 ]
