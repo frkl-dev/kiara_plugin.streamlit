@@ -5,6 +5,12 @@ from functools import partial
 from typing import Any, Callable, Generic, List, Type, TypeVar, Union
 
 import streamlit as st
+from kiara.interfaces.python_api.models.info import InfoItemGroup, ItemInfo
+from kiara.models.documentation import (
+    AuthorsMetadataModel,
+    ContextMetadataModel,
+    DocumentationMetadataModel,
+)
 from pydantic import BaseModel, Field
 from streamlit.runtime.state import SessionStateProxy
 
@@ -16,7 +22,7 @@ from typing import TYPE_CHECKING
 from streamlit.delta_generator import DeltaGenerator
 
 if TYPE_CHECKING:
-    from kiara import KiaraAPI
+    from kiara import Kiara, KiaraAPI
 
     from kiara_plugin.streamlit import KiaraStreamlit
 
@@ -47,14 +53,42 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
 
     _options: Type[COMP_OPTIONS_TYPE] = ComponentOptions  # type: ignore
 
-    def __init__(self, kiara_streamlit: "KiaraStreamlit"):
+    def __init__(
+        self, kiara_streamlit: "KiaraStreamlit", component_name: str, doc: Any = None
+    ):
+
         self._kiara_streamlit: KiaraStreamlit = kiara_streamlit
+        self._component_name: str = component_name
         self._st: DeltaGenerator = st  # type: ignore
         self._session_state: SessionStateProxy = st.session_state
+
+        self._info: Union[ComponentInfo, None] = None
+        if doc is not None:
+            doc = DocumentationMetadataModel.create(doc)
+        self._doc: Union[DocumentationMetadataModel, None] = doc
 
     @property
     def api(self) -> "KiaraAPI":
         return self._kiara_streamlit.api
+
+    @property
+    def info(self) -> "ComponentInfo":
+
+        if self._info is None:
+            self._info = ComponentInfo.create_from_instance(
+                kiara=self._kiara_streamlit.api.context, instance=self
+            )
+        return self._info
+
+    def doc(self) -> DocumentationMetadataModel:
+
+        if self._doc is None:
+            self._doc = DocumentationMetadataModel.from_class_doc(self.__class__)
+        return self._doc
+
+    @property
+    def component_name(self) -> str:
+        return self._component_name
 
     @property
     def kiara_streamlit(self) -> "KiaraStreamlit":
@@ -128,3 +162,27 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
     def get_component(self, component_name: str) -> "KiaraComponent":
         result = self._kiara_streamlit.get_component(component_name)
         return result
+
+
+class ComponentInfo(ItemInfo[KiaraComponent]):
+    @classmethod
+    def base_instance_class(cls) -> Type[KiaraComponent]:
+        return KiaraComponent
+
+    @classmethod
+    def create_from_instance(cls, kiara: "Kiara", instance: KiaraComponent, **kwargs):
+        authors_md = AuthorsMetadataModel.from_class(cls)
+        doc = instance.doc()
+        # python_class = PythonClass.from_class(cls)
+        context = ContextMetadataModel.from_class(cls)
+        type_name = instance.component_name
+
+        return ComponentInfo.construct(
+            type_name=type_name, authors=authors_md, documentation=doc, context=context
+        )
+
+
+class ComponentsInfo(InfoItemGroup[ComponentInfo]):
+    @classmethod
+    def base_info_class(cls) -> Type[ComponentInfo]:
+        return ComponentInfo

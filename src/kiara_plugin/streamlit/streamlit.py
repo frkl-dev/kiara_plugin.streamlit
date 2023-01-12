@@ -9,6 +9,7 @@ from typing import Dict, Mapping, Union
 import streamlit as st
 from kiara import KiaraAPI
 from kiara.context import KiaraConfig, KiaraContextConfig, KiaraRuntimeConfig
+from streamlit.runtime.scriptrunner import get_script_run_ctx
 
 from kiara_plugin.streamlit.components import KiaraComponent
 from kiara_plugin.streamlit.components.input import InputComponent
@@ -90,7 +91,7 @@ class ComponentMgmt(object):
 
         base_input_cls = None
         for name, cls in find_all_kiara_streamlit_components().items():
-            instance = cls(kiara_streamlit=self._kiara_streamlit)
+            instance = cls(kiara_streamlit=self._kiara_streamlit, component_name=name)
 
             if name == "value_input":
                 base_input_cls = cls
@@ -122,9 +123,11 @@ class ComponentMgmt(object):
                 continue
 
             if data_type not in input_components.keys():
-                _comp = base_input_cls(kiara_streamlit=self._kiara_streamlit, data_types=[data_type])  # type: ignore
 
+                _doc = f"Render an input widget that prompts the user for a value of type '{data_type}'."
                 _name = f"select_{data_type}"
+
+                _comp = base_input_cls(kiara_streamlit=self._kiara_streamlit, component_name=_name, data_types=[data_type], doc=_doc)  # type: ignore
                 components[_name] = _comp
                 input_components[data_type] = _comp  # type: ignore
 
@@ -156,6 +159,8 @@ class KiaraStreamlit(object):
         self._context_config: Union[None, KiaraContextConfig] = context_config
         self._runtime_config: Union[None, KiaraRuntimeConfig] = runtime_config
 
+        self._api_outside_streamlit: Union[None, KiaraAPI] = None
+
         self._component_mgmt = ComponentMgmt(
             kiara_streamlit=self, example_base_dir=None
         )
@@ -176,6 +181,10 @@ class KiaraStreamlit(object):
 
         # if item in ["api", "components", "get_component"]:
         #     return getattr(self, item)
+        if item == "api":
+            import traceback
+
+            traceback.print_stack()
 
         comp = self.get_component(item)
         if not comp:
@@ -195,11 +204,19 @@ class KiaraStreamlit(object):
     @property
     def api(self) -> KiaraAPI:
 
-        if "__kiara_api__" not in st.session_state.keys():
-            kc = KiaraConfig()
-            kiara_api = KiaraAPI(kc)
-            st.session_state["__kiara_api__"] = kiara_api
-        return st.session_state.__kiara_api__
+        ctx = get_script_run_ctx()
+        if ctx is None:
+            # means, this is not running as streamlit script
+            if self._api_outside_streamlit is None:
+                kc = KiaraConfig()
+                self._api_outside_streamlit = KiaraAPI(kc)
+            return self._api_outside_streamlit
+        else:
+            if "__kiara_api__" not in st.session_state.keys():
+                kc = KiaraConfig()
+                kiara_api = KiaraAPI(kc)
+                st.session_state["__kiara_api__"] = kiara_api
+            return st.session_state.__kiara_api__
 
     @property
     def components(self) -> Mapping[str, KiaraComponent]:

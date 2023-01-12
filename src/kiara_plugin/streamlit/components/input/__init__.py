@@ -122,6 +122,7 @@ class DefaultInputOptions(InputOptions):
 
 
 class DefaultInputComponent(InputComponent):
+    """Render a selectbox with all available values (for a specific type, if applicable)."""
 
     _component_name = "value_input"
     _options = DefaultInputOptions  # type: ignore
@@ -129,7 +130,9 @@ class DefaultInputComponent(InputComponent):
     def __init__(
         self,
         kiara_streamlit: "KiaraStreamlit",
+        component_name: str,
         data_types: Union[str, Iterable[str], None] = None,
+        doc: Any = None,
     ):
 
         if data_types:
@@ -137,7 +140,9 @@ class DefaultInputComponent(InputComponent):
                 data_types = [data_types]
 
         self._data_types: Union[None, Iterable[str]] = data_types
-        super().__init__(kiara_streamlit=kiara_streamlit)
+        super().__init__(
+            kiara_streamlit=kiara_streamlit, component_name=component_name, doc=doc
+        )
 
     @classmethod
     def get_data_type(cls) -> str:
