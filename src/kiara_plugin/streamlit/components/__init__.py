@@ -6,6 +6,7 @@ from typing import Any, Callable, Generic, List, Type, TypeVar, Union
 
 import streamlit as st
 from pydantic import BaseModel, Field
+from streamlit.runtime.state import SessionStateProxy
 
 with warnings.catch_warnings():
     pass
@@ -49,6 +50,7 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
     def __init__(self, kiara_streamlit: "KiaraStreamlit"):
         self._kiara_streamlit: KiaraStreamlit = kiara_streamlit
         self._st: DeltaGenerator = st  # type: ignore
+        self._session_state: SessionStateProxy = st.session_state
 
     @property
     def api(self) -> "KiaraAPI":
@@ -67,10 +69,10 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
 
         session_key = options.get_session_key(*key)
 
-        if session_key not in self._st.session_state:
+        if session_key not in self._session_state:
             return default
 
-        value = self._st.session_state[session_key]
+        value = self._session_state[session_key]
         return value
 
     def set_session_var(
@@ -78,7 +80,7 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
     ) -> None:
 
         session_key = options.get_session_key(*key)
-        self._st.session_state[session_key] = value
+        self._session_state[session_key] = value
 
     def render_func(self, st: Union[DeltaGenerator, None] = None) -> Callable:
 

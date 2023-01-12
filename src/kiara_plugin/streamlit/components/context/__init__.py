@@ -56,8 +56,8 @@ class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
 
             if self.get_session_var(options, "kiara_context", "created", default=False):
                 self.set_session_var(options, "kiara_context", "created", value=False)
-                self._st.session_state[text_field_key] = ""
-                self._st.session_state[checkbox_key] = False
+                self._session_state[text_field_key] = ""
+                self._session_state[checkbox_key] = False
 
             create_context_checkbox = st.checkbox(
                 "Create new context", key=checkbox_key
@@ -122,9 +122,9 @@ class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
 
         idx = 0
         if force is not None:
-            self._st.session_state[widget_key] = force
+            self._session_state[widget_key] = force
             idx = 0
-        elif widget_key not in self._st.session_state:
+        elif widget_key not in self._session_state:
             if default:
                 idx = items.index(default)
             else:
@@ -134,7 +134,7 @@ class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
             label = "Select value"
 
         def _set_current_value():
-            self._st.session_state[value_state_key] = self._st.session_state[widget_key]
+            self._session_state[value_state_key] = self._session_state[widget_key]
 
         result = st.selectbox(
             label=label,

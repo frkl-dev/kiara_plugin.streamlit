@@ -43,7 +43,8 @@ class WriteStepComponent(DynamicWorkflowComponent):
 
         with st.expander("Operation", expanded=False):
             operation_id = options.session.operations[idx].operation.operation_id
-            st.kiara.operation_info(
+            comp = self._kiara_streamlit.get_component("operation_info")
+            comp.render_func(st)(
                 operation_id, key=options.create_key(options.step_id, "operation_info")
             )
 

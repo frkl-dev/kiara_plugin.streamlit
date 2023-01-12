@@ -93,8 +93,8 @@ class InputComponent(KiaraComponent[INPUT_OPTIONS_TYPE]):
 
         current = self.get_session_var(options, *key, default=default)
 
-        if current is not None and _widget_key not in self._st.session_state:
-            self._st.session_state[_widget_key] = current
+        if current is not None and _widget_key not in self._session_state:
+            self._session_state[_widget_key] = current
 
         def callback():
             self._st.session_state[

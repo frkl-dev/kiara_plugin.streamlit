@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from typing import Dict
+
+from kiara import ValueSchema
 from kiara.exceptions import KiaraException
 from kiara.models.module.pipeline import StepStatus
 from kiara.models.module.pipeline.structure import PipelineStructure
@@ -25,7 +28,7 @@ class WorkflowStatic(KiaraComponent[StaticWorkflowOptions]):
         no_input_stages = []
         # calculate no-input stages
         for stage_idx, stage in enumerate(stages, start=1):
-            _inputs = {}
+            _inputs: Dict[str, ValueSchema] = {}
             for step in stage:
                 inputs = pipeline_structure.get_pipeline_inputs_schema_for_step(step)
                 _inputs.update(inputs)
@@ -61,7 +64,7 @@ class WorkflowStatic(KiaraComponent[StaticWorkflowOptions]):
 
         current_steps = stages[session.current_stage - 1]
 
-        current_inputs = {}
+        current_inputs: Dict[str, ValueSchema] = {}
         for step in current_steps:
             inputs = pipeline_structure.get_pipeline_inputs_schema_for_step(step)
             current_inputs.update(inputs)
