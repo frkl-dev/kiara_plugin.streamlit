@@ -51,7 +51,8 @@ dev_documentation = [
 dev_testing = [
     "kiara[dev_testing]",
     "types-setuptools",
-    "sqlalchemy-stubs"
+    "sqlalchemy-stubs",
+    "kiara_plugin.network_analysis>=0.4.7",
 ]
 dev_utils = [
     "kiara[dev_utils]"
