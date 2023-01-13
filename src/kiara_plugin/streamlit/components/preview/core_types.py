@@ -12,7 +12,7 @@ from kiara_plugin.streamlit.components.preview import PreviewComponent, PreviewO
 
 class DictPreview(PreviewComponent):
 
-    _component_name = "dict_preview"
+    _component_name = "preview_dict"
 
     @classmethod
     def get_data_type(cls) -> str:
@@ -42,7 +42,7 @@ class DictPreview(PreviewComponent):
 
 class ListPreview(PreviewComponent):
 
-    _component_name = "list_preview"
+    _component_name = "preview_list"
 
     @classmethod
     def get_data_type(cls) -> str:
@@ -72,7 +72,7 @@ class ListPreview(PreviewComponent):
 
 class FileBundlePreview(PreviewComponent):
 
-    _component_name = "file_bundle_preview"
+    _component_name = "preview_file_bundle"
 
     @classmethod
     def get_data_type(cls) -> str:
@@ -96,7 +96,7 @@ class FileBundlePreview(PreviewComponent):
 
 class FilePreview(PreviewComponent):
 
-    _component_name = "file_preview"
+    _component_name = "preview_file"
 
     @classmethod
     def get_data_type(cls) -> str:
@@ -125,7 +125,7 @@ class FilePreview(PreviewComponent):
 
 class BooleanPreview(PreviewComponent):
 
-    _component_name = "boolean_preview"
+    _component_name = "preview_boolean"
 
     @classmethod
     def get_data_type(self) -> str:
@@ -142,7 +142,7 @@ class BooleanPreview(PreviewComponent):
 
 class NonePreview(PreviewComponent):
 
-    _component_name = "none_preview"
+    _component_name = "preview_none"
 
     @classmethod
     def get_data_type(self) -> str:

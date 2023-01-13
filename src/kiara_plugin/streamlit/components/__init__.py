@@ -151,9 +151,12 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
         if "key" not in kwargs.keys():
             kwargs["key"] = self.default_key()
 
-        options = self.__class__._options(**kwargs)
-
-        return self._render(st, options)
+        try:
+            options = self.__class__._options(**kwargs)
+            return self._render(st, options)
+        except Exception as e:
+            st.write(f"Error rendering component '{self.component_name}': {e}")
+            st.error(e)
 
     @abc.abstractmethod
     def _render(self, st: DeltaGenerator, options: COMP_OPTIONS_TYPE):
