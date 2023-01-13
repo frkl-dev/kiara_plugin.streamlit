@@ -60,7 +60,7 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
         st: DeltaGenerator,
         fields: Mapping[str, ValueSchema],
         options: ASSEMBLY_OPTIONS_TYPE,
-    ) -> Mapping[str, Union[str, uuid.UUID, ValueLink]]:
+    ) -> Mapping[str, Union[str, uuid.UUID, ValueLink, None]]:
 
         max_columns = options.max_columns
 
@@ -107,7 +107,7 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
         st: DeltaGenerator,
         fields: Mapping[str, ValueSchema],
         options: AssemblyOptions,
-    ) -> Mapping[str, Union[str, uuid.UUID, ValueLink]]:
+    ) -> Mapping[str, Union[str, None, uuid.UUID, ValueLink]]:
 
         required: Dict[str, ValueSchema] = {}
         optional: Dict[str, ValueSchema] = {}

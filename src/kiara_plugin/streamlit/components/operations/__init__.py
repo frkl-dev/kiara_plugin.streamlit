@@ -41,7 +41,7 @@ class OperationProcessPanel(KiaraComponent[OperationProcessOptions]):
         result: Union[None, ValueMap] = None
         if process_btn:
             with st.container():
-                with self._st.spinner("Processing..."):
+                with self._st.spinner("Processing..."):  # type: ignore
                     try:
                         result = self.api.run_job(
                             operation=options.operation_id, inputs=operation_inputs

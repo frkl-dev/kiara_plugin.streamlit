@@ -34,7 +34,7 @@ class KiaraApiHelpComponent(KiaraComponent[KiaraApiHelpCompOptions]):
         doc = self.api.doc
         left, right = options.columns
         if isinstance(left, int):
-            left, right = st.columns(options.columns)
+            left, right = st.columns(options.columns)  # type: ignore
 
         _key = options.create_key("api_command_selection")
         method_names = sorted(doc.keys(), key=str.lower)

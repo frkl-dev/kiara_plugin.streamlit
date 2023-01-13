@@ -28,10 +28,12 @@ class ListInput(InputComponent):
         # current = self.get_session_var(options, "input", "list", default=[])
         with st:
             items = st_tags(
-                label="Enter items",
+                label=options.label,
                 text="Press enter to add more",
                 key=options.create_key("input", "list"),
             )
+            if options.help:
+                st.caption(options.help)
 
         value = self.api.register_data(items, data_type="list", reuse_existing=True)
         return value
