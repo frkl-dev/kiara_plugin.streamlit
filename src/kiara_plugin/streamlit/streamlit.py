@@ -174,6 +174,8 @@ class KiaraStreamlit(object):
 
         atexit.register(del_temp_dir)
 
+        self.api  # noqa
+
         # self.add_component("test", TestComponent(kiara_streamlit=self))
         # self.add_component("help", HelpComponent(kiara_streamlit=self))
 

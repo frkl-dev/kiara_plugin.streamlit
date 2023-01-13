@@ -65,7 +65,7 @@ class PreviousOutputsPreview(StaticWorkflowComponent):
             values = current_step_outputs[step]
             with tabs[idx]:
                 value_map = comp.render_func(st)(
-                    values=values,
+                    value_map=values,
                     add_value_types=True,
                     key=options.create_key("preview", "previous_stages_outputs", step),
                 )

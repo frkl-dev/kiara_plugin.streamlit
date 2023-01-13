@@ -155,6 +155,9 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
             options = self.__class__._options(**kwargs)
             return self._render(st, options)
         except Exception as e:
+            import traceback
+
+            traceback.print_exc()
             st.write(f"Error rendering component '{self.component_name}': {e}")
             st.error(e)
 

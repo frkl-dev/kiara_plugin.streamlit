@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+
 import streamlit as st
 
 import kiara_plugin.streamlit as kst
 
+st.set_page_config(layout="wide")
+
 kst.init()
 
-result = st.kiara.process_operation("create.database.from.table")
-print(result)
+st.kiara.operation_documentation()

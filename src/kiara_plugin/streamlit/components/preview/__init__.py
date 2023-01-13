@@ -162,7 +162,7 @@ class ValueListPreview(KiaraComponent[PreviewListOptions]):
 
 
 class ValueMapPreviewOptions(ComponentOptions):
-    values: Mapping[str, Union[str, uuid.UUID, Value]] = Field(
+    value_map: Mapping[str, Union[str, uuid.UUID, Value]] = Field(
         description="The values to display."
     )
     add_value_types: bool = Field(
@@ -182,11 +182,11 @@ class ValueMapPreview(KiaraComponent[ValueMapPreviewOptions]):
         options: ValueMapPreviewOptions,
     ) -> Union[ValueMap, None]:
 
-        if not options.values:
+        if not options.value_map:
             st.write("-- no values --")
             return None
 
-        _values = self.api.retrieve_value_map(options.values)
+        _values = self.api.retrieve_value_map(options.value_map)
 
         field_names = sorted(_values.keys())
         if not options.add_value_types:

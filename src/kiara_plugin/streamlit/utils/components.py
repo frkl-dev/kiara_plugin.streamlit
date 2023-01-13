@@ -12,7 +12,7 @@ def create_list_component(
     key: str,
     title: str,
     items: List[str],
-    height=400,
+    height: Union[None, int] = None,
     default: Union[str, None] = None,
 ) -> Union[None, str]:
 

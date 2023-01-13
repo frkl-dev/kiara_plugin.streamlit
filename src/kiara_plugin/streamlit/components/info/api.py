@@ -1,16 +1,9 @@
 # -*- coding: utf-8 -*-
 import abc
-from typing import List, Mapping, Union
+from typing import List, Mapping, Tuple, Union
 
 from kiara import ValueSchema
-from kiara.interfaces.python_api import (
-    DataTypeClassesInfo,
-    DataTypeClassInfo,
-    ModuleTypeInfo,
-    ModuleTypesInfo,
-    OperationGroupInfo,
-    OperationInfo,
-)
+from kiara.interfaces.python_api import DataTypeClassInfo, ModuleTypeInfo, OperationInfo
 from kiara.interfaces.python_api.models.info import InfoItemGroup, ItemInfo
 from kiara.utils.output import create_dict_from_field_schemas
 from pydantic import Field
@@ -21,7 +14,15 @@ from kiara_plugin.streamlit.utils.components import create_list_component
 
 
 class KiaraApiHelpCompOptions(ComponentOptions):
-    pass
+    class Config:
+        arbitrary_types_allowed = True
+
+    columns: Union[Tuple[int, int], Tuple[DeltaGenerator, DeltaGenerator]] = Field(
+        description="The column layout to use for the next step.", default=(1, 4)
+    )
+    height: Union[int, None] = Field(
+        description="The height of the list component.", default=None
+    )
 
 
 class KiaraApiHelpComponent(KiaraComponent[KiaraApiHelpCompOptions]):
@@ -31,12 +32,18 @@ class KiaraApiHelpComponent(KiaraComponent[KiaraApiHelpCompOptions]):
     def _render(self, st: DeltaGenerator, options: KiaraApiHelpCompOptions):
 
         doc = self.api.doc
-        left, right = st.columns([1, 3])
+        left, right = options.columns
+        if isinstance(left, int):
+            left, right = st.columns(options.columns)
 
         _key = options.create_key("api_command_selection")
         method_names = sorted(doc.keys(), key=str.lower)
         selected_function = create_list_component(
-            st=left, title="Functions", items=method_names, key=_key
+            st=left,
+            title="Functions",
+            items=method_names,
+            key=_key,
+            height=options.height,
         )
 
         if not selected_function:
@@ -44,17 +51,26 @@ class KiaraApiHelpComponent(KiaraComponent[KiaraApiHelpCompOptions]):
         else:
             if selected_function in doc.keys():
                 txt = doc[selected_function]
-                with right:
+                with right:  # type: ignore
                     st.text_area(
                         f"function: {selected_function}",
                         value=txt,
                         disabled=True,
-                        height=360,
+                        height=options.height,
                         key=options.create_key("help_text"),
                     )
 
 
 class InfoCompOptions(ComponentOptions):
+    class Config:
+        arbitrary_types_allowed = True
+
+    columns: Union[
+        Tuple[int, int], Tuple[DeltaGenerator, DeltaGenerator], None
+    ] = Field(description="The column layout to use for the next step.", default=(1, 4))
+    height: Union[int, None] = Field(
+        description="The height of the list component.", default=None
+    )
     items: Union[str, List[str], None] = Field(
         description="The item(s) to show info for."
     )
@@ -80,15 +96,17 @@ class KiaraInfoComponent(KiaraComponent[InfoCompOptions]):
                     raise Exception(f"No method '{method}' found on kiara api object.")
 
             _items = getattr(self.api, method)()
-            self.render_all_info(
+            selected = self.render_all_info(
                 st=st,
                 key=options.create_key("all_infos"),
                 items=_items,
                 options=options,
             )
+            return selected
 
         elif isinstance(items, str):
 
+            # ignoring columns
             method = f"get_{self.get_info_type()}_info"
             if not hasattr(self.api, method):
                 method = f"retrieve_{self.get_info_type()}_info"
@@ -103,6 +121,7 @@ class KiaraInfoComponent(KiaraComponent[InfoCompOptions]):
                 item=_item,
                 options=options,
             )
+            return items
         else:
             raise NotImplementedError()
 
@@ -112,15 +131,39 @@ class KiaraInfoComponent(KiaraComponent[InfoCompOptions]):
     ):
         pass
 
-    @abc.abstractmethod
-    def render_all_info(
+    def render_all_info(  # type: ignore
         self,
         st: DeltaGenerator,
         key: str,
         items: InfoItemGroup,
         options: InfoCompOptions,
-    ):
-        pass
+    ) -> Union[None, str]:
+
+        if options.columns is None:
+            left, right = st.columns((1, 4))
+        elif isinstance(options.columns[0], int):
+            left, right = st.columns(options.columns)
+        else:
+            left, right = options.columns
+
+        selected_op = create_list_component(
+            st=left,
+            title=self.__class__.get_info_type().capitalize(),
+            items=list(items.item_infos.keys()),
+            key=f"{key}_{self.__class__.get_info_type()}_list",
+            height=options.height,
+        )
+
+        if selected_op:
+            op = items.item_infos[selected_op]
+            self.render_info(
+                st=right,
+                key=f"{key}__{self.__class__.get_info_type()}_{selected_op}",
+                item=op,
+                options=options,
+            )
+
+        return selected_op
 
 
 class KiaraOperationInfoComponent(KiaraInfoComponent):
@@ -154,24 +197,6 @@ class KiaraOperationInfoComponent(KiaraInfoComponent):
             key=options.create_key("outputs"), fields=item.operation.outputs_schema
         )
 
-    def render_all_info(  # type: ignore
-        self, st: DeltaGenerator, key: str, items: OperationGroupInfo, options: InfoCompOptions  # type: ignore
-    ):
-
-        left, right = st.columns([1, 3])
-        selected_op = create_list_component(
-            st=left,
-            title="Operations",
-            items=list(items.item_infos.keys()),
-            key=f"{key}_operation_list",
-        )
-
-        if selected_op:
-            op = items.item_infos[selected_op]
-            self.render_info(
-                st=right, key=f"{key}_{selected_op}", item=op, options=options
-            )
-
 
 class KiaraModuleTypeInfoComponent(KiaraInfoComponent):
 
@@ -186,24 +211,6 @@ class KiaraModuleTypeInfoComponent(KiaraInfoComponent):
     ):
         st.write(item)
 
-    def render_all_info(  # type: ignore
-        self, st: DeltaGenerator, key: str, items: ModuleTypesInfo, options: InfoCompOptions  # type: ignore
-    ):
-
-        left, right = st.columns([1, 3])
-        selected_module_type = create_list_component(
-            st=left,
-            title="Module types",
-            items=list(items.item_infos.keys()),
-            key=f"{key}_module_type_list",
-        )
-
-        if selected_module_type:
-            op = items.item_infos[selected_module_type]
-            self.render_info(
-                st=right, key=f"{key}_{selected_module_type}", item=op, options=options
-            )
-
 
 class KiaraDataTypeInfoComponent(KiaraInfoComponent):
 
@@ -217,24 +224,6 @@ class KiaraDataTypeInfoComponent(KiaraInfoComponent):
         self, st: DeltaGenerator, key: str, item: DataTypeClassInfo, options: InfoCompOptions  # type: ignore
     ):
         st.write(item)
-
-    def render_all_info(  # type: ignore
-        self, st: DeltaGenerator, key: str, items: DataTypeClassesInfo, options: InfoCompOptions  # type: ignore
-    ):
-
-        left, right = st.columns([1, 3])
-        selected_data_type = create_list_component(
-            st=left,
-            title="Data types",
-            items=list(items.item_infos.keys()),
-            key=f"{key}_data_type_list",
-        )
-
-        if selected_data_type:
-            op = items.item_infos[selected_data_type]
-            self.render_info(
-                st=right, key=f"{key}_{selected_data_type}", item=op, options=options
-            )
 
 
 class FieldsInfoOptions(ComponentOptions):
@@ -258,3 +247,43 @@ class FieldsInfo(KiaraComponent[FieldsInfoOptions]):
         df = pd.DataFrame(fields_data, columns=list(fields_data.keys()))
         df.set_index("field_name", inplace=True)
         st.table(df)
+
+
+class OperationDocsOptions(ComponentOptions):
+    pass
+
+
+class OperationDocs(KiaraComponent):
+
+    _component_name = "operation_documentation"
+    _options = OperationDocsOptions
+
+    def _render(self, st: DeltaGenerator, options: OperationDocsOptions):
+
+        left, right = st.columns([1, 3])
+
+        tab_names = ["Overview", "Demo"]
+        overview, demo = right.tabs(tab_names)
+
+        op_info = self.get_component("operation_info")
+        selected = op_info.render_func(st)(
+            key="op_info", columns=(left, overview), height=500
+        )
+
+        if not selected:
+            demo.markdown("No operation selected.")
+        else:
+            code = """import streamlit as st
+import kiara_plugin.streamlit as kst
+kst.init()
+
+result = st.kiara.process_operation("{}")
+""".format(
+                selected
+            )
+
+            demo.code(code)
+            comp = self.get_component("process_operation")
+            comp.render_func(demo)(
+                key=options.create_key("demo"), operation_id=selected
+            )

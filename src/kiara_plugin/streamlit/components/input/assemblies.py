@@ -40,7 +40,7 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
     ) -> Mapping[str, ValueSchema]:
         pass
 
-    def _render(self, st: DeltaGenerator, options: ASSEMBLY_OPTIONS_TYPE):
+    def _render(self, st: DeltaGenerator, options: ASSEMBLY_OPTIONS_TYPE) -> ValueMap:
 
         profile = options.profile
 
@@ -50,14 +50,17 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
 
         fields = self.get_input_fields(options=options)
         func = getattr(self, method_name)
-        return func(st, fields, options=options)
+        result = func(st, fields, options=options)
+
+        value_map = self.api.retrieve_value_map(result, values_schema=fields)
+        return value_map
 
     def render_all(
         self,
         st: DeltaGenerator,
         fields: Mapping[str, ValueSchema],
         options: ASSEMBLY_OPTIONS_TYPE,
-    ) -> ValueMap:
+    ) -> Mapping[str, Union[str, uuid.UUID, ValueLink]]:
 
         max_columns = options.max_columns
 
@@ -97,15 +100,14 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
 
             values[field_name] = r
 
-        result = construct_valuemap(kiara_api=self.api, values=values)
-        return result
+        return values
 
     def render_default(
         self,
         st: DeltaGenerator,
         fields: Mapping[str, ValueSchema],
         options: AssemblyOptions,
-    ) -> ValueMap:
+    ) -> Mapping[str, Union[str, uuid.UUID, ValueLink]]:
 
         required: Dict[str, ValueSchema] = {}
         optional: Dict[str, ValueSchema] = {}
@@ -190,8 +192,8 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
 
                 r = comp.render_input_field(opt_columns[column_idx], input_opts)
                 values[field_name] = r
-        result = construct_valuemap(kiara_api=self.api, values=values)
-        return result
+
+        return values
 
 
 class OperationInputsOptions(AssemblyOptions):

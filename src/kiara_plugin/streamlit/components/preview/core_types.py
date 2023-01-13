@@ -140,6 +140,26 @@ class BooleanPreview(PreviewComponent):
             st.write("false")
 
 
+class StringPreview(PreviewComponent):
+
+    _component_name = "preview_string"
+
+    @classmethod
+    def get_data_type(self) -> str:
+        return "string"
+
+    def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
+
+        _value = self.api.get_value(options.value)
+        text = _value.data
+        st.text_area(
+            label="The string content",
+            value=text,
+            disabled=True,
+            label_visibility="hidden",
+        )
+
+
 class NonePreview(PreviewComponent):
 
     _component_name = "preview_none"
