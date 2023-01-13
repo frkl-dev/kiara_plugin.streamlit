@@ -88,7 +88,7 @@ if workflow_ref not in st.session_state or context_changed or pipeline != new_pi
 else:
     workflow_session = st.session_state[workflow_ref]
 
-if not st.kiara.api.get_alias_names():
+if "example_corpus" not in st.kiara.api.get_alias_names():
     with st.spinner("Downloading example data ..."):
 
         result = st.kiara.api.run_job(
