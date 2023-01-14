@@ -3,11 +3,11 @@ doc: Example topic-modeling end-to-end workflow.
 steps:
   - module_type: create.table.from.file_bundle
     step_id: create_text_corpus
-  - module_type: table.cut_column
+  - module_type: table.pick.column
     step_id: extract_texts_column
     input_links:
       table: create_text_corpus.table
-  - module_type: table.cut_column
+  - module_type: table.pick.column
     step_id: extract_filename_column
     input_links:
       table: create_text_corpus.table
