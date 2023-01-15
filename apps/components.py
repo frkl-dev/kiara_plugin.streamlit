@@ -8,7 +8,7 @@ import kiara_plugin.streamlit as kst
 st.set_page_config(layout="wide")
 
 kst.init()
-st.kiara.api.set_active_context("_components_doc", create=True)
+st.kiara.api.set_active_context("components_doc", create=True)
 
 if "corpus_files" not in st.kiara.api.get_alias_names():
     with st.spinner("Downloading example data ..."):
