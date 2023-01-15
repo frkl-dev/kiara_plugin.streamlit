@@ -3,7 +3,9 @@ from typing import Union
 
 from kiara import ValueMap
 from kiara.exceptions import KiaraException
-from pydantic import Field
+from kiara.interfaces.python_api import OperationInfo
+from kiara.models.module.operation import Operation
+from pydantic import Field, validator
 from streamlit.delta_generator import DeltaGenerator
 
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
@@ -12,6 +14,18 @@ from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 class OperationProcessOptions(ComponentOptions):
 
     operation_id: str = Field(description="The id of the operation to use.")
+
+    @validator("operation_id")
+    def _validate_operation_id(cls, v: str) -> str:
+
+        if isinstance(v, str):
+            return v
+        elif isinstance(v, Operation):
+            return v.operation_id
+        elif isinstance(v, OperationInfo):
+            return v.operation.operation_id
+        else:
+            raise ValueError(f"Invalid type for operation id: {type(v)}.")
 
 
 class OperationProcessPanel(KiaraComponent[OperationProcessOptions]):

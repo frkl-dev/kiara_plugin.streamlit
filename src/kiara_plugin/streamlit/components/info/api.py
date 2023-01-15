@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import Mapping, Type
+from typing import Mapping, Type, Union
 
 from kiara.interfaces.python_api import OperationInfo
 from streamlit.delta_generator import DeltaGenerator
@@ -153,7 +153,7 @@ class OperationDocs(KiaraComponent):
         overview, demo = right.tabs(tab_names)
 
         op_info = self.get_component("operation_info")
-        selected = op_info.render_func(st)(
+        selected: Union[OperationInfo, None] = op_info.render_func(st)(
             key=options.create_key("ops_info"), columns=(left, overview), height=500
         )
 
@@ -166,11 +166,12 @@ kst.init()
 
 result = st.kiara.process_operation("{}")
 """.format(
-                selected
+                selected.operation.operation_id
             )
 
             demo.code(code)
             comp = self.get_component("process_operation")
             comp.render_func(demo)(
-                key=options.create_key("demo"), operation_id=selected
+                key=options.create_key("demo"),
+                operation_id=selected.operation.operation_id,
             )
