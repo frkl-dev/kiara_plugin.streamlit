@@ -10,7 +10,7 @@ st.set_page_config(layout="wide")
 kst.init()
 st.kiara.api.set_active_context("components_doc", create=True)
 
-if "corpus_table" not in st.kiara.api.get_alias_names():
+if "corpus_table" not in st.kiara.api.list_alias_names():
     with st.spinner("Downloading example data ..."):
         pipeline_file = os.path.join(
             os.path.dirname(__file__), "pipelines", "components_doc_onboarding.yaml"

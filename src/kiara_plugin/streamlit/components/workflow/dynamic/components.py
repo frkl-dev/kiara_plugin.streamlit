@@ -95,7 +95,7 @@ class NextStepComponent(DynamicWorkflowComponent):
         else:
             left, right = options.columns
 
-        operations = self.api.get_operations_info(input_types=value.data_type_name)
+        operations = self.api.retrieve_operations_info(input_types=value.data_type_name)
         all_tags = set()
         for op in operations.item_infos.values():
             all_tags.update(op.context.tags)

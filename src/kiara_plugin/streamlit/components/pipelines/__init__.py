@@ -21,7 +21,7 @@ class PipelineSelect(KiaraComponent[PipelineSelectOptions]):
 
     def _render(self, st: DeltaGenerator, options: PipelineSelectOptions):
 
-        pipeline_infos = self.api.get_operations_info(
+        pipeline_infos = self.api.retrieve_operations_info(
             *options.filters, operation_types=["pipeline"]
         )
 

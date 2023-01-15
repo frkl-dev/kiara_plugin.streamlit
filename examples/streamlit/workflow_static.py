@@ -57,14 +57,14 @@ with st.expander("Notes (click to hide)", expanded=True):
     st.markdown(EXPLANATION)
 
 
-current = kst.api.current_context_name
+current = kst.api.get_current_context_name()
 with st.sidebar:
     selected_context = st.kiara.context_switch_control(allow_create=True, key="xxx")
     context_changed = current != selected_context
 
 
 with st.spinner("Registering pipelines ..."):
-    if "topic_modeling" not in kst.api.operation_ids:
+    if "topic_modeling" not in kst.api.list_operation_ids():
         pipelines_path = os.path.join(os.path.dirname(__file__), "pipelines")
         st.kiara.api.register_pipelines(pipelines_path)
 
@@ -88,7 +88,7 @@ if workflow_ref not in st.session_state or context_changed or pipeline != new_pi
 else:
     workflow_session = st.session_state[workflow_ref]
 
-if "example_corpus" not in st.kiara.api.get_alias_names():
+if "example_corpus" not in st.kiara.api.list_alias_names():
     with st.spinner("Downloading example data ..."):
 
         result = st.kiara.api.run_job(

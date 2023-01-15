@@ -117,7 +117,7 @@ class ComponentMgmt(object):
                     )
                 input_components[data_type] = instance  # type: ignore
 
-        for data_type in self._kiara_streamlit.api.data_type_names:
+        for data_type in self._kiara_streamlit.api.list_data_type_names():
 
             if self._kiara_streamlit.api.is_internal_data_type(data_type):
                 continue

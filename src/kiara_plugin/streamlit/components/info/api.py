@@ -77,11 +77,11 @@ class KiaraOperationInfoComponent(KiaraInfoComponent[OperationInfo]):
 
     def get_all_item_infos(self) -> Mapping[str, OperationInfo]:
 
-        return self.api.get_operations_info().item_infos
+        return self.api.retrieve_operations_info().item_infos
 
     def get_info_item(self, item_id: str) -> OperationInfo:
 
-        return self.api.get_operation_info(operation=item_id)
+        return self.api.retrieve_operation_info(operation=item_id)
 
     def render_info(  # type: ignore
         self, st: DeltaGenerator, key: str, item: OperationInfo, options: InfoCompOptions  # type: ignore

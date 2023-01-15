@@ -27,7 +27,7 @@ Another thing I want to show in the future is the whole area of onboarding data 
 with st.expander("Notes (click to hide)", expanded=True):
     st.markdown(EXPLANATION)
 
-current = kst.api.current_context_name
+current = kst.api.get_current_context_name()
 with st.sidebar:
     selected_context = st.kiara.context_switch_control(allow_create=True, key="xxx")
     context_changed = current != selected_context
@@ -40,7 +40,7 @@ if workflow_ref not in st.session_state or context_changed:
 else:
     workflow_session = st.session_state[workflow_ref]
 
-if not st.kiara.api.get_alias_names():
+if not st.kiara.api.list_alias_names():
     with st.spinner("Downloading example data ..."):
 
         result = st.kiara.api.run_job(

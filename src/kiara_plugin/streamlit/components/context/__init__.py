@@ -44,7 +44,7 @@ class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
             if "default" in context_names:
                 context_names.pop(context_names.index("default"))
                 context_names.insert(0, "default")
-            current = self.api.current_context_name
+            current = self.api.get_current_context_name()
 
             selected_context = self.write_selectbox(
                 st=st,
@@ -86,7 +86,7 @@ class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
                     )
                     submitted = st.form_submit_button("Create")
 
-            current = self.api.current_context_name
+            current = self.api.get_current_context_name()
             if submitted:
                 print(f"CREATING CONTEXT: {new_context_name}")
                 self.api.create_new_context(new_context_name, set_active=False)

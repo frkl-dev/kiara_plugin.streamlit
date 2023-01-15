@@ -191,7 +191,7 @@ class ValueMapPreview(KiaraComponent[ValueMapPreviewOptions]):
             st.write("-- no values --")
             return None
 
-        _values = self.api.retrieve_value_map(options.value_map)
+        _values = self.api.assemble_value_map(options.value_map)
 
         field_names = sorted(_values.keys())
         if not options.add_value_types:

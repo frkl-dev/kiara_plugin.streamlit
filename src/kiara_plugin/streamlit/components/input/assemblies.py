@@ -52,7 +52,7 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
         func = getattr(self, method_name)
         result = func(st, fields, options=options)
 
-        value_map = self.api.retrieve_value_map(result, values_schema=fields)
+        value_map = self.api.assemble_value_map(result, values_schema=fields)
         return value_map
 
     def render_all(
