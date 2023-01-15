@@ -49,8 +49,12 @@ class PreviewComponent(KiaraComponent[PreviewOptions]):
 
 
 class DefaultPreviewComponent(PreviewComponent):
+    """The default preview component, will render a preview component dependent on the data type of the provided value."""
 
     _component_name = "preview"
+    _examples = [
+        {"doc": "Preview a table value.", "args": {"value": "nodes_table"}},
+    ]
 
     @classmethod
     def get_data_type(cls) -> str:
@@ -162,12 +166,13 @@ class ValueListPreview(KiaraComponent[PreviewListOptions]):
 
 
 class ValueMapPreviewOptions(ComponentOptions):
-    value_map: Mapping[str, Union[str, uuid.UUID, Value]] = Field(
-        description="The values to display."
-    )
+
     add_value_types: bool = Field(
         description="Whether to add the type of the value to the tab titles.",
         default=True,
+    )
+    value_map: Mapping[str, Union[str, uuid.UUID, Value]] = Field(
+        description="The values to display."
     )
 
 

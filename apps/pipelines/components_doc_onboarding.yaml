@@ -1,0 +1,50 @@
+pipeline_name: operations_doc_onboarding
+doc: Onboard example datasets to be used in the operations doc app.
+steps:
+  - module_type: download.file_bundle
+    step_id: download_example_data
+  - module_type: file_bundle.pick.sub_folder
+    step_id: pick_corpus_data
+    input_links:
+      file_bundle: download_example_data.file_bundle
+  - module_type: create.table.from.file_bundle
+    step_id: create_text_corpus
+    input_links:
+      file_bundle: pick_corpus_data.file_bundle
+  - module_type: file_bundle.pick.file
+    step_id: pick_journal_nodes
+    input_links:
+      file_bundle: download_example_data.file_bundle
+  - module_type: file_bundle.pick.file
+    step_id: pick_journal_edges
+    input_links:
+      file_bundle: download_example_data.file_bundle
+  - module_type: create.table.from.file
+    step_id: create_nodes_table
+    input_links:
+      file: pick_journal_nodes.file
+  - module_type: create.table.from.file
+    step_id: create_edges_table
+    input_links:
+      file: pick_journal_edges.file
+
+
+input_aliases:
+  download_example_data.url: "example_data_url"
+  pick_corpus_data.sub_path: "corpus_sub_folder"
+  pick_journal_edges.path: "journal_edges_path"
+  pick_journal_nodes.path: "journal_nodes_path"
+
+output_aliases:
+  pick_corpus_data.file_bundle: "corpus_file_bundle"
+  create_text_corpus.table: "corpus_table"
+  pick_journal_nodes.file: "nodes_file"
+  pick_journal_edges.file: "edges_file"
+  create_nodes_table.table: "nodes_table"
+  create_edges_table.table: "edges_table"
+
+defaults:
+  example_data_url: "https://github.com/DHARPA-Project/kiara.examples/archive/refs/heads/main.zip"
+  corpus_sub_folder: "kiara.examples-main/examples/data/text_corpus/data"
+  journal_edges_path: "kiara.examples-main/examples/data/journals/JournalEdges1902.csv"
+  journal_nodes_path: "kiara.examples-main/examples/data/journals/JournalNodes1902.csv"

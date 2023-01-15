@@ -15,3 +15,5 @@ ONBOARD_MAKER_KEY = "__ONBOARD__"
 NO_VALUE_MARKER = "-- no value --"
 
 NO_LABEL_MARKER = "-- no label --"
+
+AUTO_GEN_MARKER = "-- generated --"

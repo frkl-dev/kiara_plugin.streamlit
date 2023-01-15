@@ -5,6 +5,12 @@ from streamlit.delta_generator import DeltaGenerator
 
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 
+KIARA_METADATA = {
+    "description": "Kiara streamlit compoents to work with workflows",
+    "tags": ["workflows"],
+    "labels": {"package": "kiara_plugin.core_types"},
+}
+
 
 class WorkflowSession(BaseModel):
     class Config:

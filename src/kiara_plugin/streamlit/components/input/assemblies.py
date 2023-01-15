@@ -19,7 +19,7 @@ class AssemblyOptions(ComponentOptions):
         description="The maximum number of columns to use for the assembly.", default=3
     )
     profile: str = Field(
-        description="The name of the profile that renders the assembly.",
+        description="The name of the profile that renders the assembly. Available: 'default' and 'all'",
         default="default",
     )
     smart_label: bool = Field(
@@ -203,9 +203,16 @@ class OperationInputsOptions(AssemblyOptions):
 
 
 class OperationInputs(InputAssemblyComponent):
+    """Render all inputs for a specifc operation."""
 
     _component_name = "operation_inputs"
     _options = OperationInputsOptions  # type: ignore
+    _examples = [
+        {
+            "doc": "Render the inputs for the 'table_filter.select_rows' operation.",
+            "args": {"operation_id": "table_filter.select_rows"},
+        }
+    ]
 
     def get_input_fields(
         self, options: OperationInputsOptions
@@ -221,9 +228,27 @@ class InputFieldsOptions(AssemblyOptions):
 
 
 class InputFields(InputAssemblyComponent):
+    """Render a panel containing input widgets for each of the provided fields.
 
-    _component_name = "input_fields"
+    The type of input widgets is determined by the type of each field schema.
+    """
+
+    _component_name = "inputs_for_fields"
     _options = InputFieldsOptions  # type: ignore
+    _examples = [
+        {
+            "doc": "Render inputs for 2 scalar field items.\n\nIn most cases, you would not build the field schemas up yourself, but use already existing 'inputs_schema' object attached to operations or workflows.",
+            "args": {
+                "fields": {
+                    "text_field": {
+                        "type": "string",
+                        "doc": "A text field.",
+                    },
+                    "number_field": {"type": "integer", "doc": "A number."},
+                }
+            },
+        }
+    ]
 
     def get_input_fields(
         self, options: InputFieldsOptions

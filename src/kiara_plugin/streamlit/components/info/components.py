@@ -1,76 +1,151 @@
 # -*- coding: utf-8 -*-
-from typing import Union
+from typing import Any, Dict, List, Mapping, Type
 
-from pydantic import Field
+from kiara import Value, ValueMap
+from kiara.models.documentation import DocumentationMetadataModel
 from streamlit.delta_generator import DeltaGenerator
 
-from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
-from kiara_plugin.streamlit.utils.components import create_list_component
+from kiara_plugin.streamlit.components import ComponentInfo, ComponentsInfo
+from kiara_plugin.streamlit.components.info import InfoCompOptions, KiaraInfoComponent
 
 
-class HelpCompOptions(ComponentOptions):
+class KiaraComponentInfoComponent(KiaraInfoComponent[ComponentInfo]):
+    """Display information about a kiara streamlit component.
 
-    attribute: Union[str, None] = Field(description="The attribute to show help for.")
+    This is used to create what you see here.
+    """
 
+    _component_name = "component_info"
 
-class HelpComponent(KiaraComponent[HelpCompOptions]):
+    _examples = [
+        {
+            "doc": "Display component info for the 'input_boolean' component.",
+            "args": {"items": "input_boolean"},
+        },
+    ]
 
-    _component_name = "help"
-    _options = HelpCompOptions
+    @classmethod
+    def get_info_type(cls) -> Type[ComponentInfo]:
+        return ComponentInfo
 
-    def _render(self, st: DeltaGenerator, options: HelpCompOptions):
-
-        attribute = options.attribute
-
-        if not attribute:
-            component_tab, api_tab = st.tabs(["components", "kiara_api"])
-
-            with api_tab:
-                self.kiara_streamlit.kiara_api_help()
-            with component_tab:
-                self.kiara_streamlit.kiara_component_help()
-
-        elif attribute in self.api.doc.keys():
-            st.markdown(self.api.doc[attribute])
-        elif attribute in self.kiara_streamlit.components.keys():
-            component = self.kiara_streamlit.components[attribute]
-            try:
-                _key = options.create_key("component_help", attribute)
-                component.render_func(st)(key=_key)
-            except Exception as e:
-                st.error(e)
-                import traceback
-
-                traceback.print_exc()
-
-
-class KiaraComponentHelpComponent(KiaraComponent):
-
-    _component_name = "kiara_component_help"
-
-    def _render(self, st: DeltaGenerator, options: ComponentOptions):
+    def get_all_item_infos(self) -> Mapping[str, ComponentInfo]:
 
         components = self.kiara_streamlit.components
 
-        left, right = st.columns([1, 3])
-        items = sorted(
-            (x for x in components.keys() if x not in ["kiara_component_help"]),
-            key=str.lower,
+        infos = ComponentsInfo.create_from_instances(
+            title="All components",
+            kiara=self.kiara_streamlit.api.context,
+            instances=components,
         )
 
-        _key = options.create_key("component", "help", "selection_list")
-        selected_component = create_list_component(
-            st=left, title="Components", items=items, key=_key
+        # filter out workflow components, those are not ready yet
+        items = {}
+        for name, info in infos.item_infos.items():
+            if "workflows" in info.context.tags:
+                continue
+            else:
+                items[name] = info
+
+        return items
+
+    def get_info_item(self, item_id: str) -> ComponentInfo:
+
+        comp = self.kiara_streamlit.get_component(item_id)
+        return ComponentInfo.create_from_instance(
+            kiara=self.kiara_streamlit.api.context, instance=comp
         )
 
-        if selected_component in sorted(components.keys()):
-            component = components[selected_component]
-            with right:
-                try:
-                    _key = options.create_key("component", "help", selected_component)
-                    component.render_func(st)(key=_key)
-                except Exception as e:
-                    st.error(e)
-                    import traceback
+    def render_info(  # type: ignore
+        self, st: DeltaGenerator, key: str, item: ComponentInfo, options: InfoCompOptions  # type: ignore
+    ):
+        st.markdown(f"#### Component: `{item.type_name}`")
+        st.markdown(item.documentation.full_doc)
 
-                    traceback.print_exc()
+        comp = self.get_component("fields_info")
+        st.markdown("##### Arguments")
+        arg_table: Dict[str, List[Any]] = {
+            "field": [],
+            "type": [],
+            "required": [],
+            "default": [],
+            "description": [],
+        }
+        for arg_name in item.arguments.keys():
+            arg = item.arguments[arg_name]
+            arg_table["field"].append(arg_name)
+            arg_table["type"].append(arg.python_type)
+            arg_table["required"].append("yes" if arg.required else "no")
+            arg_table["default"].append("" if arg.default is None else str(arg.default))
+            arg_table["description"].append(arg.description)
+
+        st.table(arg_table)
+
+        st.markdown("##### Usage")
+        code = """import streamlit as st
+import kiara_plugin.streamlit as kst
+kst.init()
+
+result = st.kiara.{}({})
+        """.format(
+            item.type_name, "<options>"
+        )
+        st.code(code)
+
+        if item.examples:
+            st.markdown("##### Examples")
+            comp = self.get_component(item.type_name)
+            for idx, example in enumerate(item.examples, start=1):
+                doc = example.get("doc", None)
+                if doc:
+                    d = DocumentationMetadataModel.create(doc)
+                    title = f"**Example**: *{d.description}*"
+                    txt = d.doc
+                else:
+                    title = f"**Example** *#{idx}*"
+                    txt = None
+
+                with st.expander(title, expanded=idx == 1):
+
+                    if txt:
+                        self._st.markdown(txt)
+
+                    _options = []
+                    example_args = example.get("args", {})
+                    for arg_name in item.arguments.keys():
+                        if arg_name in example_args.keys():
+                            v = example_args[arg_name]
+                            if isinstance(v, str):
+                                v = f'"{v}"'
+                            else:
+                                v = str(v)
+                            _options.append(f"{arg_name}={v}")
+
+                    arg_str = ", ".join(_options)
+
+                    code = """result = st.kiara.{}({})
+        """.format(
+                        item.type_name, arg_str
+                    )
+                    self._st.code(code)
+
+                    with self._st.expander("***Rendered component***", expanded=True):
+
+                        try:
+                            result = comp.render_func(self._st)(
+                                **example.get("args", {})
+                            )
+                        except Exception as e:
+                            st.error(e)
+                            result = None
+                        if result:
+                            if isinstance(result, Value):
+                                with self._st.expander("*result*"):
+                                    self.kiara_streamlit.preview(result)
+                            elif isinstance(result, ValueMap):
+                                with self._st.expander("*result*"):
+                                    self.kiara_streamlit.value_map_preview(
+                                        value_map=dict(result)
+                                    )
+                            else:
+                                with self._st.expander("*result*"):
+                                    self._st.markdown(f"***Result***: {result}")

@@ -272,7 +272,7 @@ class DynamicWorkflow(KiaraComponent):
         session.workflow.set_input(field_name=name, value=current_value)
 
         with right:
-            _key = options.create_key("steP_input_fields", pipeline_step)
+            _key = options.create_key("step_input_fields", pipeline_step)
             current_inputs = self.kiara_streamlit.step_input_fields(
                 key=_key, session=session, step_id=pipeline_step
             )

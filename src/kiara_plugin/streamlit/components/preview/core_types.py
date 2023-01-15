@@ -11,6 +11,7 @@ from kiara_plugin.streamlit.components.preview import PreviewComponent, PreviewO
 
 
 class DictPreview(PreviewComponent):
+    """Preview a value of type 'dict'."""
 
     _component_name = "preview_dict"
 
@@ -41,6 +42,7 @@ class DictPreview(PreviewComponent):
 
 
 class ListPreview(PreviewComponent):
+    """Preview a value of type 'list'."""
 
     _component_name = "preview_list"
 
@@ -71,6 +73,7 @@ class ListPreview(PreviewComponent):
 
 
 class FileBundlePreview(PreviewComponent):
+    """Preview a value of type 'file_bundle'."""
 
     _component_name = "preview_file_bundle"
 
@@ -95,6 +98,7 @@ class FileBundlePreview(PreviewComponent):
 
 
 class FilePreview(PreviewComponent):
+    """Preview a value of type 'file'."""
 
     _component_name = "preview_file"
 
@@ -124,6 +128,7 @@ class FilePreview(PreviewComponent):
 
 
 class BooleanPreview(PreviewComponent):
+    """Preview a value of type 'boolean'."""
 
     _component_name = "preview_boolean"
 
@@ -141,6 +146,7 @@ class BooleanPreview(PreviewComponent):
 
 
 class StringPreview(PreviewComponent):
+    """Preview a value of type 'string'."""
 
     _component_name = "preview_string"
 
@@ -160,7 +166,40 @@ class StringPreview(PreviewComponent):
         )
 
 
+class IntegerPreview(PreviewComponent):
+    """Preview a value of type 'integer'."""
+
+    _component_name = "preview_integer"
+
+    @classmethod
+    def get_data_type(self) -> str:
+        return "integer"
+
+    def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
+
+        _value = self.api.get_value(options.value)
+        text = _value.data
+        st.text_input(label="The integer value", value=str(text), disabled=True)
+
+
+class FloatPreview(PreviewComponent):
+    """Preview a value of type 'float'."""
+
+    _component_name = "preview_float"
+
+    @classmethod
+    def get_data_type(self) -> str:
+        return "float"
+
+    def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
+
+        _value = self.api.get_value(options.value)
+        text = _value.data
+        st.text_input(label="The float value", value=str(text), disabled=True)
+
+
 class NonePreview(PreviewComponent):
+    """Preview a none-type value, you should not need this'."""
 
     _component_name = "preview_none"
 

@@ -127,7 +127,13 @@ class ComponentMgmt(object):
                 _doc = f"Render an input widget that prompts the user for a value of type '{data_type}'."
                 _name = f"select_{data_type}"
 
+                _example = {
+                    "doc": f"Render an input widget for a value of type '{data_type}'.",
+                    "args": {},
+                }
+
                 _comp = base_input_cls(kiara_streamlit=self._kiara_streamlit, component_name=_name, data_types=[data_type], doc=_doc)  # type: ignore
+                _comp._instance_examples = [_example]  # type: ignore
                 components[_name] = _comp
                 input_components[data_type] = _comp  # type: ignore
 
@@ -160,6 +166,20 @@ class KiaraStreamlit(object):
         self._runtime_config: Union[None, KiaraRuntimeConfig] = runtime_config
 
         self._api_outside_streamlit: Union[None, KiaraAPI] = None
+
+        ctx = get_script_run_ctx()
+        if ctx is None:
+            # means, this is not running as streamlit script
+            if self._api_outside_streamlit is None:
+                kc = KiaraConfig()
+                self._api_outside_streamlit = KiaraAPI(kc)
+            self.api = self._api_outside_streamlit
+        else:
+            if "__kiara_api__" not in st.session_state.keys():
+                kc = KiaraConfig()
+                kiara_api = KiaraAPI(kc)
+                st.session_state["__kiara_api__"] = kiara_api
+            self.api = st.session_state.__kiara_api__
 
         self._component_mgmt = ComponentMgmt(
             kiara_streamlit=self, example_base_dir=None
@@ -203,22 +223,22 @@ class KiaraStreamlit(object):
     #
     #     self._component_mgmt.add_component(name, component)
 
-    @property
-    def api(self) -> KiaraAPI:
-
-        ctx = get_script_run_ctx()
-        if ctx is None:
-            # means, this is not running as streamlit script
-            if self._api_outside_streamlit is None:
-                kc = KiaraConfig()
-                self._api_outside_streamlit = KiaraAPI(kc)
-            return self._api_outside_streamlit
-        else:
-            if "__kiara_api__" not in st.session_state.keys():
-                kc = KiaraConfig()
-                kiara_api = KiaraAPI(kc)
-                st.session_state["__kiara_api__"] = kiara_api
-            return st.session_state.__kiara_api__
+    # @property
+    # def api(self) -> KiaraAPI:
+    #
+    #     ctx = get_script_run_ctx()
+    #     if ctx is None:
+    #         # means, this is not running as streamlit script
+    #         if self._api_outside_streamlit is None:
+    #             kc = KiaraConfig()
+    #             self._api_outside_streamlit = KiaraAPI(kc)
+    #         return self._api_outside_streamlit
+    #     else:
+    #         if "__kiara_api__" not in st.session_state.keys():
+    #             kc = KiaraConfig()
+    #             kiara_api = KiaraAPI(kc)
+    #             st.session_state["__kiara_api__"] = kiara_api
+    #         return st.session_state.__kiara_api__
 
     @property
     def components(self) -> Mapping[str, KiaraComponent]:

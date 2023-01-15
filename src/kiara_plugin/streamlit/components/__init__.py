@@ -2,7 +2,7 @@
 import abc
 import warnings
 from functools import partial
-from typing import Any, Callable, Generic, List, Type, TypeVar, Union
+from typing import Any, Callable, Dict, Generic, List, Type, TypeVar, Union
 
 import streamlit as st
 from kiara.interfaces.python_api.models.info import InfoItemGroup, ItemInfo
@@ -12,7 +12,10 @@ from kiara.models.documentation import (
     DocumentationMetadataModel,
 )
 from pydantic import BaseModel, Field
+from pydantic.fields import ModelField
 from streamlit.runtime.state import SessionStateProxy
+
+from kiara_plugin.streamlit.defaults import AUTO_GEN_MARKER
 
 with warnings.catch_warnings():
     pass
@@ -29,7 +32,9 @@ if TYPE_CHECKING:
 
 class ComponentOptions(BaseModel):
 
-    key: str = Field(description="The (base) key to use for this component.")
+    key: str = Field(
+        description="The (base) key to use for this component.", default=AUTO_GEN_MARKER
+    )
 
     def create_key(self, *args) -> str:
 
@@ -148,7 +153,7 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
                 continue
             kwargs[key] = arg
 
-        if "key" not in kwargs.keys():
+        if "key" not in kwargs.keys() or AUTO_GEN_MARKER == kwargs["key"]:
             kwargs["key"] = self.default_key()
 
         try:
@@ -158,8 +163,8 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
             import traceback
 
             traceback.print_exc()
-            st.write(f"Error rendering component '{self.component_name}': {e}")
             st.error(e)
+            return None
 
     @abc.abstractmethod
     def _render(self, st: DeltaGenerator, options: COMP_OPTIONS_TYPE):
@@ -170,7 +175,39 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
         return result
 
 
+class ArgInfo(BaseModel):
+    @classmethod
+    def from_field(cls, field_info: ModelField):
+
+        python_type = str(field_info.type_)
+        desc = field_info.field_info.description
+        req = field_info.required
+        default = field_info.default
+
+        if field_info.outer_type_ != field_info.type_:
+            python_type = str(field_info.outer_type_)
+
+        if not desc:
+            desc = "-- n/a --"
+        return ArgInfo(
+            python_type=python_type, description=desc, required=req, default=default
+        )
+
+    python_type: str = Field(description="The python type of this argument.")
+    description: str = Field(description="The description of this argument.")
+    required: bool = Field(description="Whether this argument is required.")
+    default: Any = Field(description="The default value for this argument.")
+
+
 class ComponentInfo(ItemInfo[KiaraComponent]):
+
+    arguments: Dict[str, ArgInfo] = Field(
+        description="The arguments for this component."
+    )
+    examples: List[Dict[str, Any]] = Field(
+        description="The examples for this component.", default_factory=list
+    )
+
     @classmethod
     def base_instance_class(cls) -> Type[KiaraComponent]:
         return KiaraComponent
@@ -180,12 +217,34 @@ class ComponentInfo(ItemInfo[KiaraComponent]):
         authors_md = AuthorsMetadataModel.from_class(cls)
         doc = instance.doc()
         # python_class = PythonClass.from_class(cls)
-        context = ContextMetadataModel.from_class(cls)
+        context = ContextMetadataModel.from_class(instance.__class__)
         type_name = instance.component_name
 
-        return ComponentInfo.construct(
-            type_name=type_name, authors=authors_md, documentation=doc, context=context
+        options_cls = instance.__class__._options
+        args = {}
+        field_names = list(options_cls.__fields__.keys())
+        field_names.reverse()
+        for field_name in field_names:
+            details = options_cls.__fields__[field_name]
+            args[field_name] = ArgInfo.from_field(details)
+
+        if hasattr(instance, "_instance_examples"):
+            examples = instance._instance_examples  # type: ignore
+
+        elif hasattr(instance.__class__, "_examples"):
+            examples = instance.__class__._examples  # type: ignore
+        else:
+            examples = []
+
+        info = ComponentInfo(
+            type_name=type_name,
+            authors=authors_md,
+            documentation=doc,
+            context=context,
+            arguments=args,
+            examples=examples,
         )
+        return info
 
 
 class ComponentsInfo(InfoItemGroup[ComponentInfo]):

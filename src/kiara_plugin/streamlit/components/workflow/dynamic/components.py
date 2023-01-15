@@ -214,7 +214,7 @@ class StepInputFields(DynamicWorkflowComponent):
                 st.write("No additional inputs necessary.")
                 new_inputs = {}
             else:
-                comp = self.kiara_streamlit.get_component("input_fields")
+                comp = self.kiara_streamlit.get_component("inputs_for_fields")
                 _key = options.create_key("missing_inputs_fields", step.step_id)
                 new_inputs = comp.render_func(st)(key=_key, fields=missing_fields)
 

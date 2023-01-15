@@ -8,6 +8,7 @@ from kiara_plugin.streamlit.components.preview import PreviewComponent, PreviewO
 
 
 class ArrayPreview(PreviewComponent):
+    """Preview a value of type 'array'."""
 
     _component_name = "preview_array"
 
@@ -24,6 +25,7 @@ class ArrayPreview(PreviewComponent):
 
 
 class TablePreview(PreviewComponent):
+    """Preview a value of type 'table'."""
 
     _component_name = "preview_table"
 
@@ -40,6 +42,7 @@ class TablePreview(PreviewComponent):
 
 
 class DatabasePreview(PreviewComponent):
+    """Preview a value of type 'database'."""
 
     _component_name = "preview_database"
 

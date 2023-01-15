@@ -5,6 +5,10 @@ from kiara_plugin.streamlit.components.preview import PreviewComponent, PreviewO
 
 
 class NetworkDataPreview(PreviewComponent):
+    """Preview a value of type 'network data'.
+
+    Currently, this displays a graph, as well as the nodes and edges tables. The graph is only a preview, and takes a while to render depending on the network data size, this will replaced at some point.
+    """
 
     _component_name = "preview_network_data"
 

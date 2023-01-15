@@ -39,8 +39,12 @@ class ScalarInput(InputComponent):
 
 
 class BooleanInput(ScalarInput):
+    """Render a checkbox for a boolean input."""
 
     _component_name = "input_boolean"
+    _examples = [
+        {"doc": "A simple boolean input.", "args": {"label": "Should I?"}},
+    ]
 
     @classmethod
     def get_data_type(cls) -> str:
@@ -72,8 +76,12 @@ class BooleanInput(ScalarInput):
 
 
 class StringInput(ScalarInput):
+    """Render a text input widget."""
 
     _component_name = "input_string"
+    _examples = [
+        {"doc": "A simple text field input.", "args": {"label": "Say somthing"}},
+    ]
 
     @classmethod
     def get_data_type(cls) -> str:
@@ -104,8 +112,21 @@ class StringInput(ScalarInput):
 
 
 class IntegerInput(ScalarInput):
+    """Render an integer input widget.
+
+    You can select between two different styles:
+    - "default": a number input widget
+    - "text_input": a text input widget, which will be converted to an integer
+    """
 
     _component_name = "input_integer"
+    _examples = [
+        {"doc": "A simple integer input.", "args": {"label": "Select an integer."}},
+        {
+            "doc": "A text field to provide an interger.",
+            "args": {"label": "Enter a number.", "display_style": "text_input"},
+        },
+    ]
 
     @classmethod
     def get_data_type(cls) -> str:
@@ -121,15 +142,18 @@ class IntegerInput(ScalarInput):
         options: InputOptions,
     ):
 
-        style = options.display_style
-        if not style:
-            style = "default"
-
         default = options.get_default()
         if default in [None, SpecialValue.NOT_SET, SpecialValue.NO_VALUE]:
             default = int(0)
         else:
             default = int(default)
+
+        style = options.display_style
+        if not style:
+            style = "default"
+
+        if style == "text_input":
+            default = str(default)
 
         callback, _key = self._create_session_store_callback(
             options, "input", "scalar", self.__class__.get_data_type(), default=default
@@ -138,7 +162,7 @@ class IntegerInput(ScalarInput):
         if style == "default":
             number = st.number_input(
                 label=options.label,
-                key=_key,
+                key=f"{_key}__default",
                 help=options.help,
                 on_change=callback,
                 step=1,
@@ -147,7 +171,7 @@ class IntegerInput(ScalarInput):
         elif style == "text_input":
             number_str = st.text_input(
                 label=options.label,
-                key=_key,
+                key=f"{_key}__text_input",
                 on_change=callback,
                 help=options.help,
             )
@@ -162,8 +186,21 @@ class IntegerInput(ScalarInput):
 
 
 class FloatInput(ScalarInput):
+    """Render an input widget for a floating point number.
+
+    You can select between two different styles:
+    - "default": a number input widget
+    - "text_input": a text input widget, which will be converted to an integer
+    """
 
     _component_name = "input_float"
+    _examples = [
+        {"doc": "A simple float input.", "args": {"label": "Select a float."}},
+        {
+            "doc": "A text field to provide an interger.",
+            "args": {"label": "Enter a float.", "display_style": "text_input"},
+        },
+    ]
 
     @classmethod
     def get_data_type(cls) -> str:
@@ -179,15 +216,18 @@ class FloatInput(ScalarInput):
         options: InputOptions,
     ):
 
-        style = options.display_style
-        if not style:
-            style = "default"
-
         default = options.get_default()
         if default in [None, SpecialValue.NOT_SET, SpecialValue.NO_VALUE]:
             default = 0.0
         else:
             default = float(default)
+
+        style = options.display_style
+        if not style:
+            style = "default"
+
+        if style == "text_input":
+            default = str(default)
 
         callback, _key = self._create_session_store_callback(
             options, "input", "scalar", self.__class__.get_data_type(), default=default

@@ -6,8 +6,15 @@ from kiara_plugin.streamlit.components.input import InputComponent, InputOptions
 
 
 class ListInput(InputComponent):
+    """Render a widget for input a list.
+
+    Currently, only lists of strings are supported.
+    """
 
     _component_name = "input_list"
+    _examples = [
+        {"doc": "A simple list input widget.", "args": {"label": "List of words"}},
+    ]
 
     @classmethod
     def get_data_type(cls) -> str:
@@ -25,8 +32,7 @@ class ListInput(InputComponent):
         if options.smart_label:
             options.label = options.label.split("__")[-1]
 
-        # current = self.get_session_var(options, "input", "list", default=[])
-        with st:
+        with st.container():
             items = st_tags(
                 label=options.label,
                 text="Press enter to add more",

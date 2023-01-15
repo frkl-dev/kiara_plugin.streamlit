@@ -69,7 +69,7 @@ class WorkflowStatic(KiaraComponent[StaticWorkflowOptions]):
             inputs = pipeline_structure.get_pipeline_inputs_schema_for_step(step)
             current_inputs.update(inputs)
 
-        comp = self.get_component("input_fields")
+        comp = self.get_component("inputs_for_fields")
         inputs = comp.render(st, current_inputs, smart_label=False)
 
         workflow.set_inputs(**inputs)

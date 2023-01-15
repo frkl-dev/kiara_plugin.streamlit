@@ -8,18 +8,34 @@ from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 
 
 class ContextSwitchOptions(ComponentOptions):
+
     allow_create: bool = Field(
         description="Allow the user to create a new context.", default=False
     )
     switch_to_selected: bool = Field(
-        description="Switch to the selected context.", default=True
+        description="Immediately switch to the selected context.", default=True
     )
 
 
 class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
+    """A component to switch between kiara contexts.
+
+    A *kiara* context is used to separate different sets of data and configuration, and is
+    useful to keep datasets and processing results organized.
+    """
 
     _options = ContextSwitchOptions
     _component_name = "context_switch_control"
+
+    _examples = [
+        {
+            "doc": "Show a context switch control.\n\nAllow the user to create a new context, and don't immediately switch to the selected context. You can compare the result of this component call with a call to `st.api.current_context_name`, to figure out whether the user wants to switch or not.",
+            "args": {
+                "switch_to_selected": False,
+                "allow_create": True,
+            },
+        }
+    ]
 
     def _render(self, st: DeltaGenerator, options: ContextSwitchOptions) -> bool:
 
@@ -41,9 +57,8 @@ class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
             )
             if selected_context != current:
                 self.api.set_active_context(selected_context)
-                return True
-            else:
-                return False
+
+            return selected_context
 
         else:
 
