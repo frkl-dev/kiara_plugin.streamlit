@@ -1,0 +1,31 @@
+pipeline_name: example
+steps:
+  - module_type: dummy
+    step_id: "step_1"
+    module_config:
+      desc: "First step"
+      inputs_schema:
+        field_1:
+          type: "string"
+          doc: "first input"
+        field_2:
+          type: "string"
+          doc: "second input"
+      outputs_schema:
+        output_1:
+          type: "string"
+          doc: "output value"
+  - module_type: dummy
+    step_id: "step_2"
+    module_config:
+      desc: "2nd step"
+      inputs_schema:
+        step_2_1:
+          type: string
+          doc: "2nd step input"
+      outputs_schema:
+        output_1:
+          type: string
+          doc: "the result"
+    input_links:
+      step_2_1: step_1.output_1
