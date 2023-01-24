@@ -1,0 +1,31 @@
+# -*- coding: utf-8 -*-
+import os
+
+import nltk
+import streamlit as st
+
+import kiara_plugin.streamlit as kiara_streamlit
+from kiara_plugin.streamlit.components.workflow.static import WorkflowSessionStatic
+
+st.set_page_config(layout="wide")
+
+kst = kiara_streamlit.init()
+
+current = kst.api.get_current_context_name()
+with st.sidebar:
+    selected_context = st.kiara.context_switch_control(allow_create=True, key="xxx")
+    context_changed = current != selected_context
+
+pipeline = {{ pipeline.structure.pipeline_config.get_raw_config() }}
+
+
+workflow_ref = "workflow_static"
+if workflow_ref not in st.session_state or context_changed:
+    workflow = st.kiara.api.create_workflow(initial_pipeline=pipeline)
+    workflow_session: WorkflowSessionStatic = WorkflowSessionStatic(workflow=workflow)
+    st.session_state[workflow_ref] = workflow_session
+
+else:
+    workflow_session = st.session_state[workflow_ref]
+
+st.kiara.workflow(workflow_session)

@@ -85,6 +85,9 @@ streamlit = "kiara_plugin.streamlit.interfaces.cli.streamlit:streamlit"
 [project.entry-points."kiara.streamlit_components"]
 streamlit = "kiara_plugin.streamlit:find_kiara_streamlit_components"
 
+[project.entry-points."kiara.renderers"]
+jupyter = "kiara_plugin.streamlit:find_renderer_classes"
+
 [project.urls]
 homepage = "https://github.com/DHARPA-Project/kiara_plugin.streamlit"
 documentation = "https://DHARPA-Project.github.io/kiara_plugin.streamlit"

@@ -12,6 +12,7 @@ from kiara.utils.class_loading import (
     find_data_types_under,
     find_kiara_model_classes_under,
     find_kiara_modules_under,
+    find_kiara_renderers_under,
     find_pipeline_base_path_for_module,
 )
 
@@ -60,10 +61,13 @@ find_pipelines: KiaraEntryPointItem = (
     "kiara_plugin.streamlit.pipelines",
     KIARA_METADATA,
 )
-
 find_kiara_streamlit_components: KiaraEntryPointItem = (
     find_kiara_streamlit_components_under,
     "kiara_plugin.streamlit.components",
+)
+find_renderer_classes: KiaraEntryPointItem = (
+    find_kiara_renderers_under,
+    "kiara_plugin.streamlit.renderers",
 )
 
 
