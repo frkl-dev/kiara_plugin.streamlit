@@ -44,8 +44,8 @@ dynamic = ["version"]
 
 [project.optional-dependencies]
 all_plugins = [
-    "kiara_plugin.network_analysis>=0.4.7",
-    "kiara_plugin.language_processing>=0.4.9",
+    "kiara_plugin.network_analysis>=0.4.9",
+    "kiara_plugin.language_processing>=0.4.10",
     "kiara_plugin.onboarding>=0.4.2"
 ]
 dev_documentation = [
