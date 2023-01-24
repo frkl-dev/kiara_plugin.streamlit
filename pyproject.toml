@@ -64,6 +64,27 @@ dev_all = [
     "kiara[dev_all]"
 ]
 
+[project.entry-points."kiara.plugin"]
+streamlit = "kiara_plugin.streamlit"
+
+[project.entry-points."kiara.data_types"]
+streamlit = "kiara_plugin.streamlit:find_data_types"
+
+[project.entry-points."kiara.model_classes"]
+streamlit = "kiara_plugin.streamlit:find_model_classes"
+
+[project.entry-points."kiara.modules"]
+streamlit = "kiara_plugin.streamlit:find_modules"
+
+[project.entry-points."kiara.pipelines"]
+streamlit = "kiara_plugin.streamlit:find_pipelines"
+
+[project.entry-points."kiara.cli_subcommands"]
+streamlit = "kiara_plugin.streamlit.interfaces.cli.streamlit:streamlit"
+
+[project.entry-points."kiara.streamlit_components"]
+streamlit = "kiara_plugin.streamlit:find_kiara_streamlit_components"
+
 [project.urls]
 homepage = "https://github.com/DHARPA-Project/kiara_plugin.streamlit"
 documentation = "https://DHARPA-Project.github.io/kiara_plugin.streamlit"
