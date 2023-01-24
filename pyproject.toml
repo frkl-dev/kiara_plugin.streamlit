@@ -30,9 +30,9 @@ classifiers = [
     "Programming Language :: Python :: 3.11"
 ]
 dependencies = [
-    "kiara>=0.4.25",
-    "kiara_plugin.tabular>=0.4.18",
-    "kiara_plugin.onboarding>=0.4.1",
+    "kiara>=0.4.29",
+    "kiara_plugin.tabular>=0.4.20",
+    "kiara_plugin.onboarding>=0.4.2",
     "streamlit>=1.16.0",
     "streamlit-aggrid>=0.3.3",
     "importlib-resources",
@@ -46,7 +46,7 @@ dynamic = ["version"]
 all_plugins = [
     "kiara_plugin.network_analysis>=0.4.7",
     "kiara_plugin.language_processing>=0.4.9",
-    "kiara_plugin.onboarding>=0.4.1"
+    "kiara_plugin.onboarding>=0.4.2"
 ]
 dev_documentation = [
     "kiara[dev_documentation]"
