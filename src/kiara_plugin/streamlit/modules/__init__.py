@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from typing import Any, Dict
+from typing import Any, Dict, Mapping
 
 from boltons.strutils import slugify
-from kiara import KiaraModule, KiaraModuleConfig, ValueMap, ValueMapSchema, ValueSchema
+from kiara import KiaraModule, KiaraModuleConfig, ValueMap, ValueMapSchema
 from kiara.models.module.pipeline import PipelineConfig
 from pydantic import Field
 
@@ -50,7 +50,7 @@ class Dummymodule(KiaraModule):
     ) -> ValueMapSchema:
 
         result = {}
-        v: ValueSchema
+        v: Mapping[str, Any]
         for k, v in self.get_config_value("inputs_schema").items():
             data = {
                 "type": v["type"],
