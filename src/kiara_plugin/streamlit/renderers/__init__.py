@@ -1,31 +1,32 @@
 # -*- coding: utf-8 -*-
-from typing import Any, List, Mapping, Type
+from typing import Any, Iterable, Mapping, Union
 
 from jinja2 import Template
 from kiara.models.module.pipeline.pipeline import Pipeline
-from kiara.renderers import RenderInputsSchema
+from kiara.renderers import RenderInputsSchema, SourceTransformer
+from kiara.renderers.included_renderers.pipeline import PipelineTransformer
 from kiara.renderers.jinja import BaseJinjaRenderer, JinjaEnv
 from kiara.utils import log_message
 
 
 class PipelineRendererStreamlit(BaseJinjaRenderer[Pipeline, RenderInputsSchema]):
+    """Renders a basic streamlit app from a pipeline structure."""
 
-    _renderer_name = "pipeline_streamlit_renderer"
-
-    _render_profiles = {"streamlit_app": {}}  # type: ignore
-
-    @classmethod
-    def retrieve_supported_render_source(cls) -> str:
-        return "pipeline"
-
-    @classmethod
-    def retrieve_supported_python_classes(cls) -> List[Type[Any]]:
-        return [Pipeline]
+    _renderer_name = "pipeline_streamlit_app"
 
     def retrieve_jinja_env(self) -> JinjaEnv:
 
         jinja_env = JinjaEnv(template_base="kiara_plugin.streamlit")
         return jinja_env
+
+    def retrieve_supported_render_sources(self) -> str:
+        return "pipeline"
+
+    def retrieve_supported_render_targets(cls) -> Union[Iterable[str], str]:
+        return "streamlit_app"
+
+    def retrieve_source_transformers(self) -> Iterable[SourceTransformer]:
+        return [PipelineTransformer(kiara=self._kiara)]
 
     def get_template(self, render_config: RenderInputsSchema) -> Template:
 
