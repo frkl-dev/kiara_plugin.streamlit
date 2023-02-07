@@ -4,6 +4,7 @@ steps:
     step_id: "step_1"
     module_config:
       desc: "First step"
+      title: "First step"
       inputs_schema:
         field_1:
           type: "string"
@@ -19,6 +20,7 @@ steps:
     step_id: "step_2"
     module_config:
       desc: "2nd step"
+      title: "Second step"
       inputs_schema:
         step_2_1:
           type: string

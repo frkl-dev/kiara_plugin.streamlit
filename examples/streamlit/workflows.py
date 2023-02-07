@@ -16,7 +16,7 @@ st.selectbox("Select data type", data_types, key="data_type")
 
 ops = api.list_operation_ids()
 op = st.selectbox("Select operations", ops, key="ops")
-st.kiara.operation_info(op)
+st.kiara.item_info(op)
 
 req1 = st.kiara.step_requirements(key="req1")
 req2 = st.kiara.step_requirements(key="req2")

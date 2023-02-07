@@ -3,6 +3,7 @@ import os
 
 import nltk
 import streamlit as st
+from kiara.interfaces.python_api import OperationInfo
 
 import kiara_plugin.streamlit as kiara_streamlit
 from kiara_plugin.streamlit.components.workflow.static import WorkflowSessionStatic
@@ -65,15 +66,20 @@ with st.sidebar:
 
 with st.spinner("Registering pipelines ..."):
     if "topic_modeling" not in kst.api.list_operation_ids():
-        pipelines_path = os.path.join(os.path.dirname(__file__), "pipelines")
-        st.kiara.api.register_pipelines(pipelines_path)
+        pipelines_path = os.path.join(
+            os.path.dirname(__file__), "pipelines", "topic_modeling.yaml"
+        )
+        ops = st.kiara.api.register_pipelines(pipelines_path)
 
 pipeline = None
 if "selected_pipeline" in st.session_state:
     pipeline = st.session_state["selected_pipeline"]
 
 with st.sidebar:
-    new_pipeline = st.kiara.select_pipeline(filters=["topic_modeling"])
+    new_pipeline_info: OperationInfo = st.kiara.select_pipeline(
+        filters=["topic_modeling"]
+    )
+    new_pipeline = new_pipeline_info.operation.operation_id
     st.session_state["selected_pipeline"] = new_pipeline
 
 # new_pipeline = "/home/markus/projects/kiara/kiara.examples/examples/pipelines/topic_modeling/topic_modeling.yaml"
