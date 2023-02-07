@@ -42,7 +42,7 @@ kiara: KiaraAPI = st.kiara.api
 *kiara* will download a csv file from a url you provide, it will execute the 'download.file' operation. For details about this operation, click on the expander below.
 """
 with st.expander("Show operation info 'download.file'", expanded=False):
-    st.write(st.kiara.item_info("download.file"))
+    st.write(st.kiara.operation_info("download.file"))
 
 # So from this, we know that download.file will download a single file from a remote location for us to use in kiara.  We need to give the function a url and, if we want, a file name. These are the inputs.  In return, we will get the file and metadata about the file as our outputs.
 # Let’s give this a go using some kiara sample data.
@@ -97,7 +97,7 @@ op_id = "create.table.from.file"
 create_table_info = kiara.retrieve_operation_info(op_id)
 
 with st.expander(f"Show operation info '{op_id}'", expanded=False):
-    st.kiara.item_info(op_id)
+    st.kiara.operation_info(op_id)
 
 # Great, we have all the information we need now.
 # Let’s go again.
@@ -139,7 +139,7 @@ Now that we have our table, we can do things like querying it via SQL.
 """
 
 with st.expander("Show operation info 'query.table'", expanded=False):
-    st.kiara.item_info("query.table")
+    st.kiara.operation_info("query.table")
 
 query = st.text_input(
     "Please provide a query", value="SELECT * from data where City like 'Berlin'"
