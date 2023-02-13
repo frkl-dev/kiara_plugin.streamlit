@@ -83,7 +83,7 @@ class InputComponent(KiaraComponent[INPUT_OPTIONS_TYPE]):
         if not value:
             return None
         else:
-            return self.api.get_value(value)
+            return self.api.get_value(value)  # type: ignore
 
     def _create_session_store_callback(
         self, options: ComponentOptions, *key, default=None
