@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import streamlit as st
-from kiara import KiaraAPI
+from kiara.api import KiaraAPI
 
 import kiara_plugin.streamlit as kst
 from kiara_plugin.streamlit.modules import DummyModuleConfig

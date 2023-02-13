@@ -3,7 +3,7 @@ import abc
 import uuid
 from typing import Dict, Mapping, TypeVar, Union
 
-from kiara import ValueMap, ValueSchema
+from kiara.api import ValueMap, ValueSchema
 from kiara.registries.data import ValueLink
 from kiara.utils.values import construct_valuemap
 from pydantic import Field

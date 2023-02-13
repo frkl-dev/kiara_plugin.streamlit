@@ -2,7 +2,7 @@
 from typing import Any, Dict, Mapping
 
 from boltons.strutils import slugify
-from kiara import KiaraModule, KiaraModuleConfig, ValueMap, ValueMapSchema
+from kiara.api import KiaraModule, KiaraModuleConfig, ValueMap, ValueMapSchema
 from kiara.models.module.pipeline import PipelineConfig
 from pydantic import Field
 

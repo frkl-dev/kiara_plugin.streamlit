@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import Dict, List, Union
 
-from kiara import Value
+from kiara.api import Value
 from kiara.interfaces.python_api import OperationInfo, Workflow
 from pydantic import Field
 

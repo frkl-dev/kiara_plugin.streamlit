@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import Mapping
 
-from kiara import ValueSchema
+from kiara.api import ValueSchema
 from kiara.utils.output import create_dict_from_field_schemas
 from pydantic import Field
 from streamlit.delta_generator import DeltaGenerator

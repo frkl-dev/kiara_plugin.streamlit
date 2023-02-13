@@ -4,7 +4,7 @@ import copy
 import uuid
 from typing import TYPE_CHECKING, Any, Callable, Iterable, List, Tuple, TypeVar, Union
 
-from kiara import Value, ValueSchema
+from kiara.api import Value, ValueSchema
 from kiara.defaults import SpecialValue
 from kiara.registries.data import ValueLink
 from pydantic import Field
@@ -14,7 +14,7 @@ from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 from kiara_plugin.streamlit.defaults import NO_LABEL_MARKER, NO_VALUE_MARKER
 
 if TYPE_CHECKING:
-    from kiara_plugin.streamlit import KiaraStreamlit
+    from kiara_plugin.streamlit.streamlit import KiaraStreamlit
 
 
 class InputOptions(ComponentOptions):

@@ -30,9 +30,8 @@ classifiers = [
     "Programming Language :: Python :: 3.11"
 ]
 dependencies = [
-    "kiara>=0.4.31",
-    "kiara_plugin.tabular>=0.4.21",
-    "kiara_plugin.onboarding>=0.4.2",
+    "kiara_plugin.tabular>=0.4.22",
+    "kiara_plugin.onboarding>=0.4.3",
     "streamlit>=1.16.0",
     "streamlit-aggrid>=0.3.3",
     "importlib-resources",

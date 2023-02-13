@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import Dict, Mapping, Tuple, TypeVar, Union
 
-from kiara import Value
+from kiara.api import Value
 from kiara.models.module.operation import Operation
 from pydantic import Field
 from streamlit.delta_generator import DeltaGenerator

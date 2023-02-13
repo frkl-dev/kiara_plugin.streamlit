@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Dict, Mapping, Union
 
 import streamlit as st
-from kiara import KiaraAPI
+from kiara.api import KiaraAPI
 from kiara.context import KiaraConfig, KiaraContextConfig, KiaraRuntimeConfig
 from streamlit.runtime.scriptrunner import get_script_run_ctx
 

@@ -4,9 +4,6 @@ from typing import Iterable
 import rich_click as click
 from kiara.utils.cli import output_format_option, terminal_print_model
 
-from kiara_plugin.streamlit import KiaraStreamlit
-from kiara_plugin.streamlit.components import ComponentsInfo
-
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
@@ -30,6 +27,9 @@ def streamlit(ctx):
 @click.pass_context
 def list_components(ctx, filter: Iterable[str], full_doc: bool, format: str):
     """List all available streamlit components."""
+
+    from kiara_plugin.streamlit.components import ComponentsInfo
+    from kiara_plugin.streamlit.streamlit import KiaraStreamlit
 
     kiara_streamlit = KiaraStreamlit()
 

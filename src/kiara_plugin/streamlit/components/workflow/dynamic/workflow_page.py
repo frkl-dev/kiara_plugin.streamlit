@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import List, Union
 
-from kiara import Value
+from kiara.api import Value
 from kiara.interfaces.python_api import OperationInfo
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.pipeline import PipelineStep, generate_pipeline_endpoint_name

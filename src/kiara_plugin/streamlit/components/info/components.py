@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import Any, Dict, List, Mapping, Type
 
-from kiara import Value, ValueMap
+from kiara.api import Value, ValueMap
 from kiara.models.documentation import DocumentationMetadataModel
 from streamlit.delta_generator import DeltaGenerator
 

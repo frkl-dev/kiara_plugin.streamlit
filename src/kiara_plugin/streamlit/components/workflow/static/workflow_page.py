@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import Dict
 
-from kiara import ValueSchema
+from kiara.api import ValueSchema
 from kiara.exceptions import KiaraException
 from kiara.models.module.pipeline import StepStatus
 from kiara.models.module.pipeline.structure import PipelineStructure

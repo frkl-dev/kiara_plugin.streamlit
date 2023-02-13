@@ -2,7 +2,7 @@
 import uuid
 from typing import Dict, List, TypeVar, Union
 
-from kiara import ValueMap
+from kiara.api import ValueMap
 from pydantic import Field
 from streamlit.delta_generator import DeltaGenerator
 

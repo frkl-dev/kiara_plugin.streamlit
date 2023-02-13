@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import Union
 
-from kiara import ValueMap
+from kiara.api import ValueMap
 from kiara.exceptions import KiaraException
 from kiara.interfaces.python_api import OperationInfo
 from kiara.models.module.operation import Operation

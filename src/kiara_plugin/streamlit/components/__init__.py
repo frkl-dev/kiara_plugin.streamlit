@@ -25,9 +25,9 @@ from typing import TYPE_CHECKING
 from streamlit.delta_generator import DeltaGenerator
 
 if TYPE_CHECKING:
-    from kiara import Kiara, KiaraAPI
+    from kiara.api import Kiara, KiaraAPI
 
-    from kiara_plugin.streamlit import KiaraStreamlit
+    from kiara_plugin.streamlit.streamlit import KiaraStreamlit
 
 
 class ComponentOptions(BaseModel):

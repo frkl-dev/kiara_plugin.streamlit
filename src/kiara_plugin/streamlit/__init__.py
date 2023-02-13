@@ -2,11 +2,11 @@
 
 """Top-level package for kiara_plugin.streamlit."""
 import os
+import typing
 import warnings
 from typing import Union
 
-import streamlit as st
-from kiara.context import KiaraContextConfig, KiaraRuntimeConfig
+# import streamlit as st
 from kiara.utils.class_loading import (
     KiaraEntryPointItem,
     find_data_types_under,
@@ -16,11 +16,16 @@ from kiara.utils.class_loading import (
     find_pipeline_base_path_for_module,
 )
 
-import kiara_plugin.streamlit.utils.monkey_patches  # noqa
-from kiara_plugin.streamlit.streamlit import KiaraStreamlit
+# import kiara_plugin.streamlit.utils.monkey_patches  # noqa
 from kiara_plugin.streamlit.utils.class_loading import (
     find_kiara_streamlit_components_under,
 )
+
+if typing.TYPE_CHECKING:
+    from kiara.context import KiaraContextConfig, KiaraRuntimeConfig
+
+    from kiara_plugin.streamlit.streamlit import KiaraStreamlit
+
 
 __author__ = """Markus Binsteiner"""
 __email__ = "markus@frkl.io"
@@ -99,11 +104,17 @@ def get_version():
 
 
 def init(
-    context_config: Union[None, KiaraContextConfig] = None,
-    runtime_config: Union[None, KiaraRuntimeConfig] = None,
-) -> KiaraStreamlit:
+    context_config: Union[None, "KiaraContextConfig"] = None,
+    runtime_config: Union[None, "KiaraRuntimeConfig"] = None,
+) -> "KiaraStreamlit":
+
+    import streamlit as st
+
+    import kiara_plugin.streamlit.utils.monkey_patches  # noqa
+    from kiara_plugin.streamlit.streamlit import KiaraStreamlit
+
     @st.experimental_singleton
-    def get_ktx() -> KiaraStreamlit:
+    def get_ktx() -> "KiaraStreamlit":
         print("CREATE KIARA STREAMLIT")
         ktx = KiaraStreamlit(
             context_config=context_config, runtime_config=runtime_config
