@@ -2,16 +2,24 @@
 from typing import Any, Dict, Mapping
 
 from boltons.strutils import slugify
+from pydantic import Field
+
 from kiara.api import KiaraModule, KiaraModuleConfig, ValueMap, ValueMapSchema
 from kiara.models.module.pipeline import PipelineConfig
-from pydantic import Field
 
 
 class DummyModuleConfig(KiaraModuleConfig):
     @classmethod
-    def create_pipeline_config(cls, title: str, description: str, author: str, *steps: "DummyModuleConfig") -> PipelineConfig:
+    def create_pipeline_config(
+        cls, title: str, description: str, author: str, *steps: "DummyModuleConfig"
+    ) -> PipelineConfig:
 
-        data: Dict[str, Any] = {"pipeline_name": slugify(title), "doc": description, "context": {"authors": [author]},  "steps": []}
+        data: Dict[str, Any] = {
+            "pipeline_name": slugify(title),
+            "doc": description,
+            "context": {"authors": [author]},
+            "steps": [],
+        }
         for step in steps:
             step_data = {
                 "step_id": slugify(step.title),

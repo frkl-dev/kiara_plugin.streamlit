@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from typing import Union
 
-from streamlit.delta_generator import DeltaGenerator
-
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 from kiara_plugin.streamlit.modules import DummyModuleConfig
+from streamlit.delta_generator import DeltaGenerator
 
 
 class StepRequirementsOptions(ComponentOptions):

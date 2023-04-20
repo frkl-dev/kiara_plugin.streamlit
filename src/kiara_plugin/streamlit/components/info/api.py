@@ -2,10 +2,9 @@
 from typing import Mapping, Type, Union
 
 from kiara.interfaces.python_api import OperationInfo
-from streamlit.delta_generator import DeltaGenerator
-
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 from kiara_plugin.streamlit.components.info import InfoCompOptions, KiaraInfoComponent
+from streamlit.delta_generator import DeltaGenerator
 
 # class KiaraApiHelpCompOptions(ComponentOptions):
 #     class Config:

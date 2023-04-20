@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
+from kiara_plugin.streamlit.components.preview import PreviewComponent, PreviewOptions
 from kiara_plugin.tabular.models.array import KiaraArray
 from kiara_plugin.tabular.models.db import KiaraDatabase
 from kiara_plugin.tabular.models.table import KiaraTable
 from streamlit.delta_generator import DeltaGenerator
-
-from kiara_plugin.streamlit.components.preview import PreviewComponent, PreviewOptions
 
 
 class ArrayPreview(PreviewComponent):

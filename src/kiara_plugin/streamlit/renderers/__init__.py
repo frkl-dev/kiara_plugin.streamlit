@@ -2,6 +2,7 @@
 from typing import Any, Iterable, Mapping, Union
 
 from jinja2 import Template
+
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.renderers import RenderInputsSchema, SourceTransformer
 from kiara.renderers.included_renderers.pipeline import PipelineTransformer

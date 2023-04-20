@@ -2,12 +2,12 @@
 import uuid
 from typing import Dict, List, TypeVar, Union
 
-from kiara.api import ValueMap
 from pydantic import Field
-from streamlit.delta_generator import DeltaGenerator
 
+from kiara.api import ValueMap
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 from kiara_plugin.streamlit.components.workflow.static import WorkflowSessionStatic
+from streamlit.delta_generator import DeltaGenerator
 
 
 class StaticWorkflowOptions(ComponentOptions):

@@ -5,8 +5,6 @@ from kiara.api import Value
 from kiara.interfaces.python_api import OperationInfo
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.pipeline import PipelineStep, generate_pipeline_endpoint_name
-from streamlit.delta_generator import DeltaGenerator
-
 from kiara_plugin.streamlit.components import KiaraComponent
 from kiara_plugin.streamlit.components.workflow.dynamic import (
     LEFT_COLUMN,
@@ -16,6 +14,7 @@ from kiara_plugin.streamlit.components.workflow.dynamic import (
 from kiara_plugin.streamlit.components.workflow.dynamic.components import (
     DynamicWorkflowOptions,
 )
+from streamlit.delta_generator import DeltaGenerator
 
 
 class DynamicWorkflow(KiaraComponent):

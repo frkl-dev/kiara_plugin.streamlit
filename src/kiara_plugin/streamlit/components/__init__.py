@@ -4,6 +4,9 @@ import warnings
 from functools import partial
 from typing import Any, Callable, Dict, Generic, List, Type, TypeVar, Union
 
+from pydantic import BaseModel, Field
+from pydantic.fields import ModelField
+
 import streamlit as st
 from kiara.interfaces.python_api.models.info import InfoItemGroup, ItemInfo
 from kiara.models.documentation import (
@@ -11,11 +14,8 @@ from kiara.models.documentation import (
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
-from pydantic import BaseModel, Field
-from pydantic.fields import ModelField
-from streamlit.runtime.state import SessionStateProxy
-
 from kiara_plugin.streamlit.defaults import AUTO_GEN_MARKER
+from streamlit.runtime.state import SessionStateProxy
 
 with warnings.catch_warnings():
     pass
@@ -26,7 +26,6 @@ from streamlit.delta_generator import DeltaGenerator
 
 if TYPE_CHECKING:
     from kiara.api import Kiara, KiaraAPI
-
     from kiara_plugin.streamlit.streamlit import KiaraStreamlit
 
 

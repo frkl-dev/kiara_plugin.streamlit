@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 from typing import Union
 
+from pydantic import Field, validator
+
 from kiara.api import ValueMap
 from kiara.exceptions import KiaraException
 from kiara.interfaces.python_api import OperationInfo
 from kiara.models.module.operation import Operation
-from pydantic import Field, validator
-from streamlit.delta_generator import DeltaGenerator
-
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
+from streamlit.delta_generator import DeltaGenerator
 
 
 class OperationProcessOptions(ComponentOptions):

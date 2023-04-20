@@ -2,12 +2,12 @@
 import abc
 from typing import Generic, List, Mapping, Tuple, Type, TypeVar, Union
 
-from kiara.interfaces.python_api.models.info import ItemInfo
 from pydantic import Field
-from streamlit.delta_generator import DeltaGenerator
 
+from kiara.interfaces.python_api.models.info import ItemInfo
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 from kiara_plugin.streamlit.utils.components import create_list_component
+from streamlit.delta_generator import DeltaGenerator
 
 
 class InfoCompOptions(ComponentOptions):

@@ -3,9 +3,8 @@ import abc
 from typing import Any
 
 from kiara.defaults import SpecialValue
-from streamlit.delta_generator import DeltaGenerator
-
 from kiara_plugin.streamlit.components.input import InputComponent, InputOptions
+from streamlit.delta_generator import DeltaGenerator
 
 
 class ScalarInput(InputComponent):

@@ -9,8 +9,6 @@ from typing import Dict, Mapping, Union
 import streamlit as st
 from kiara.api import KiaraAPI
 from kiara.context import KiaraConfig, KiaraContextConfig, KiaraRuntimeConfig
-from streamlit.runtime.scriptrunner import get_script_run_ctx
-
 from kiara_plugin.streamlit.components import KiaraComponent
 from kiara_plugin.streamlit.components.input import InputComponent
 from kiara_plugin.streamlit.components.preview import PreviewComponent
@@ -18,6 +16,7 @@ from kiara_plugin.streamlit.defaults import kiara_stremalit_app_dirs
 from kiara_plugin.streamlit.utils.class_loading import (
     find_all_kiara_streamlit_components,
 )
+from streamlit.runtime.scriptrunner import get_script_run_ctx
 
 
 class ComponentMgmt(object):
@@ -145,13 +144,13 @@ class ComponentMgmt(object):
     @property
     def preview_components(self) -> Mapping[str, Mapping[str, PreviewComponent]]:
         if self._preview_components is None:
-            self.components  # noqa
+            self.components
         return self._preview_components  # type: ignore
 
     @property
     def input_components(self) -> Mapping[str, InputComponent]:
         if self._input_components is None:
-            self.components  # noqa
+            self.components
         return self._input_components  # type: ignore
 
 
@@ -194,7 +193,7 @@ class KiaraStreamlit(object):
 
         atexit.register(del_temp_dir)
 
-        self.api  # noqa
+        self.api
 
         # self.add_component("test", TestComponent(kiara_streamlit=self))
         # self.add_component("help", HelpComponent(kiara_streamlit=self))

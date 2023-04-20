@@ -70,19 +70,27 @@ jobs:
       - name: Test with mypy
         run: make mypy
 
-  flake8-linux:
-    name: flake8 on linux
+  linting-linux:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Python 3.9
+      - uses: actions/checkout@v3
+      - name: Install Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
-      - uses: actions/checkout@v3
-      - name: install kiara_plugin.streamlit
-        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
-      - name: Test with flake8
-        run: make flake
+          python-version: "3.11"
+      - name: pip cache
+        id: pip-cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff
+      # Include `--format=github` to enable automatic inline annotations.
+      - name: Run Ruff
+        run: ruff --format=github src/
 
   build-docs:
     name: build documentation
@@ -91,7 +99,7 @@ jobs:
     needs:
       - test-linux
       - mypy-linux
-      - flake8-linux
+      - linting-linux
     steps:
       - name: Set up Python 3.9
         uses: actions/setup-python@v4
@@ -120,7 +128,7 @@ jobs:
     needs:
       - test-linux
       - mypy-linux
-      - flake8-linux
+      - linting-linux
     env:
         GEMFURY_PUSH_TOKEN: ${{ secrets.GEMFURY_PUSH_TOKEN }}
     steps:
@@ -156,7 +164,7 @@ jobs:
     needs:
       - test-linux
       - mypy-linux
-      - flake8-linux
+      - linting-linux
     steps:
       - name: "Set up Python 3.9"
         uses: actions/setup-python@v4
@@ -171,8 +179,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: install kiara
+        run: pip install kiara
       - name: install required plugin packages
-        run: pip install -U --pre --extra-index-url https://pypi.fury.io/dharpa/ kiara_plugin.develop
+        run: pip install git+https://github.com/DHARPA-Project/kiara_plugin.develop.git@develop
       - name: build conda package
         if: ${{ ( github.ref == 'refs/heads/develop') }}
         run: kiara conda build-package --patch-data ci/conda/conda-pkg-patch.yaml .
@@ -189,7 +199,7 @@ jobs:
     needs:
       - test-linux
       - mypy-linux
-      - flake8-linux
+      - linting-linux
     steps:
     - uses: actions/checkout@v3
       with:

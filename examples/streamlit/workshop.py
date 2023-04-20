@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import streamlit as st
-from kiara.api import KiaraAPI
 
 import kiara_plugin.streamlit as kst
+from kiara.api import KiaraAPI
 
 # st.set_page_config(layout="wide")
 

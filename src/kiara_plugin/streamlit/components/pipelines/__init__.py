@@ -2,14 +2,14 @@
 from typing import List, Literal, Union
 
 import networkx as nx
+from pydantic import Field
+
 from kiara.interfaces.python_api import OperationInfo
 from kiara.models.module.operation import Operation
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.module.pipeline.pipeline import Pipeline
-from pydantic import Field
-from streamlit.delta_generator import DeltaGenerator
-
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
+from streamlit.delta_generator import DeltaGenerator
 
 
 class PipelineSelectOptions(ComponentOptions):

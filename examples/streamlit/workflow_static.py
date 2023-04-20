@@ -3,9 +3,9 @@ import os
 
 import nltk
 import streamlit as st
-from kiara.interfaces.python_api import OperationInfo
 
 import kiara_plugin.streamlit as kiara_streamlit
+from kiara.interfaces.python_api import OperationInfo
 from kiara_plugin.streamlit.components.workflow.static import WorkflowSessionStatic
 
 st.set_page_config(layout="wide")

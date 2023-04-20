@@ -5,9 +5,8 @@ from kiara.models.data_types import DictModel
 from kiara.models.filesystem import FileBundle, FileModel
 from kiara.utils.json import orjson_dumps
 from kiara_plugin.core_types.models import ListModel
-from streamlit.delta_generator import DeltaGenerator
-
 from kiara_plugin.streamlit.components.preview import PreviewComponent, PreviewOptions
+from streamlit.delta_generator import DeltaGenerator
 
 
 class DictPreview(PreviewComponent):

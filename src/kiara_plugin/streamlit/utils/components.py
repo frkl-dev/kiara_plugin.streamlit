@@ -4,6 +4,7 @@ from typing import List, Union
 
 import pandas as pd
 from st_aggrid import AgGrid, ColumnsAutoSizeMode, GridOptionsBuilder
+
 from streamlit.delta_generator import DeltaGenerator
 
 

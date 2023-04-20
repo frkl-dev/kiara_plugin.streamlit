@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from streamlit.delta_generator import DeltaGenerator
 from streamlit_tags import st_tags
 
 from kiara_plugin.streamlit.components.input import InputComponent, InputOptions
+from streamlit.delta_generator import DeltaGenerator
 
 
 class ListInput(InputComponent):

@@ -3,10 +3,9 @@ from typing import Any, Dict, List, Mapping, Type
 
 from kiara.api import Value, ValueMap
 from kiara.models.documentation import DocumentationMetadataModel
-from streamlit.delta_generator import DeltaGenerator
-
 from kiara_plugin.streamlit.components import ComponentInfo, ComponentsInfo
 from kiara_plugin.streamlit.components.info import InfoCompOptions, KiaraInfoComponent
+from streamlit.delta_generator import DeltaGenerator
 
 
 class KiaraComponentInfoComponent(KiaraInfoComponent[ComponentInfo]):

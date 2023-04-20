@@ -3,14 +3,14 @@ import abc
 import uuid
 from typing import Dict, Mapping, TypeVar, Union
 
+from pydantic import Field
+
 from kiara.api import ValueMap, ValueSchema
 from kiara.registries.data import ValueLink
 from kiara.utils.values import construct_valuemap
-from pydantic import Field
-from streamlit.delta_generator import DeltaGenerator
-
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 from kiara_plugin.streamlit.components.input import DefaultInputOptions, InputComponent
+from streamlit.delta_generator import DeltaGenerator
 
 
 class AssemblyOptions(ComponentOptions):

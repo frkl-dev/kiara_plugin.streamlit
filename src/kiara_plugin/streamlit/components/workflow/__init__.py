@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from kiara.interfaces.python_api import Workflow
 from pydantic import BaseModel, Field
-from streamlit.delta_generator import DeltaGenerator
 
+from kiara.interfaces.python_api import Workflow
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
+from streamlit.delta_generator import DeltaGenerator
 
 KIARA_METADATA = {
     "description": "Kiara streamlit compoents to work with workflows",

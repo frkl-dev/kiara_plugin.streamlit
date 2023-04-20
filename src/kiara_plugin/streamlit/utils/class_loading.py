@@ -23,7 +23,6 @@ def find_kiara_streamlit_components_under(
 ) -> List[Type["KiaraComponent"]]:
 
     from kiara.utils.class_loading import find_subclasses_under
-
     from kiara_plugin.streamlit.components import KiaraComponent
 
     return find_subclasses_under(
@@ -39,7 +38,6 @@ def find_all_kiara_streamlit_components() -> Dict[str, Type["KiaraComponent"]]:
     """
 
     from kiara.utils.class_loading import load_all_subclasses_for_entry_point
-
     from kiara_plugin.streamlit.components import KiaraComponent
 
     components = load_all_subclasses_for_entry_point(

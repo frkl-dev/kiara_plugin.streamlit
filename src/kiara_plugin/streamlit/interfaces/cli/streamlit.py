@@ -2,6 +2,7 @@
 from typing import Iterable
 
 import rich_click as click
+
 from kiara.utils.cli import output_format_option, terminal_print_model
 
 #  Copyright (c) 2021, Markus Binsteiner

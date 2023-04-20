@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 from typing import Dict, Mapping, Tuple, TypeVar, Union
 
+from pydantic import Field
+
 from kiara.api import Value
 from kiara.models.module.operation import Operation
-from pydantic import Field
-from streamlit.delta_generator import DeltaGenerator
-
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 from kiara_plugin.streamlit.components.preview import PreviewOptions
 from kiara_plugin.streamlit.components.workflow.dynamic import WorkflowSessionDynamic
+from streamlit.delta_generator import DeltaGenerator
 
 
 class DynamicWorkflowOptions(ComponentOptions):

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-from streamlit.delta_generator import DeltaGenerator
-
 from kiara_plugin.streamlit.components.preview import PreviewComponent, PreviewOptions
+from streamlit.delta_generator import DeltaGenerator
 
 
 class NetworkDataPreview(PreviewComponent):
@@ -19,9 +18,10 @@ class NetworkDataPreview(PreviewComponent):
     def render_preview(self, st: DeltaGenerator, options: PreviewOptions):
 
         import networkx as nx
+        from pyvis.network import Network
+
         import streamlit.components.v1 as components
         from kiara_plugin.network_analysis.models import NetworkData
-        from pyvis.network import Network
 
         _value = self.api.get_value(options.value)
         db: NetworkData = _value.data

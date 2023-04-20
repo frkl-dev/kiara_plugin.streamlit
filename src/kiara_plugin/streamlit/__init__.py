@@ -16,20 +16,19 @@ from kiara.utils.class_loading import (
     find_pipeline_base_path_for_module,
 )
 
-# import kiara_plugin.streamlit.utils.monkey_patches  # noqa
+# import kiara_plugin.streamlit.utils.monkey_patches
 from kiara_plugin.streamlit.utils.class_loading import (
     find_kiara_streamlit_components_under,
 )
 
 if typing.TYPE_CHECKING:
     from kiara.context import KiaraContextConfig, KiaraRuntimeConfig
-
     from kiara_plugin.streamlit.streamlit import KiaraStreamlit
 
 
 __author__ = """Markus Binsteiner"""
 __email__ = "markus@frkl.io"
-warnings.simplefilter(action="ignore", category=FutureWarning)  # noqa
+warnings.simplefilter(action="ignore", category=FutureWarning)
 
 
 KIARA_METADATA = {
@@ -108,9 +107,8 @@ def init(
     runtime_config: Union[None, "KiaraRuntimeConfig"] = None,
 ) -> "KiaraStreamlit":
 
-    import streamlit as st
-
     import kiara_plugin.streamlit.utils.monkey_patches  # noqa
+    import streamlit as st
     from kiara_plugin.streamlit.streamlit import KiaraStreamlit
 
     @st.experimental_singleton

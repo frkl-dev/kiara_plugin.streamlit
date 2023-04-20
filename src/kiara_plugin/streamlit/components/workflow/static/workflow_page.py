@@ -5,12 +5,11 @@ from kiara.api import ValueSchema
 from kiara.exceptions import KiaraException
 from kiara.models.module.pipeline import StepStatus
 from kiara.models.module.pipeline.structure import PipelineStructure
-from streamlit.delta_generator import DeltaGenerator
-
 from kiara_plugin.streamlit.components import KiaraComponent
 from kiara_plugin.streamlit.components.workflow.static.components import (
     StaticWorkflowOptions,
 )
+from streamlit.delta_generator import DeltaGenerator
 
 
 class WorkflowStatic(KiaraComponent[StaticWorkflowOptions]):
@@ -85,7 +84,7 @@ class WorkflowStatic(KiaraComponent[StaticWorkflowOptions]):
 
         steps_to_process = []
         stages_to_process = [session.current_stage]
-        for stage in stages[0 : session.current_stage]:  # noqa
+        for stage in stages[0 : session.current_stage]:
             steps_to_process.append(stage)
 
         cur = session.current_stage + 1

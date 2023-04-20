@@ -3,12 +3,12 @@ import uuid
 from abc import abstractmethod
 from typing import List, Mapping, Union
 
-from kiara.api import Value, ValueMap
 from pydantic import Field
-from streamlit.delta_generator import DeltaGenerator
 
+from kiara.api import Value, ValueMap
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 from kiara_plugin.streamlit.utils.components import create_list_component
+from streamlit.delta_generator import DeltaGenerator
 
 
 class PreviewOptions(ComponentOptions):

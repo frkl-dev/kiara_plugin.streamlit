@@ -2,9 +2,9 @@
 from typing import Any, Callable, List, Union
 
 from pydantic import Field
-from streamlit.delta_generator import DeltaGenerator
 
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
+from streamlit.delta_generator import DeltaGenerator
 
 
 class ContextSwitchOptions(ComponentOptions):
