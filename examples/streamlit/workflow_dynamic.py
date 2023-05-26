@@ -22,6 +22,22 @@ As contrast, check out the pipeline auto-rendered UI example: https://kiara-stat
 This has better usability by default for novice users, but obviously that would only work for one specific, pre-assembled scenario/pipeline, and there would be no freedom for the user to 'explore' on their own.
 
 Another thing I want to show in the future is the whole area of onboarding data into kiara, and making it usable and flexible enough to be useful. I think that's our biggest challenge, so I am still thinking about how to best do it.
+
+An example workflow, to create network_data from an edges file would be:
+
+- select `journal_edges_file` as the inital value -- this is the data we want to work with for this workflow
+- select `create_table.from.file` as the first operation -- this will convert the edges file into a table (with typed columns etc.) -- check out the 'Show operation details' to get information about the operation you selected.
+- check 'first_row_is_header', and click process
+- this module only has one output, so we can just select that using 'Select for next step'. This means that this result-dataset will be used as input for the next step
+- now the app will show you all available operations that take a 'table' as one of the inputs
+- maybe pick 'query.table' to run some sql against it:
+- set the query to `select * from data where weight > 1` and leave relation name to 'data'
+- click process
+- again, we only have one result, so we can just select that
+- now the app will show you the same operations as with the last step, since both values were of type `table`
+- select `assemble.network_data.from.tables` as the next operation
+- click the 'Preview' box above to see the table you are working with as input, select the inputs accordingly: 'Source', 'Target' (we don't need the 'id_column_name' in this particular instance because we don't hava a separate nodes table)
+- select the only result for the next step again, tihs is of type 'network_data'. We don't have many modules yet to work with 'network_data', but I hope you get the idea where this is going...
 """
 
 with st.expander("Notes (click to hide)", expanded=True):
@@ -46,7 +62,7 @@ if not st.kiara.api.list_alias_names():
         result = st.kiara.api.run_job(
             operation="download.file",
             inputs={
-                "url": "https://github.com/DHARPA-Project/kiara.examples/raw/main/examples/data/journals/JournalNodes1902.csv"
+                "url": "https://github.com/DHARPA-Project/kiara.examples/raw/main/examples/data/network_analysis/journals/JournalNodes1902.csv"
             },
         )
         st.kiara.api.store_value(value=result["file"], alias="journal_nodes_file")
@@ -54,7 +70,7 @@ if not st.kiara.api.list_alias_names():
         result = st.kiara.api.run_job(
             operation="download.file",
             inputs={
-                "url": "https://github.com/DHARPA-Project/kiara.examples/raw/main/examples/data/journals/JournalEdges1902.csv"
+                "url": "https://github.com/DHARPA-Project/kiara.examples/raw/main/examples/data/network_analysis/journals/JournalEdges1902.csv"
             },
         )
         st.kiara.api.store_value(value=result["file"], alias="journal_edges_file")
