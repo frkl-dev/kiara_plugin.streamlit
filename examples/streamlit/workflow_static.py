@@ -40,19 +40,19 @@ To try out this demo, there are a few inputs that are non obvious for now (for t
 
 - Stage 2
 
-   - this needs to know the names of the columns where the required data is, you can look that up in the 'Outputs (previous stages)' expander, or just use: 'content' for `extract_texts_column__column_name` and 'file_name' for `extract_filename_column__column_name`
+   - this needs to know the names of the column where the required data is, you can look that up in the 'Outputs (previous stages)' expander, or just use: 'content' for `extract_texts_column__column_name`. A 'production' UI would give the user a combobox or similar with only the available column names here...
 
 - Stage 3
 
-   - this stage tokenizes the text content, and extracts a date column from the file name column. This is a bit difficult to do right now, because the date parser is not very good and needs the start and end position of the word it should parse (file name in our case): just use '11' for `create_date_array__min_index` and '21' for `create_date_array__max_index`
+   - this stage tokenizes the text content and also creates a list of stop words that will be used later in the pre-processing step. Just keep the `tokenize_by_word` input checked (unchecked would make sense for some asian languages), and maybe add 'italian' to the `languages` input. To test, you can also add some stopwords manually here.
 
 - Stage 4
 
-   - this stage pre-processes the tokens we computed in the previous stage, you can't do anything wrong. Just play a bit with the options and see how the result changes
+   - this stage pre-processes the tokens we computed in the previous stage, removes stopwords, etc. You can't do anything wrong. Just play a bit with the options and see how the result changes
 
 - Stage 5
 
-   - the final step, also nothing that can go wrong here. If you know about topic modeling, then the results will make sense, otherwise, probably not :)
+   - the final step, if you know about topic modeling, then the results will make sense, otherwise, probably not. Select to create a few topics (maybe `num_topics_min` 5 and num_topics_max 9), check `compute_coherence` and words_per_topic 3. Our production app would have a lot more explanations and documentation what any of the inputs and outputs mean, what exactly happens, what LDA is, etc.
 """
 with st.expander("Notes (click to hide)", expanded=True):
     st.markdown(EXPLANATION)
@@ -83,7 +83,6 @@ with st.sidebar:
     st.session_state["selected_pipeline"] = new_pipeline
 
 # new_pipeline = "/home/markus/projects/kiara/kiara.examples/examples/pipelines/topic_modeling/topic_modeling.yaml"
-print(st.kiara.api.context.id)
 workflow_ref = "workflow_static"
 
 if workflow_ref not in st.session_state or context_changed or pipeline != new_pipeline:
@@ -100,7 +99,7 @@ if "example_corpus" not in st.kiara.api.list_alias_names():
         result = st.kiara.api.run_job(
             operation="download.file",
             inputs={
-                "url": "https://github.com/DHARPA-Project/kiara.examples/raw/main/examples/data/journals/JournalNodes1902.csv"
+                "url": "https://github.com/DHARPA-Project/kiara.examples/raw/main/examples/data/network_analysis/journals/JournalNodes1902.csv"
             },
         )
         st.kiara.api.store_value(value=result["file"], alias="journal_nodes_file")
@@ -108,7 +107,7 @@ if "example_corpus" not in st.kiara.api.list_alias_names():
         result = st.kiara.api.run_job(
             operation="download.file",
             inputs={
-                "url": "https://github.com/DHARPA-Project/kiara.examples/raw/main/examples/data/journals/JournalEdges1902.csv"
+                "url": "https://github.com/DHARPA-Project/kiara.examples/raw/main/examples/data/network_analysis/journals/JournalEdges1902.csv"
             },
         )
         st.kiara.api.store_value(value=result["file"], alias="journal_edges_file")
@@ -117,7 +116,7 @@ if "example_corpus" not in st.kiara.api.list_alias_names():
             operation="download.file_bundle",
             inputs={
                 "url": "https://github.com/DHARPA-Project/kiara.examples/archive/refs/heads/main.zip",
-                "sub_path": "kiara.examples-main/examples/data/text_corpus/data",
+                "sub_path": "kiara.examples-main/examples/data/language_processing/text_corpus/data",
             },
         )
         st.kiara.api.store_value(value=result["file_bundle"], alias="example_corpus")

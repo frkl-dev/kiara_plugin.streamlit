@@ -7,14 +7,6 @@ steps:
     step_id: extract_texts_column
     input_links:
       table: create_text_corpus.table
-  - module_type: table.pick.column
-    step_id: extract_filename_column
-    input_links:
-      table: create_text_corpus.table
-  - module_type: parse.date_array
-    step_id: create_date_array
-    input_links:
-      array: extract_filename_column.array
   - module_type: tokenize.texts_array
     step_id: tokenize_content
     input_links:

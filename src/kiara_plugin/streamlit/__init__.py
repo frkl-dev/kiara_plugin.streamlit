@@ -111,9 +111,9 @@ def init(
     import streamlit as st
     from kiara_plugin.streamlit.streamlit import KiaraStreamlit
 
-    @st.experimental_singleton
+    @st.cache_resource
     def get_ktx() -> "KiaraStreamlit":
-        print("CREATE KIARA STREAMLIT")
+        # print("CREATE KIARA STREAMLIT")
         ktx = KiaraStreamlit(
             context_config=context_config, runtime_config=runtime_config
         )
