@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from typing import Any, Dict
 
-from kiara.models.data_types import DictModel
+from kiara.models.data_types import KiaraDict
 from kiara.models.filesystem import FileBundle, FileModel
 from kiara.utils.json import orjson_dumps
-from kiara_plugin.core_types.models import ListModel
+from kiara_plugin.core_types.models import KiaraList
 from kiara_plugin.streamlit.components.preview import PreviewComponent, PreviewOptions
 from streamlit.delta_generator import DeltaGenerator
 
@@ -21,7 +21,7 @@ class DictPreview(PreviewComponent):
     def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
 
         _value = self.api.get_value(options.value)
-        dict_data: DictModel = _value.data
+        dict_data: KiaraDict = _value.data
 
         data, schema = st.tabs(["Data", "Schema"])
 
@@ -52,7 +52,7 @@ class ListPreview(PreviewComponent):
     def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
 
         _value = self.api.get_value(options.value)
-        list_data: ListModel = _value.data
+        list_data: KiaraList = _value.data
 
         data, schema = st.tabs(["Data", "Schema"])
 

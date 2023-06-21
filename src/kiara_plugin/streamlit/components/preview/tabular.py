@@ -37,7 +37,7 @@ class TablePreview(PreviewComponent):
         _value = self.api.get_value(options.value)
         table: KiaraTable = _value.data
 
-        st.dataframe(table.to_pandas(), use_container_width=True)
+        st.dataframe(table.to_pandas_dataframe(), use_container_width=True)
 
 
 class DatabasePreview(PreviewComponent):
