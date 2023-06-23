@@ -46,6 +46,6 @@ class FieldsInfo(KiaraComponent[FieldsInfoOptions]):
 
         fields = options.fields
         fields_data = create_dict_from_field_schemas(fields)
-        df = pd.DataFrame(fields_data, columns=list(fields_data.keys()))
-        df.set_index("field_name", inplace=True)
-        st.table(df)
+        dataframe = pd.DataFrame(fields_data, columns=list(fields_data.keys()))
+        dataframe.set_index("field_name", inplace=True)  # noqa
+        st.table(dataframe)

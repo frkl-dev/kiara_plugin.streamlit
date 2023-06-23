@@ -218,7 +218,7 @@ class DefaultInputComponent(InputComponent):
                 return f"{v} ({available_values[v].data_type_name})"
 
         if optional:
-            _item_options = [NO_VALUE_MARKER] + list(available_values.keys())
+            _item_options = [NO_VALUE_MARKER, *available_values.keys()]
             if not default:
                 default = NO_VALUE_MARKER
         else:

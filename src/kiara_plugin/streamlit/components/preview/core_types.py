@@ -37,8 +37,6 @@ class DictPreview(PreviewComponent):
             json_str = f"Error parsing schema: {e}"
         schema.json(json_str)
 
-        return
-
 
 class ListPreview(PreviewComponent):
     """Preview a value of type 'list'."""
@@ -68,8 +66,6 @@ class ListPreview(PreviewComponent):
             json_str = f"Error parsing schema: {e}"
         schema.json(json_str)
 
-        return
-
 
 class FileBundlePreview(PreviewComponent):
     """Preview a value of type 'file_bundle'."""
@@ -92,8 +88,6 @@ class FileBundlePreview(PreviewComponent):
             table.setdefault("mime-type", []).append(file_info.mime_type)
 
         st.dataframe(table, use_container_width=True)
-
-        return
 
 
 class FilePreview(PreviewComponent):
@@ -122,8 +116,6 @@ class FilePreview(PreviewComponent):
         st.table(table)
 
         # st.table(table, use_container_width=True)
-
-        return
 
 
 class BooleanPreview(PreviewComponent):

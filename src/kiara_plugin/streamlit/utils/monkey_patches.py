@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
-from typing import TYPE_CHECKING
 
-from streamlit.delta_generator import *  # noqa
-from streamlit.delta_generator import _enqueue_message
-
-if TYPE_CHECKING:
-    from streamlit.delta_generator import DeltaGenerator
+from streamlit.delta_generator import (
+    Block_pb2,
+    DeltaGenerator,
+    ForwardMsg_pb2,
+    _enqueue_message,
+    caching,
+    current_form_id,
+    cursor,
+)
+from streamlit.elements.form import FormData
 
 # copied from: https://github.com/joy13975/streamlit-nested-layout/blob/main/streamlit_nested_layout/nest.py
 # License: Apache License 2.0
@@ -44,7 +48,7 @@ def _nestable_block(
     # a brand new cursor for this new block we're creating.
     block_cursor: cursor.RunningCursor = cursor.RunningCursor(  # type: ignore
         root_container=dg._root_container,  # type: ignore
-        parent_path=dg._cursor.parent_path + (dg._cursor.index,),  # type: ignore
+        parent_path=dg._cursor.parent_path + (dg._cursor.index,),  # type: ignore  # noqa
     )
     block_dg = DeltaGenerator(
         root_container=dg._root_container,
@@ -54,7 +58,7 @@ def _nestable_block(
     )
     # Blocks inherit their parent form ids.
     # NOTE: Container form ids aren't set in proto.
-    block_dg._form_data = FormData(current_form_id(dg))  # type: ignore
+    block_dg._form_data = FormData(current_form_id(dg))
 
     # Must be called to increment this cursor's index.
     dg._cursor.get_locked_cursor(last_index=None)

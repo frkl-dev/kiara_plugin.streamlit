@@ -32,8 +32,8 @@ classifiers = [
 dependencies = [
     "kiara_plugin.tabular>=0.4.27",
     "kiara_plugin.onboarding>=0.4.3",
-    "streamlit>=1.16.0",
-    "streamlit-aggrid>=0.3.3",
+    "streamlit>=1.23.1.0",
+    "streamlit-aggrid>=0.3.4",
     "importlib-resources",
     "pydot>=1.4.0",
     "pyvis>=0.3.0",
@@ -147,7 +147,7 @@ select = [
     "PLW",
     "PIE",
 ]
-ignore = ["E501", "S101", "SIM118", "SIM108", "PLR2004", "PLR0913", "S110", "PLR0912", "PLR0915", "PIE810"]
+ignore = ["E501", "S101", "SIM118", "SIM108", "PLR2004", "PLR0913", "S110", "PLR0912", "PLR0915", "PIE810", "T201", "PD011", "F405"]
 
 fix = true
 fixable = ["E", "F", "RUF100", "I001", "Q"]

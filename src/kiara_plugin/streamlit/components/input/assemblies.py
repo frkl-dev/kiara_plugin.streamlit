@@ -69,11 +69,10 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
 
         if not max_columns:
             num_columns = len(fields)
+        elif len(fields) >= max_columns:
+            num_columns = max_columns
         else:
-            if len(fields) >= max_columns:
-                num_columns = max_columns
-            else:
-                num_columns = len(fields)
+            num_columns = len(fields)
 
         columns = st.columns(num_columns)
         values: Dict[str, Union[None, ValueLink, str, uuid.UUID]] = {}
@@ -126,11 +125,10 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
             req_expander = st.expander("Required inputs", expanded=True)
             if not max_columns:
                 num_columns = len(required)
+            elif len(required) >= max_columns:
+                num_columns = max_columns
             else:
-                if len(required) >= max_columns:
-                    num_columns = max_columns
-                else:
-                    num_columns = len(required)
+                num_columns = len(required)
 
             columns = req_expander.columns(num_columns)
             for idx, field_name in enumerate(required.keys()):
@@ -160,11 +158,10 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
 
             if not max_columns:
                 num_columns = len(optional)
+            elif len(optional) >= max_columns:
+                num_columns = max_columns
             else:
-                if len(optional) >= max_columns:
-                    num_columns = max_columns
-                else:
-                    num_columns = len(optional)
+                num_columns = len(optional)
 
             opt_columns = opt_expander.columns(num_columns)
 
