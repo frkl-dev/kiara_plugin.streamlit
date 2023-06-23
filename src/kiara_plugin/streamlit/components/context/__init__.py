@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import Any, Callable, List, Union
+from typing import Any, Callable, ClassVar, List, Union
 
 from pydantic import Field
 
@@ -27,7 +27,7 @@ class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
     _options = ContextSwitchOptions
     _component_name = "context_switch_control"
 
-    _examples = [
+    _examples: ClassVar = [
         {
             "doc": "Show a context switch control.\n\nAllow the user to create a new context, and don't immediately switch to the selected context. You can compare the result of this component call with a call to `st.api.current_context_name`, to figure out whether the user wants to switch or not.",
             "args": {

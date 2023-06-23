@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import Mapping, Type, Union
+from typing import ClassVar, Mapping, Type, Union
 
 from kiara.interfaces.python_api import OperationInfo
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
@@ -62,7 +62,7 @@ class KiaraOperationInfoComponent(KiaraInfoComponent[OperationInfo]):
     """
 
     _component_name = "operation_info"
-    _examples = [
+    _examples: ClassVar = [
         {
             "doc": "Show information for the 'create.table.from.file' operation.",
             "args": {"items": "create.table.from.file"},
