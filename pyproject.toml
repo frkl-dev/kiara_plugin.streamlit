@@ -49,8 +49,8 @@ workflow_app = [
 all_plugins = [
     "kiara_plugin.network_analysis>=0.4.9",
     "kiara_plugin.language_processing>=0.4.10",
-    "kiara_plugin.html>=0.4.0",
-    "kiara_plugin.onboarding>=0.4.2"
+    "kiara_plugin.html>=0.4.3",
+    "kiara_plugin.onboarding>=0.4.5"
 ]
 dev_documentation = [
     "kiara[dev_documentation]"
