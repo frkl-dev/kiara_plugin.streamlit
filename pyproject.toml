@@ -43,7 +43,6 @@ dynamic = ["version"]
 
 [project.optional-dependencies]
 workflow_app = [
-    "boltons>=23.0.0,<24.0.0",
     "PyGithub>=1.59.0",
     "githublfs>=0.1.3"
 ]

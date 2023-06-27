@@ -2,7 +2,7 @@
 from typing import Any, Dict
 
 from kiara.models.data_types import KiaraDict
-from kiara.models.filesystem import FileBundle, FileModel
+from kiara.models.filesystem import KiaraFile, KiaraFileBundle
 from kiara.utils.json import orjson_dumps
 from kiara_plugin.core_types.models import KiaraList
 from kiara_plugin.streamlit.components.preview import PreviewComponent, PreviewOptions
@@ -79,7 +79,7 @@ class FileBundlePreview(PreviewComponent):
     def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
 
         _value = self.api.get_value(options.value)
-        bundle: FileBundle = _value.data
+        bundle: KiaraFileBundle = _value.data
 
         table: Dict[str, Any] = {}
         for file_path, file_info in bundle.included_files.items():
@@ -102,7 +102,7 @@ class FilePreview(PreviewComponent):
     def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
 
         _value = self.api.get_value(options.value)
-        file_model: FileModel = _value.data
+        file_model: KiaraFile = _value.data
 
         table: Dict[str, Any] = {"key": [], "value": []}
         table["key"].append("path")
