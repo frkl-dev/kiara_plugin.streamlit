@@ -1613,7 +1613,12 @@
 <span class="normal">147</span>
 <span class="normal">148</span>
 <span class="normal">149</span>
-<span class="normal">150</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraComponentInfoComponent</span><span class="p">(</span><span class="n">KiaraInfoComponent</span><span class="p">[</span><span class="n">ComponentInfo</span><span class="p">]):</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraComponentInfoComponent</span><span class="p">(</span><span class="n">KiaraInfoComponent</span><span class="p">[</span><span class="n">ComponentInfo</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Display information about a kiara streamlit component.</span>
 
 <span class="sd">    This is used to create what you see here.</span>
@@ -1664,6 +1669,11 @@
     <span class="p">):</span>
         <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#### Component: `</span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">type_name</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
         <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">full_doc</span><span class="p">)</span>
+
+        <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;##### Component code&quot;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Class: `</span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">python_class_name</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">):</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
 
         <span class="n">comp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_component</span><span class="p">(</span><span class="s2">&quot;fields_info&quot;</span><span class="p">)</span>
         <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;##### Arguments&quot;</span><span class="p">)</span>
@@ -1992,11 +2002,21 @@
 <span class="normal">147</span>
 <span class="normal">148</span>
 <span class="normal">149</span>
-<span class="normal">150</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span> <span class="nf">render_info</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span> <span class="nf">render_info</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">st</span><span class="p">:</span> <span class="n">DeltaGenerator</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">ComponentInfo</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">InfoCompOptions</span>  <span class="c1"># type: ignore</span>
     <span class="p">):</span>
         <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#### Component: `</span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">type_name</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
         <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">full_doc</span><span class="p">)</span>
+
+        <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;##### Component code&quot;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Class: `</span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">python_class_name</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">):</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
 
         <span class="n">comp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_component</span><span class="p">(</span><span class="s2">&quot;fields_info&quot;</span><span class="p">)</span>
         <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;##### Arguments&quot;</span><span class="p">)</span>
