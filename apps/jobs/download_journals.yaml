@@ -1,0 +1,14 @@
+operation: "${this_dir}/../pipelines/example_file_onboarding.yaml"
+inputs:
+  example_data_source: "gh:DHARPA-Project/kiara.examples/main"
+  sub_folder: "examples/data/network_analysis/journals"
+  journal_edges_path: "JournalEdges1902.csv"
+  journal_nodes_path: "JournalNodes1902.csv"
+
+#save:
+#  files_table: "journal_files_table"
+#  edges_file: "journals_edges_file"
+#  edges_table: "journals_edges_table"
+#  file_bundle: "journals_file_bundle"
+#  nodes_file: "journals_nodes_file"
+#  nodes_table: "journals_nodes_table"

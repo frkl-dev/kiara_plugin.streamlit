@@ -60,6 +60,11 @@ class KiaraComponentInfoComponent(KiaraInfoComponent[ComponentInfo]):
         st.markdown(f"#### Component: `{item.type_name}`")
         st.markdown(item.documentation.full_doc)
 
+        st.markdown("##### Component code")
+
+        with st.expander(f"Class: `{item.python_class.python_class_name}`"):
+            st.write(item.python_class.dict())
+
         comp = self.get_component("fields_info")
         st.markdown("##### Arguments")
         arg_table: Dict[str, List[Any]] = {

@@ -63,3 +63,4 @@ onefile.spec
 *_complete.zsh.zwc
 ci/conda/**/build
 ci/conda/kiara_plugin.streamlit/meta.yaml
+other_pipelines

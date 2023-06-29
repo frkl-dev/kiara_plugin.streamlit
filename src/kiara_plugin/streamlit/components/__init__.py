@@ -14,6 +14,7 @@ from kiara.models.documentation import (
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
+from kiara.models.python_class import PythonClass
 from kiara_plugin.streamlit.defaults import AUTO_GEN_MARKER
 from streamlit.runtime.state import SessionStateProxy
 
@@ -206,6 +207,9 @@ class ComponentInfo(ItemInfo[KiaraComponent]):
     examples: List[Dict[str, Any]] = Field(
         description="The examples for this component.", default_factory=list
     )
+    python_class: PythonClass = Field(
+        description="The python class backing this component."
+    )
 
     @classmethod
     def base_instance_class(cls) -> Type[KiaraComponent]:
@@ -242,6 +246,7 @@ class ComponentInfo(ItemInfo[KiaraComponent]):
             context=context,
             arguments=args,
             examples=examples,
+            python_class=PythonClass.from_class(instance.__class__),
         )
         return info
 
