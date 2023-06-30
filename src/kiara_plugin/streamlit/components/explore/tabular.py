@@ -50,6 +50,9 @@ class DatabasePreview(PreviewComponent):
         table_names = list(db.table_names)
 
         selected_table = st.selectbox("Select table", table_names)
+        if not selected_table:
+            return
+
         table = db.get_table_as_pandas_df(selected_table)
 
         pyg_html = pyg.walk(table, return_html=True)
@@ -74,6 +77,10 @@ class TablesPreview(PreviewComponent):
         tables: KiaraTables = _value.data
 
         selected_table = st.selectbox("Select table", tables.table_names)
+
+        if not selected_table:
+            return
+
         table = tables.get_table(selected_table).to_polars_dataframe()
 
         pyg_html = pyg.walk(table, return_html=True)
