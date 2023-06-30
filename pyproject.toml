@@ -36,6 +36,7 @@ dependencies = [
     "streamlit-aggrid>=0.3.4",
     "importlib-resources",
     "pydot>=1.4.0",
+    "pygwalker>=0.1.11",
     "pyvis>=0.3.0",
     "streamlit-tags>=1.2.8"
 ]

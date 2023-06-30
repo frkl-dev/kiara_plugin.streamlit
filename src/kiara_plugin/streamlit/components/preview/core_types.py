@@ -94,6 +94,7 @@ class FilePreview(PreviewComponent):
     """Preview a value of type 'file'."""
 
     _component_name = "preview_file"
+    _examples = [{"doc": "A file preview.", "args": {"value": "nodes_file"}}]
 
     @classmethod
     def get_data_type(cls) -> str:

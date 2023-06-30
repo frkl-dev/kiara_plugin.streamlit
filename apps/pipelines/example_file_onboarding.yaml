@@ -23,6 +23,19 @@ steps:
     step_id: create_edges_table
     input_links:
       file: pick_journal_edges.file
+  - module_type: assemble.tables
+    step_id: assemble_tables
+    module_config:
+      constants:
+        table_name_1: "nodes"
+        table_name_2: "edges"
+    input_links:
+      table_1: create_nodes_table.table
+      table_2: create_edges_table.table
+  - module_type: create.database.from.tables
+    step_id: create_database_from_tables
+    input_links:
+      tables: assemble_tables.tables
 
 
 input_aliases:
@@ -44,3 +57,5 @@ output_aliases:
   pick_journal_edges.file: "edges_file"
   create_nodes_table.table: "nodes_table"
   create_edges_table.table: "edges_table"
+  assemble_tables.tables: "journals_tables"
+  create_database_from_tables.database: "journals_database"

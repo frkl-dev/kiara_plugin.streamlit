@@ -235,7 +235,7 @@ class FloatInput(ScalarInput):
         if style == "default":
             number = st.number_input(
                 label=options.label,
-                key=_key,
+                key=f"{_key}_number_input",
                 on_change=callback,
                 help=options.help,
                 step=1.0,
@@ -243,7 +243,7 @@ class FloatInput(ScalarInput):
         elif style == "text_input":
             number_str = st.text_input(
                 label=options.label,
-                key=_key,
+                key=f"{_key}_text_field",
                 on_change=callback,
                 help=options.help,
             )

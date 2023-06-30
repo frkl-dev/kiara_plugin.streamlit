@@ -60,10 +60,19 @@ class KiaraComponentInfoComponent(KiaraInfoComponent[ComponentInfo]):
         st.markdown(f"#### Component: `{item.type_name}`")
         st.markdown(item.documentation.full_doc)
 
-        st.markdown("##### Component code")
+        expander = st.expander("Component details", expanded=False)
 
-        with st.expander(f"Class: `{item.python_class.python_class_name}`"):
-            st.write(item.python_class.dict())
+        pkg_name = item.context.labels.get("package", "-- n/a --")
+        table_md = f"""
+        | attribute | value |
+        | --------- | ----- |
+        | Python class      | `{item.python_class.full_name}` |
+        | Plugin            | `{pkg_name}` |
+        """
+        expander.markdown(table_md)
+        expander.write("---")
+        expander.write("##### Source code")
+        expander.code(item.python_class.get_source_code())
 
         comp = self.get_component("fields_info")
         st.markdown("##### Arguments")

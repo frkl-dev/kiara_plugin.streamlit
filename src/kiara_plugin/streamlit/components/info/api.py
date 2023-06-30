@@ -144,6 +144,12 @@ class OperationDocs(KiaraComponent):
     _component_name = "operation_documentation"
     _options = OperationDocsOptions
 
+    _examples: ClassVar = [
+        {
+            "doc": "Display operations doc.",
+        },
+    ]
+
     def _render(self, st: DeltaGenerator, options: OperationDocsOptions):
 
         left, right = st.columns([1, 3])
