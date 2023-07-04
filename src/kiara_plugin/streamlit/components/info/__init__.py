@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import abc
-from typing import Generic, List, Mapping, Tuple, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Generic, List, Mapping, Tuple, Type, TypeVar, Union
 
 from pydantic import Field
 
@@ -8,6 +8,9 @@ from kiara.interfaces.python_api.models.info import ItemInfo
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 from kiara_plugin.streamlit.utils.components import create_list_component
 from streamlit.delta_generator import DeltaGenerator
+
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class InfoCompOptions(ComponentOptions):
@@ -38,7 +41,7 @@ class KiaraInfoComponent(KiaraComponent[InfoCompOptions], Generic[ITEM_TYPE]):
         pass
 
     def _render(
-        self, st: DeltaGenerator, options: InfoCompOptions
+        self, st: "KiaraStreamlitAPI", options: InfoCompOptions
     ) -> Union[ITEM_TYPE, None]:
 
         items = options.items
@@ -97,13 +100,17 @@ class KiaraInfoComponent(KiaraComponent[InfoCompOptions], Generic[ITEM_TYPE]):
 
     @abc.abstractmethod
     def render_info(
-        self, st: DeltaGenerator, key: str, item: ITEM_TYPE, options: InfoCompOptions
+        self,
+        st: "KiaraStreamlitAPI",
+        key: str,
+        item: ITEM_TYPE,
+        options: InfoCompOptions,
     ):
         pass
 
     def render_all_info(  # type: ignore
         self,
-        st: DeltaGenerator,
+        st: "KiaraStreamlitAPI",
         key: str,
         items: Mapping[str, ITEM_TYPE],
         options: InfoCompOptions,
@@ -130,7 +137,7 @@ class KiaraInfoComponent(KiaraComponent[InfoCompOptions], Generic[ITEM_TYPE]):
             item = items[selected_op]
 
             self.render_info(
-                st=right,
+                st=right,  # type: ignore
                 key=f"{key}__{info_type_name}_{selected_op}",
                 item=item,
                 options=options,

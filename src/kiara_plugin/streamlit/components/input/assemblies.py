@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import abc
 import uuid
-from typing import Dict, Mapping, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, Mapping, TypeVar, Union
 
 from pydantic import Field
 
@@ -10,7 +10,9 @@ from kiara.registries.data import ValueLink
 from kiara.utils.values import construct_valuemap
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 from kiara_plugin.streamlit.components.input import DefaultInputOptions, InputComponent
-from streamlit.delta_generator import DeltaGenerator
+
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class AssemblyOptions(ComponentOptions):
@@ -40,7 +42,9 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
     ) -> Mapping[str, ValueSchema]:
         pass
 
-    def _render(self, st: DeltaGenerator, options: ASSEMBLY_OPTIONS_TYPE) -> ValueMap:
+    def _render(
+        self, st: "KiaraStreamlitAPI", options: ASSEMBLY_OPTIONS_TYPE
+    ) -> ValueMap:
 
         profile = options.profile
 
@@ -57,7 +61,7 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
 
     def render_all(
         self,
-        st: DeltaGenerator,
+        st: "KiaraStreamlitAPI",
         fields: Mapping[str, ValueSchema],
         options: ASSEMBLY_OPTIONS_TYPE,
     ) -> Mapping[str, Union[str, uuid.UUID, ValueLink, None]]:
@@ -95,7 +99,7 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
                 help=help,
                 smart_label=options.smart_label,
             )
-            r = comp.render_input_field(columns[column_idx], input_opts)
+            r = comp.render_input_field(columns[column_idx], input_opts)  # type: ignore
 
             values[field_name] = r
 
@@ -103,7 +107,7 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
 
     def render_default(
         self,
-        st: DeltaGenerator,
+        st: "KiaraStreamlitAPI",
         fields: Mapping[str, ValueSchema],
         options: AssemblyOptions,
     ) -> Mapping[str, Union[str, None, uuid.UUID, ValueLink]]:
@@ -149,7 +153,7 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
                     smart_label=options.smart_label,
                 )
 
-                r = comp.render_input_field(columns[column_idx], input_opts)
+                r = comp.render_input_field(columns[column_idx], input_opts)  # type: ignore
 
                 values[field_name] = r
 
@@ -187,7 +191,7 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
                     smart_label=options.smart_label,
                 )
 
-                r = comp.render_input_field(opt_columns[column_idx], input_opts)
+                r = comp.render_input_field(opt_columns[column_idx], input_opts)  # type: ignore
                 values[field_name] = r
 
         return values
@@ -196,6 +200,9 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
 class OperationInputsOptions(AssemblyOptions):
     operation_id: str = Field(
         description="The id of the operation to render the inputs for."
+    )
+    module_config: Union[Dict[str, Any], None] = Field(
+        description="Optional module config.", default=None
     )
 
 
@@ -216,7 +223,11 @@ class OperationInputs(InputAssemblyComponent):
     ) -> Mapping[str, ValueSchema]:
 
         # TODO: check argument
-        op = self.api.get_operation(options.operation_id)
+        data = {
+            "module_type": options.operation_id,
+            "module_config": options.module_config,
+        }
+        op = self.api.get_operation(data)
         return op.inputs_schema
 
 

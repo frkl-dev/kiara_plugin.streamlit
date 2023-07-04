@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
-from typing import Any, Dict
+from typing import TYPE_CHECKING, Any, Dict
 
 from kiara.models.data_types import KiaraDict
 from kiara.models.filesystem import KiaraFile, KiaraFileBundle
 from kiara.utils.json import orjson_dumps
 from kiara_plugin.core_types.models import KiaraList
 from kiara_plugin.streamlit.components.preview import PreviewComponent, PreviewOptions
-from streamlit.delta_generator import DeltaGenerator
+
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class DictPreview(PreviewComponent):
@@ -18,7 +20,7 @@ class DictPreview(PreviewComponent):
     def get_data_type(cls) -> str:
         return "dict"
 
-    def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
+    def render_preview(self, st: "KiaraStreamlitAPI", options: PreviewOptions) -> None:
 
         _value = self.api.get_value(options.value)
         dict_data: KiaraDict = _value.data
@@ -47,7 +49,7 @@ class ListPreview(PreviewComponent):
     def get_data_type(cls) -> str:
         return "list"
 
-    def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
+    def render_preview(self, st: "KiaraStreamlitAPI", options: PreviewOptions) -> None:
 
         _value = self.api.get_value(options.value)
         list_data: KiaraList = _value.data
@@ -76,7 +78,7 @@ class FileBundlePreview(PreviewComponent):
     def get_data_type(cls) -> str:
         return "file_bundle"
 
-    def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
+    def render_preview(self, st: "KiaraStreamlitAPI", options: PreviewOptions) -> None:
 
         _value = self.api.get_value(options.value)
         bundle: KiaraFileBundle = _value.data
@@ -100,7 +102,7 @@ class FilePreview(PreviewComponent):
     def get_data_type(cls) -> str:
         return "file"
 
-    def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
+    def render_preview(self, st: "KiaraStreamlitAPI", options: PreviewOptions) -> None:
 
         _value = self.api.get_value(options.value)
         file_model: KiaraFile = _value.data
@@ -128,7 +130,7 @@ class BooleanPreview(PreviewComponent):
     def get_data_type(self) -> str:
         return "boolean"
 
-    def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
+    def render_preview(self, st: "KiaraStreamlitAPI", options: PreviewOptions) -> None:
 
         _value = self.api.get_value(options.value)
         if _value.data is True:
@@ -146,7 +148,7 @@ class StringPreview(PreviewComponent):
     def get_data_type(self) -> str:
         return "string"
 
-    def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
+    def render_preview(self, st: "KiaraStreamlitAPI", options: PreviewOptions) -> None:
 
         _value = self.api.get_value(options.value)
         text = _value.data
@@ -167,7 +169,7 @@ class IntegerPreview(PreviewComponent):
     def get_data_type(self) -> str:
         return "integer"
 
-    def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
+    def render_preview(self, st: "KiaraStreamlitAPI", options: PreviewOptions) -> None:
 
         _value = self.api.get_value(options.value)
         text = _value.data
@@ -183,7 +185,7 @@ class FloatPreview(PreviewComponent):
     def get_data_type(self) -> str:
         return "float"
 
-    def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
+    def render_preview(self, st: "KiaraStreamlitAPI", options: PreviewOptions) -> None:
 
         _value = self.api.get_value(options.value)
         text = _value.data
@@ -199,6 +201,6 @@ class NonePreview(PreviewComponent):
     def get_data_type(self) -> str:
         return "none"
 
-    def render_preview(self, st: DeltaGenerator, options: PreviewOptions) -> None:
+    def render_preview(self, st: "KiaraStreamlitAPI", options: PreviewOptions) -> None:
 
         st.write("-- value not set --")

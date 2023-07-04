@@ -64,3 +64,4 @@ onefile.spec
 ci/conda/**/build
 ci/conda/kiara_plugin.streamlit/meta.yaml
 other_pipelines
+dev.py

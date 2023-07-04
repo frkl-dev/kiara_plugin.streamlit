@@ -12,7 +12,10 @@ from kiara.context import KiaraConfig, KiaraContextConfig, KiaraRuntimeConfig
 from kiara_plugin.streamlit.components import KiaraComponent
 from kiara_plugin.streamlit.components.input import InputComponent
 from kiara_plugin.streamlit.components.preview import PreviewComponent
-from kiara_plugin.streamlit.defaults import kiara_stremalit_app_dirs
+from kiara_plugin.streamlit.defaults import (
+    WANTS_MODAL_MARKER_KEY,
+    kiara_stremalit_app_dirs,
+)
 from kiara_plugin.streamlit.utils.class_loading import (
     find_all_kiara_streamlit_components,
 )
@@ -92,7 +95,7 @@ class ComponentMgmt(object):
         for name, cls in find_all_kiara_streamlit_components().items():
             instance = cls(kiara_streamlit=self._kiara_streamlit, component_name=name)
 
-            if name == "value_input":
+            if name == "select_value":
                 base_input_cls = cls
 
             components[name] = instance
@@ -215,30 +218,6 @@ class KiaraStreamlit(object):
 
         return comp.render_func()
 
-    # def add_component(self, name: str, component: KiaraComponent):
-    #
-    #     if name in self._avail_kiara_methods:
-    #         raise ValueError(f"Can't add component with name '{name}', name is already used by Kiara context object.")
-    #
-    #     self._component_mgmt.add_component(name, component)
-
-    # @property
-    # def api(self) -> KiaraAPI:
-    #
-    #     ctx = get_script_run_ctx()
-    #     if ctx is None:
-    #         # means, this is not running as streamlit script
-    #         if self._api_outside_streamlit is None:
-    #             kc = KiaraConfig()
-    #             self._api_outside_streamlit = KiaraAPI(kc)
-    #         return self._api_outside_streamlit
-    #     else:
-    #         if "__kiara_api__" not in st.session_state.keys():
-    #             kc = KiaraConfig()
-    #             kiara_api = KiaraAPI(kc)
-    #             st.session_state["__kiara_api__"] = kiara_api
-    #         return st.session_state.__kiara_api__
-
     @property
     def components(self) -> Mapping[str, KiaraComponent]:
         return self._component_mgmt.components
@@ -251,15 +230,16 @@ class KiaraStreamlit(object):
         )
 
     def get_input_component(self, data_type: str) -> InputComponent:
-        return self._component_mgmt.get_input_component(data_type=data_type)
+        result = self._component_mgmt.get_input_component(data_type=data_type)
+        return result
 
-    # def wants_onboarding(self) -> bool:
-    #     onboarding = st.session_state.get(ONBOARD_MAKER_KEY, None)
-    #     if onboarding and onboarding.get("enabled", False) is True:
-    #         return True
-    #     else:
-    #         st.session_state.pop(ONBOARD_MAKER_KEY, None)
-    #         return False
+    def wants_modal(self) -> bool:
+        wants_modal = st.session_state.get(WANTS_MODAL_MARKER_KEY, None)
+        if wants_modal and wants_modal.get("enabled", False) is True:
+            return True
+        else:
+            st.session_state.pop(WANTS_MODAL_MARKER_KEY, None)
+            return False
 
     def get_component(self, component_name: str) -> KiaraComponent:
 

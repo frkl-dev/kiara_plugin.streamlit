@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-from typing import Any, Dict, List, Mapping, Type
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Type
 
 from kiara.api import Value, ValueMap
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara_plugin.streamlit.components import ComponentInfo, ComponentsInfo
 from kiara_plugin.streamlit.components.info import InfoCompOptions, KiaraInfoComponent
-from streamlit.delta_generator import DeltaGenerator
+
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class KiaraComponentInfoComponent(KiaraInfoComponent[ComponentInfo]):
@@ -55,7 +57,7 @@ class KiaraComponentInfoComponent(KiaraInfoComponent[ComponentInfo]):
         )
 
     def render_info(  # type: ignore
-        self, st: DeltaGenerator, key: str, item: ComponentInfo, options: InfoCompOptions  # type: ignore
+        self, st: "KiaraStreamlitAPI", key: str, item: ComponentInfo, options: InfoCompOptions  # type: ignore
     ):
         st.markdown(f"#### Component: `{item.type_name}`")
         st.markdown(item.documentation.full_doc)
@@ -83,10 +85,25 @@ class KiaraComponentInfoComponent(KiaraInfoComponent[ComponentInfo]):
             "default": [],
             "description": [],
         }
+
+        is_type_specific_select_comp = (
+            item.python_class.full_name
+            == "kiara_plugin.streamlit.components.input.DefaultInputComponent"
+            and item.type_name != "select_value"
+        )
+
         for arg_name in item.arguments.keys():
+
+            # better hide this argument, otherwise it might be confusing
+            if is_type_specific_select_comp and arg_name in [
+                "value_schema",
+                "data_type",
+            ]:
+                continue
+
             arg = item.arguments[arg_name]
             arg_table["field"].append(arg_name)
-            arg_table["type"].append(arg.python_type)
+            arg_table["type"].append(arg.python_type_string)
             arg_table["required"].append("yes" if arg.required else "no")
             arg_table["default"].append("" if arg.default is None else str(arg.default))
             arg_table["description"].append(arg.description)

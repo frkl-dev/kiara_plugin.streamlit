@@ -4,7 +4,7 @@
 import os
 import typing
 import warnings
-from typing import Union
+from typing import Dict, Union
 
 # import streamlit as st
 from kiara.utils.class_loading import (
@@ -15,6 +15,8 @@ from kiara.utils.class_loading import (
     find_kiara_renderers_under,
     find_pipeline_base_path_for_module,
 )
+from kiara_plugin.streamlit.components.modals import KiaraStreamlitModal
+from kiara_plugin.streamlit.defaults import WANTS_MODAL_MARKER_KEY
 
 # import kiara_plugin.streamlit.utils.monkey_patches
 from kiara_plugin.streamlit.utils.class_loading import (
@@ -23,6 +25,7 @@ from kiara_plugin.streamlit.utils.class_loading import (
 
 if typing.TYPE_CHECKING:
     from kiara.context import KiaraContextConfig, KiaraRuntimeConfig
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
     from kiara_plugin.streamlit.streamlit import KiaraStreamlit
 
 
@@ -105,11 +108,15 @@ def get_version():
 def init(
     context_config: Union[None, "KiaraContextConfig"] = None,
     runtime_config: Union[None, "KiaraRuntimeConfig"] = None,
-) -> "KiaraStreamlit":
+    page_config: Union[None, Dict[str, typing.Any]] = None,
+) -> "KiaraStreamlitAPI":
 
     import kiara_plugin.streamlit.utils.monkey_patches  # noqa
     import streamlit as st
     from kiara_plugin.streamlit.streamlit import KiaraStreamlit
+
+    if page_config is not None:
+        st.set_page_config(**page_config)
 
     @st.cache_resource
     def get_ktx() -> "KiaraStreamlit":
@@ -122,6 +129,23 @@ def init(
     if not hasattr(st, "kiara"):
         ktx = get_ktx()
         setattr(st, "kiara", ktx)
-    else:
-        ktx = st.kiara
-    return ktx
+
+    modal = st.session_state.get(WANTS_MODAL_MARKER_KEY, None)
+    if modal is not None:
+
+        if not issubclass(modal.__class__, KiaraStreamlitModal):
+            raise Exception(
+                f"Invalid modal object in session state, must implement the 'KiaraStreamlitModal' protocol, not: '{type(modal)}'"
+            )
+
+        modal_finished = modal.show_modal(st=st)
+        if modal_finished:
+            st.session_state.pop(WANTS_MODAL_MARKER_KEY)
+            st.experimental_rerun()
+        else:
+            st.stop()
+
+    return st  # type: ignore
+
+
+kiara_streamlit_init = init

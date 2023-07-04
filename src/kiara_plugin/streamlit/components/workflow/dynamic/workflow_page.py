@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import List, Union
+from typing import TYPE_CHECKING, List, Union
 
 from kiara.api import Value
 from kiara.interfaces.python_api import OperationInfo
@@ -15,6 +15,9 @@ from kiara_plugin.streamlit.components.workflow.dynamic.components import (
     DynamicWorkflowOptions,
 )
 from streamlit.delta_generator import DeltaGenerator
+
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class DynamicWorkflow(KiaraComponent):
@@ -45,7 +48,7 @@ class DynamicWorkflow(KiaraComponent):
         workflow_session.last_step_processed = False
 
     def write_workflow_details(
-        self, st: DeltaGenerator, workflow_session: WorkflowSessionDynamic
+        self, st: "KiaraStreamlitAPI", workflow_session: WorkflowSessionDynamic
     ):
 
         st.write(workflow_session.input_values)
@@ -68,7 +71,7 @@ class DynamicWorkflow(KiaraComponent):
         workflow_session.last_operation = operation
 
     def write_step_desc(
-        self, st: DeltaGenerator, key: str, pipeline_step: PipelineStep
+        self, st: "KiaraStreamlitAPI", key: str, pipeline_step: PipelineStep
     ) -> None:
 
         left, right = st.columns((1, 10))
@@ -87,7 +90,7 @@ class DynamicWorkflow(KiaraComponent):
 
     def display_current_outputs(
         self,
-        st: DeltaGenerator,
+        st: "KiaraStreamlitAPI",
         key: str,
         workflow_session: WorkflowSessionDynamic,
         step_id: str,
@@ -115,16 +118,16 @@ class DynamicWorkflow(KiaraComponent):
         )
         return selected_value
 
-    def write_columns(self, st: DeltaGenerator) -> List[DeltaGenerator]:
+    def write_columns(self, st: "KiaraStreamlitAPI") -> List[DeltaGenerator]:
 
         columns = st.columns((LEFT_COLUMN, RIGHT_COLUMN))
         return columns
 
-    def write_separator(self, st: DeltaGenerator) -> None:
+    def write_separator(self, st: "KiaraStreamlitAPI") -> None:
 
         st.markdown("---")
 
-    def _render(self, st: DeltaGenerator, options: DynamicWorkflowOptions):
+    def _render(self, st: "KiaraStreamlitAPI", options: DynamicWorkflowOptions):
 
         session: WorkflowSessionDynamic = options.session
         if session.workflow is None:
@@ -313,7 +316,7 @@ class DynamicWorkflow(KiaraComponent):
         elif session.last_step_processed:
             _key = options.create_key("display_current_outputs")
             selected_value = self.display_current_outputs(
-                right, key=_key, workflow_session=session, step_id=pipeline_step
+                right, key=_key, workflow_session=session, step_id=pipeline_step  # type: ignore
             )
         else:
             selected_value = None

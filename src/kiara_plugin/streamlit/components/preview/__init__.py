@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 import uuid
 from abc import abstractmethod
-from typing import List, Mapping, Union
+from typing import TYPE_CHECKING, List, Mapping, Union
 
 from pydantic import Field
 
 from kiara.api import Value, ValueMap
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 from kiara_plugin.streamlit.utils.components import create_list_component
-from streamlit.delta_generator import DeltaGenerator
+
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class PreviewOptions(ComponentOptions):
@@ -36,12 +38,12 @@ class PreviewComponent(KiaraComponent[PreviewOptions]):
         return "default"
 
     @abstractmethod
-    def render_preview(self, st: DeltaGenerator, options: PreviewOptions):
+    def render_preview(self, st: "KiaraStreamlitAPI", options: PreviewOptions):
         pass
 
     def _render(
         self,
-        st: DeltaGenerator,
+        st: "KiaraStreamlitAPI",
         options: PreviewOptions,
     ):
 
@@ -62,7 +64,7 @@ class DefaultPreviewComponent(PreviewComponent):
 
     def render_preview(
         self,
-        st: DeltaGenerator,
+        st: "KiaraStreamlitAPI",
         options: PreviewOptions,
     ):
 
@@ -112,7 +114,7 @@ class ValueList(KiaraComponent[PreviewListOptions]):
     _options = PreviewListOptions
 
     def _render(
-        self, st: DeltaGenerator, options: PreviewListOptions
+        self, st: "KiaraStreamlitAPI", options: PreviewListOptions
     ) -> Union[str, None]:
 
         data_types = []
@@ -139,7 +141,7 @@ class ValueListPreview(KiaraComponent[PreviewListOptions]):
 
     def _render(
         self,
-        st: DeltaGenerator,
+        st: "KiaraStreamlitAPI",
         options: PreviewListOptions,
     ) -> Union[str, None]:
         ratio_preview: int = 3
@@ -160,7 +162,7 @@ class ValueListPreview(KiaraComponent[PreviewListOptions]):
                 component = self.kiara_streamlit.get_preview_component("any")
 
             pr_opts = PreviewOptions(key=options.create_key("preview"), value=value)
-            component.render_preview(preview_column, options=pr_opts)
+            component.render_preview(preview_column, options=pr_opts)  # type: ignore
 
         return selected_alias
 
@@ -183,7 +185,7 @@ class ValueMapPreview(KiaraComponent[ValueMapPreviewOptions]):
 
     def _render(
         self,
-        st: DeltaGenerator,
+        st: "KiaraStreamlitAPI",
         options: ValueMapPreviewOptions,
     ) -> Union[ValueMap, None]:
 
@@ -217,7 +219,7 @@ class ValueMapPreview(KiaraComponent[ValueMapPreviewOptions]):
 
                 _key = options.create_key("preview", f"{idx}_{field}")
                 preview_opts = PreviewOptions(key=_key, value=value)
-                component.render_preview(st=center, options=preview_opts)
+                component.render_preview(st=center, options=preview_opts)  # type: ignore
 
                 right.write("Save value")
                 with right.form(key=options.create_key("save_form", f"{idx}_{field}")):

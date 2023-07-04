@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-from typing import ClassVar, Mapping, Type, Union
+from typing import TYPE_CHECKING, ClassVar, Mapping, Type, Union
 
 from kiara.interfaces.python_api import OperationInfo
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 from kiara_plugin.streamlit.components.info import InfoCompOptions, KiaraInfoComponent
-from streamlit.delta_generator import DeltaGenerator
+
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 # class KiaraApiHelpCompOptions(ComponentOptions):
 #     class Config:
@@ -22,7 +24,7 @@ from streamlit.delta_generator import DeltaGenerator
 #
 #     _component_name = "kiara_api_help"
 #
-#     def _render(self, st: DeltaGenerator, options: KiaraApiHelpCompOptions):
+#     def _render(self, st: KiaraStreamlitAPI, options: KiaraApiHelpCompOptions):
 #
 #         doc = self.api.doc
 #         left, right = options.columns
@@ -83,7 +85,7 @@ class KiaraOperationInfoComponent(KiaraInfoComponent[OperationInfo]):
         return self.api.retrieve_operation_info(operation=item_id)
 
     def render_info(  # type: ignore
-        self, st: DeltaGenerator, key: str, item: OperationInfo, options: InfoCompOptions  # type: ignore
+        self, st: "KiaraStreamlitAPI", key: str, item: OperationInfo, options: InfoCompOptions  # type: ignore
     ):
         st.markdown(f"#### Operation: `{item.operation.operation_id}`")
         st.markdown(item.documentation.full_doc)
@@ -115,7 +117,7 @@ class KiaraOperationInfoComponent(KiaraInfoComponent[OperationInfo]):
 #         return "module_type"
 #
 #     def render_info(  # type: ignore
-#         self, st: DeltaGenerator, key: str, item: ModuleTypeInfo, options: InfoCompOptions  # type: ignore
+#         self, st: KiaraStreamlitAPI, key: str, item: ModuleTypeInfo, options: InfoCompOptions  # type: ignore
 #     ):
 #         st.write(item)
 #
@@ -129,7 +131,7 @@ class KiaraOperationInfoComponent(KiaraInfoComponent[OperationInfo]):
 #         return "data_type"
 #
 #     def render_info(  # type: ignore
-#         self, st: DeltaGenerator, key: str, item: DataTypeClassInfo, options: InfoCompOptions  # type: ignore
+#         self, st: KiaraStreamlitAPI, key: str, item: DataTypeClassInfo, options: InfoCompOptions  # type: ignore
 #     ):
 #         st.write(item)
 
@@ -150,7 +152,7 @@ class OperationDocs(KiaraComponent):
         },
     ]
 
-    def _render(self, st: DeltaGenerator, options: OperationDocsOptions):
+    def _render(self, st: "KiaraStreamlitAPI", options: OperationDocsOptions):
 
         left, right = st.columns([1, 3])
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import List, Literal, Union
+from typing import TYPE_CHECKING, List, Literal, Union
 
 import networkx as nx
 from pydantic import Field
@@ -9,7 +9,9 @@ from kiara.models.module.operation import Operation
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
-from streamlit.delta_generator import DeltaGenerator
+
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class PipelineSelectOptions(ComponentOptions):
@@ -25,7 +27,7 @@ class PipelineSelect(KiaraComponent[PipelineSelectOptions]):
     _options = PipelineSelectOptions
 
     def _render(
-        self, st: DeltaGenerator, options: PipelineSelectOptions
+        self, st: "KiaraStreamlitAPI", options: PipelineSelectOptions
     ) -> Union[None, OperationInfo]:
 
         pipeline_infos = self.api.retrieve_operations_info(
@@ -67,7 +69,7 @@ class PipelineGraph(KiaraComponent[PipelineGraphOptions]):
         }
     ]
 
-    def _render(self, st: DeltaGenerator, options: PipelineGraphOptions) -> None:
+    def _render(self, st: "KiaraStreamlitAPI", options: PipelineGraphOptions) -> None:
 
         if isinstance(options.pipeline, str):
             op: Operation = self.api.get_operation(options.pipeline)

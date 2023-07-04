@@ -10,7 +10,7 @@ KIARA_STREAMLIT_RESOURCES_FOLDER = importlib_resources.files(  # type: ignore
 
 """Default resources folder for this package."""
 
-ONBOARD_MAKER_KEY = "__ONBOARD__"
+WANTS_MODAL_MARKER_KEY = "__WANTS_MODAL__"
 
 NO_VALUE_MARKER = "-- no value --"
 

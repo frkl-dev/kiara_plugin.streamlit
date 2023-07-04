@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
+from typing import TYPE_CHECKING
+
 import pygwalker as pyg
 
 import streamlit.components.v1 as components
 from kiara_plugin.streamlit.components.preview import PreviewComponent, PreviewOptions
 from kiara_plugin.tabular.models.db import KiaraDatabase
 from kiara_plugin.tabular.models.tables import KiaraTable, KiaraTables
-from streamlit.delta_generator import DeltaGenerator
+
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class TableExplorer(PreviewComponent):
@@ -21,7 +25,7 @@ class TableExplorer(PreviewComponent):
     def get_data_type(cls) -> str:
         return "table"
 
-    def render_preview(self, st: DeltaGenerator, options: PreviewOptions):
+    def render_preview(self, st: "KiaraStreamlitAPI", options: PreviewOptions):
         _value = self.api.get_value(options.value)
         table: KiaraTable = _value.data
 
@@ -42,7 +46,7 @@ class DatabasePreview(PreviewComponent):
     def get_data_type(cls) -> str:
         return "database"
 
-    def render_preview(self, st: DeltaGenerator, options: PreviewOptions):
+    def render_preview(self, st: "KiaraStreamlitAPI", options: PreviewOptions):
 
         _value = self.api.get_value(options.value)
         db: KiaraDatabase = _value.data
@@ -71,7 +75,7 @@ class TablesPreview(PreviewComponent):
     def get_data_type(cls) -> str:
         return "database"
 
-    def render_preview(self, st: DeltaGenerator, options: PreviewOptions):
+    def render_preview(self, st: "KiaraStreamlitAPI", options: PreviewOptions):
 
         _value = self.api.get_value(options.value)
         tables: KiaraTables = _value.data

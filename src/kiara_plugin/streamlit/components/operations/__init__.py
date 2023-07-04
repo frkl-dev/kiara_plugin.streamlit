@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import Union
+from typing import TYPE_CHECKING, Any, Dict, Union
 
 from pydantic import Field, validator
 
@@ -8,12 +8,17 @@ from kiara.exceptions import KiaraException
 from kiara.interfaces.python_api import OperationInfo
 from kiara.models.module.operation import Operation
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
-from streamlit.delta_generator import DeltaGenerator
+
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class OperationProcessOptions(ComponentOptions):
 
     operation_id: str = Field(description="The id of the operation to use.")
+    module_config: Union[Dict[str, Any], None] = Field(
+        description="Optional module config.", default=None
+    )
 
     @validator("operation_id")
     def _validate_operation_id(cls, v: str) -> str:
@@ -34,12 +39,13 @@ class OperationProcessPanel(KiaraComponent[OperationProcessOptions]):
     _options = OperationProcessOptions
 
     def _render(
-        self, st: DeltaGenerator, options: OperationProcessOptions
+        self, st: "KiaraStreamlitAPI", options: OperationProcessOptions
     ) -> Union[ValueMap, None]:
 
         comp = self.get_component("operation_inputs")
         operation_inputs: ValueMap = comp.render_func(st)(
             operation_id=options.operation_id,
+            module_config=options.module_config,
             key=options.create_key("inputs", options.operation_id),
         )
 

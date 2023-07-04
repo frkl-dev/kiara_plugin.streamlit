@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
+from typing import TYPE_CHECKING
+
 from streamlit_tags import st_tags
 
 from kiara_plugin.streamlit.components.input import InputComponent, InputOptions
-from streamlit.delta_generator import DeltaGenerator
+
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class ListInput(InputComponent):
@@ -26,7 +30,7 @@ class ListInput(InputComponent):
 
     def render_input_field(
         self,
-        st: DeltaGenerator,
+        st: "KiaraStreamlitAPI",
         options: InputOptions,
     ):
         if options.smart_label:

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import Dict, Mapping, Tuple, TypeVar, Union
+from typing import TYPE_CHECKING, Dict, Mapping, Tuple, TypeVar, Union
 
 from pydantic import Field
 
@@ -9,6 +9,9 @@ from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 from kiara_plugin.streamlit.components.preview import PreviewOptions
 from kiara_plugin.streamlit.components.workflow.dynamic import WorkflowSessionDynamic
 from streamlit.delta_generator import DeltaGenerator
+
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class DynamicWorkflowOptions(ComponentOptions):
@@ -37,7 +40,7 @@ class WriteStepComponent(DynamicWorkflowComponent):
     _component_name = "write_step_details"
     _options = StepDetailsOptions  # type: ignore
 
-    def _render(self, st: DeltaGenerator, options: StepDetailsOptions):
+    def _render(self, st: "KiaraStreamlitAPI", options: StepDetailsOptions):
 
         idx = options.session.pipeline_steps.index(options.step_id)
 
@@ -85,7 +88,7 @@ class NextStepComponent(DynamicWorkflowComponent):
     _options = NextStepOptions
 
     def _render(
-        self, st: DeltaGenerator, options: NextStepOptions
+        self, st: "KiaraStreamlitAPI", options: NextStepOptions
     ) -> Tuple[Union[Operation, None], Union[str, None]]:
 
         value = options.value
@@ -188,7 +191,7 @@ class StepInputFields(DynamicWorkflowComponent):
     _options = StepDetailsOptions
 
     def _render(
-        self, st: DeltaGenerator, options: StepDetailsOptions
+        self, st: "KiaraStreamlitAPI", options: StepDetailsOptions
     ) -> Dict[str, Value]:
 
         step_id = options.step_id
@@ -241,7 +244,7 @@ class CurrentValuesPreview(KiaraComponent[CurrentValuesPreviewOptions]):
 
     def _render(
         self,
-        st: DeltaGenerator,
+        st: "KiaraStreamlitAPI",
         options: CurrentValuesPreviewOptions,
     ) -> Union[Value, None]:
 
@@ -274,7 +277,7 @@ class CurrentValuesPreview(KiaraComponent[CurrentValuesPreviewOptions]):
             select = left.button("Select for next step", key=_key)
             _key = options.create_key("preview", f"{idx}_{field}")
             preview_opts = PreviewOptions(key=_key, value=value)
-            component.render_preview(st=center, options=preview_opts)
+            component.render_preview(st=center, options=preview_opts)  # type: ignore
 
             right.write("Save value")
             with right.form(key=options.create_key("save_form", f"{idx}_{field}")):

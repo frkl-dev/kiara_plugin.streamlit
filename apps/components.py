@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 
-import streamlit as st
-
 import kiara_plugin.streamlit as kst
 from kiara.interfaces.python_api import JobDesc
 
-st.set_page_config(layout="wide")
+st = kst.init(page_config={"layout": "wide"})
 
-kst.init()
 st.kiara.api.set_active_context("components_doc", create=True)
 
 if "file_bundle" not in st.kiara.api.list_alias_names():

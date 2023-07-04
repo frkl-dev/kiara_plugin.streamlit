@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-from typing import Union
+from typing import TYPE_CHECKING, Union
 
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 from kiara_plugin.streamlit.modules import DummyModuleConfig
-from streamlit.delta_generator import DeltaGenerator
+
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class StepRequirementsOptions(ComponentOptions):
@@ -19,7 +21,7 @@ class StepRequirement(KiaraComponent[StepRequirementsOptions]):
     _examples = [{"doc": "A simple example", "args": {}}]
 
     def _render(
-        self, st: DeltaGenerator, options: StepRequirementsOptions
+        self, st: "KiaraStreamlitAPI", options: StepRequirementsOptions
     ) -> Union[None, DummyModuleConfig]:
 
         st.write("INSIDE COMPONENT")

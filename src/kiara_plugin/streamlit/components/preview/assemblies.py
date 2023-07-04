@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
-from typing import Mapping
+from typing import TYPE_CHECKING, Mapping
 
 from pydantic import Field
 
 from kiara.api import ValueSchema
 from kiara.utils.output import create_dict_from_field_schemas
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
-from streamlit.delta_generator import DeltaGenerator
+
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class FieldsInfoOptions(ComponentOptions):
@@ -40,7 +42,7 @@ class FieldsInfo(KiaraComponent[FieldsInfoOptions]):
         }
     ]
 
-    def _render(self, st: DeltaGenerator, options: FieldsInfoOptions):
+    def _render(self, st: "KiaraStreamlitAPI", options: FieldsInfoOptions):
 
         import pandas as pd
 

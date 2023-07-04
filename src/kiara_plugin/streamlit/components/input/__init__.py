@@ -7,14 +7,18 @@ from typing import TYPE_CHECKING, Any, Callable, Iterable, List, Tuple, TypeVar,
 from pydantic import Field
 
 from kiara.api import Value, ValueSchema
-from kiara.defaults import SpecialValue
+from kiara.defaults import DEFAULT_NO_DESC_VALUE, SpecialValue
 from kiara.registries.data import ValueLink
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
-from kiara_plugin.streamlit.defaults import NO_LABEL_MARKER, NO_VALUE_MARKER
-from streamlit.delta_generator import DeltaGenerator
+from kiara_plugin.streamlit.defaults import (
+    NO_LABEL_MARKER,
+    NO_VALUE_MARKER,
+    WANTS_MODAL_MARKER_KEY,
+)
 
 if TYPE_CHECKING:
-    from kiara_plugin.streamlit.streamlit import KiaraStreamlit
+    from kiara_plugin.streamlit import KiaraStreamlit
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class InputOptions(ComponentOptions):
@@ -29,7 +33,8 @@ class InputOptions(ComponentOptions):
         description="The label to use for the input field.", default=NO_LABEL_MARKER
     )
     help: Union[str, None] = Field(
-        description="The help to display for this input field."
+        description="The help to display for this input field.",
+        default=DEFAULT_NO_DESC_VALUE,
     )
     value_schema: Union[None, ValueSchema] = Field(
         description="The schema for the value in question."
@@ -67,13 +72,13 @@ class InputComponent(KiaraComponent[INPUT_OPTIONS_TYPE]):
     @abc.abstractmethod
     def render_input_field(
         self,
-        st: DeltaGenerator,
+        st: "KiaraStreamlitAPI",
         options: INPUT_OPTIONS_TYPE,
     ) -> Union[ValueLink, None, str, uuid.UUID]:
         pass
 
     def _render(
-        self, st: DeltaGenerator, options: INPUT_OPTIONS_TYPE
+        self, st: "KiaraStreamlitAPI", options: INPUT_OPTIONS_TYPE
     ) -> Union[Value, None]:
 
         if options.label == NO_LABEL_MARKER:
@@ -111,20 +116,26 @@ class DefaultInputOptions(InputOptions):
         default=True,
     )
     preview: str = Field(
-        description="The preview to use for the value.", default="auto"
+        description="The preview profile to use for the value. Use the 'no' string to disable.",
+        default="auto",
     )
     display_value_type: Union[bool, None] = Field(
-        description="Whether to display the data type in the list.", default=None
+        description="Whether to display the data type in the list. By default it hides it for a single 'data type' option, and shows for multiple.",
+        default=None,
     )
     data_type: Union[str, List[str], None] = Field(
         description="The data type(s) to display as selection.", default=None
+    )
+    add_create_widget: Union[str, None, bool] = Field(
+        description="The name of a widget that can be used to create a new value. If specified, a 'Create' button is added that calls that widget. If 'True', the widget will be chosen automatically, if a string, the component with that name will be used.",
+        default=None,
     )
 
 
 class DefaultInputComponent(InputComponent):
     """Render a selectbox with all available values (for a specific type, if applicable)."""
 
-    _component_name = "value_input"
+    _component_name = "select_value"
     _options = DefaultInputOptions  # type: ignore
 
     def __init__(
@@ -150,7 +161,7 @@ class DefaultInputComponent(InputComponent):
 
     def render_input_field(
         self,
-        st: DeltaGenerator,
+        st: "KiaraStreamlitAPI",
         options: DefaultInputOptions,
     ) -> Union[ValueLink, None, str, uuid.UUID]:
 
@@ -179,6 +190,8 @@ class DefaultInputComponent(InputComponent):
         _key = options.create_key(*sorted(data_types))
 
         if len(data_types) == 1:
+            # here we use the instance of the input component for the data type that was auto generated, if available.
+            # it will nonetheless continue below, just a differently configured instance (unless there is a custom input widget for that data type)
             dt = data_types[0]
             inp_comp = self.kiara_streamlit.get_input_component(dt)
             if inp_comp and inp_comp.__class__ != self.__class__:
@@ -187,10 +200,40 @@ class DefaultInputComponent(InputComponent):
                 copy_options.key = _key_selectbox
                 return inp_comp.render_input_field(st, options=copy_options)
 
+        if not options.add_create_widget:
+            return self._render_default_selectbox(st, options, data_types=data_types)
+        else:
+
+            columns = st.columns([5, 1])
+            result = self._render_default_selectbox(st=columns[0], options=options, data_types=data_types)  # type: ignore
+            columns[1].header("")
+            create_widget = columns[1].button("Create")
+            if create_widget:
+
+                from kiara_plugin.streamlit.components.modals import (
+                    KiaraStreamlitModalCreate,
+                )
+
+                modal = KiaraStreamlitModalCreate()
+                st.session_state[WANTS_MODAL_MARKER_KEY] = modal  # type: ignore
+                st.experimental_rerun()
+
+            return result
+
+    def _render_default_selectbox(
+        self,
+        st: "KiaraStreamlitAPI",
+        options: DefaultInputOptions,
+        data_types: List[str],
+    ):
+
         has_alias = options.value_has_alias
-        available_values = self.api.list_aliases(
-            data_types=list(data_types), has_alias=has_alias
-        )
+        if has_alias:
+            available_values = self.api.list_aliases(data_types=list(data_types))
+        else:
+            available_values = self.api.list_values(
+                data_types=list(data_types), has_alias=False
+            )
 
         optional = False
         default = None
@@ -204,7 +247,7 @@ class DefaultInputComponent(InputComponent):
             optional = options.value_schema.optional
 
         display_type = options.display_value_type
-        if display_type is None and data_types != 1:
+        if display_type is None and len(data_types) != 1:
             display_type = True
         elif display_type is None:
             display_type = False
@@ -273,6 +316,7 @@ class DefaultInputComponent(InputComponent):
                     else:
                         comp.render_func(st)(key=_key, value=result)
             elif with_preview:
+                # TODO: support preview profiles
                 if result is not None:
                     _key = options.create_key("preview", result)
                     comp = self.get_component("preview")

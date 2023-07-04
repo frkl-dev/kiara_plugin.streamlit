@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
+from typing import TYPE_CHECKING
 
 from kiara_plugin.streamlit.components.preview import PreviewComponent, PreviewOptions
 from kiara_plugin.tabular.models.array import KiaraArray
 from kiara_plugin.tabular.models.db import KiaraDatabase
 from kiara_plugin.tabular.models.table import KiaraTable
 from kiara_plugin.tabular.models.tables import KiaraTables
-from streamlit.delta_generator import DeltaGenerator
+
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class ArrayPreview(PreviewComponent):
@@ -17,7 +20,7 @@ class ArrayPreview(PreviewComponent):
     def get_data_type(cls) -> str:
         return "array"
 
-    def render_preview(self, st: DeltaGenerator, options: PreviewOptions):
+    def render_preview(self, st: "KiaraStreamlitAPI", options: PreviewOptions):
 
         _value = self.api.get_value(options.value)
         table: KiaraArray = _value.data
@@ -38,7 +41,7 @@ class TablePreview(PreviewComponent):
     def get_data_type(cls) -> str:
         return "table"
 
-    def render_preview(self, st: DeltaGenerator, options: PreviewOptions):
+    def render_preview(self, st: "KiaraStreamlitAPI", options: PreviewOptions):
 
         _value = self.api.get_value(options.value)
         table: KiaraTable = _value.data
@@ -58,7 +61,7 @@ class DatabasePreview(PreviewComponent):
     def get_data_type(cls) -> str:
         return "database"
 
-    def render_preview(self, st: DeltaGenerator, options: PreviewOptions):
+    def render_preview(self, st: "KiaraStreamlitAPI", options: PreviewOptions):
 
         _value = self.api.get_value(options.value)
         db: KiaraDatabase = _value.data
@@ -69,7 +72,7 @@ class DatabasePreview(PreviewComponent):
             # of how tabs are implemented in streamlit
             # maybe there is an easy way to do this better, otherwise, maybe not use tabs
             table = db.get_table_as_pandas_df(table_name)
-            tabs[idx].dataframe(table, use_container_width=True)
+            tabs[idx].dataframe(table, use_container_width=True, hide_index=True)
 
 
 class TablesPreview(PreviewComponent):
@@ -82,9 +85,9 @@ class TablesPreview(PreviewComponent):
 
     @classmethod
     def get_data_type(cls) -> str:
-        return "database"
+        return "tables"
 
-    def render_preview(self, st: DeltaGenerator, options: PreviewOptions):
+    def render_preview(self, st: "KiaraStreamlitAPI", options: PreviewOptions):
 
         _value = self.api.get_value(options.value)
         tables: KiaraTables = _value.data
@@ -95,4 +98,4 @@ class TablesPreview(PreviewComponent):
             # of how tabs are implemented in streamlit
             # maybe there is an easy way to do this better, otherwise, maybe not use tabs
             table = tables.get_table(table_name).to_pandas_dataframe()
-            tabs[idx].dataframe(table, use_container_width=True)
+            tabs[idx].dataframe(table, use_container_width=True, hide_index=True)

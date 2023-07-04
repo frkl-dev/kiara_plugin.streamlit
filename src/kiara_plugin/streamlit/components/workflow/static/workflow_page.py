@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import Dict
+from typing import TYPE_CHECKING, Dict
 
 from kiara.api import ValueSchema
 from kiara.exceptions import KiaraException
@@ -9,7 +9,9 @@ from kiara_plugin.streamlit.components import KiaraComponent
 from kiara_plugin.streamlit.components.workflow.static.components import (
     StaticWorkflowOptions,
 )
-from streamlit.delta_generator import DeltaGenerator
+
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class WorkflowStatic(KiaraComponent[StaticWorkflowOptions]):
@@ -17,7 +19,7 @@ class WorkflowStatic(KiaraComponent[StaticWorkflowOptions]):
     _component_name = "workflow_static"
     _options = StaticWorkflowOptions
 
-    def _render(self, st: DeltaGenerator, options: StaticWorkflowOptions):
+    def _render(self, st: "KiaraStreamlitAPI", options: StaticWorkflowOptions):
 
         session = options.session
         workflow = session.workflow

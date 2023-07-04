@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-from typing import Any, Callable, ClassVar, List, Union
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, List, Union
 
 from pydantic import Field
 
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
-from streamlit.delta_generator import DeltaGenerator
+
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class ContextSwitchOptions(ComponentOptions):
@@ -37,7 +39,7 @@ class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
         }
     ]
 
-    def _render(self, st: DeltaGenerator, options: ContextSwitchOptions) -> bool:
+    def _render(self, st: "KiaraStreamlitAPI", options: ContextSwitchOptions) -> bool:
 
         if not options.allow_create:
             context_names = self.api.list_context_names()
@@ -104,7 +106,7 @@ class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
                 context_names.insert(0, "default")
 
             selected_context = self.write_selectbox(
-                st=selectbox_placeholder,
+                st=selectbox_placeholder,  # type: ignore
                 items=context_names,
                 options=options,
                 key=["kiara_context", "select_context"],
@@ -121,7 +123,7 @@ class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
 
     def write_selectbox(
         self,
-        st: DeltaGenerator,
+        st: "KiaraStreamlitAPI",
         options: ContextSwitchOptions,
         key: List[str],
         items: List[str],

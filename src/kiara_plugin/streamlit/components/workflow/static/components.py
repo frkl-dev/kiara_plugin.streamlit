@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 import uuid
-from typing import Dict, List, TypeVar, Union
+from typing import TYPE_CHECKING, Dict, List, TypeVar, Union
 
 from pydantic import Field
 
 from kiara.api import ValueMap
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 from kiara_plugin.streamlit.components.workflow.static import WorkflowSessionStatic
-from streamlit.delta_generator import DeltaGenerator
+
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class StaticWorkflowOptions(ComponentOptions):
@@ -38,7 +40,7 @@ class PreviousOutputsPreview(StaticWorkflowComponent):
     _options = StageOutputsPreviewOptions
 
     def _render(
-        self, st: DeltaGenerator, options: StageOutputsPreviewOptions
+        self, st: "KiaraStreamlitAPI", options: StageOutputsPreviewOptions
     ) -> Union[ValueMap, None]:
 
         session = options.session

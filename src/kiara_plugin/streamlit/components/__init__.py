@@ -2,7 +2,17 @@
 import abc
 import warnings
 from functools import partial
-from typing import Any, Callable, Dict, Generic, List, Type, TypeVar, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    List,
+    Type,
+    TypeVar,
+    Union,
+)
 
 from pydantic import BaseModel, Field
 from pydantic.fields import ModelField
@@ -21,13 +31,12 @@ from streamlit.runtime.state import SessionStateProxy
 with warnings.catch_warnings():
     pass
 
-from typing import TYPE_CHECKING
-
 from streamlit.delta_generator import DeltaGenerator
 
 if TYPE_CHECKING:
     from kiara.api import Kiara, KiaraAPI
-    from kiara_plugin.streamlit.streamlit import KiaraStreamlit
+    from kiara_plugin.streamlit import KiaraStreamlit
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class ComponentOptions(BaseModel):
@@ -134,7 +143,7 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
         option_fields.reverse()
         return option_fields
 
-    def render(self, st: DeltaGenerator, *args, **kwargs) -> Any:
+    def render(self, st: "KiaraStreamlitAPI", *args, **kwargs) -> Any:
 
         option_fields = self.get_option_names()
 
@@ -167,7 +176,7 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
             return None
 
     @abc.abstractmethod
-    def _render(self, st: DeltaGenerator, options: COMP_OPTIONS_TYPE):
+    def _render(self, st: "KiaraStreamlitAPI", options: COMP_OPTIONS_TYPE):
         pass
 
     def get_component(self, component_name: str) -> "KiaraComponent":
@@ -179,21 +188,39 @@ class ArgInfo(BaseModel):
     @classmethod
     def from_field(cls, field_info: ModelField):
 
-        python_type = str(field_info.type_)
+        python_type = field_info.outer_type_
         desc = field_info.field_info.description
         req = field_info.required
         default = field_info.default
 
-        if field_info.outer_type_ != field_info.type_:
-            python_type = str(field_info.outer_type_)
-
         if not desc:
             desc = "-- n/a --"
+
+        if (
+            not field_info.is_complex()
+            and not field_info.required
+            and "Union" not in str(python_type)
+        ):
+            python_type_string = f"Union[None, {python_type.__name__}]"
+        else:
+            python_type_string = str(python_type)
+            if python_type_string.startswith("<class"):
+                python_type_string = python_type.__name__
+
+        python_type_string = python_type_string.replace("NoneType", "None")
+        python_type_string = python_type_string.replace("typing.", "")
         return ArgInfo(
-            python_type=python_type, description=desc, required=req, default=default
+            python_type=python_type,
+            description=desc,
+            required=req,
+            default=default,
+            python_type_string=python_type_string,
         )
 
-    python_type: str = Field(description="The python type of this argument.")
+    python_type: Any = Field(description="The python type of this argument.")
+    python_type_string: str = Field(
+        description="The python type hint of this argument."
+    )
     description: str = Field(description="The description of this argument.")
     required: bool = Field(description="Whether this argument is required.")
     default: Any = Field(description="The default value for this argument.")

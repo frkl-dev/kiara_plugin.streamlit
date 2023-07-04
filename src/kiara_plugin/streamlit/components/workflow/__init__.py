@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
+from typing import TYPE_CHECKING
+
 from pydantic import BaseModel, Field
 
 from kiara.interfaces.python_api import Workflow
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
-from streamlit.delta_generator import DeltaGenerator
 
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 KIARA_METADATA = {
     "description": "Kiara streamlit compoents to work with workflows",
     "tags": ["workflows"],
@@ -29,7 +32,7 @@ class WorkflowComponent(KiaraComponent):
     _options = WorkflowOptions
     _component_type = "workflow"
 
-    def _render(self, st: DeltaGenerator, options: WorkflowOptions):
+    def _render(self, st: "KiaraStreamlitAPI", options: WorkflowOptions):
 
         from kiara_plugin.streamlit.components.workflow.dynamic import (
             WorkflowSessionDynamic,

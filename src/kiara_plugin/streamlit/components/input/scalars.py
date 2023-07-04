@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import abc
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from kiara.defaults import SpecialValue
 from kiara_plugin.streamlit.components.input import InputComponent, InputOptions
-from streamlit.delta_generator import DeltaGenerator
+
+if TYPE_CHECKING:
+    from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
 class ScalarInput(InputComponent):
@@ -14,7 +16,7 @@ class ScalarInput(InputComponent):
 
     def render_input_field(
         self,
-        st: DeltaGenerator,
+        st: "KiaraStreamlitAPI",
         options: InputOptions,
     ):
         if options.smart_label:
@@ -31,7 +33,7 @@ class ScalarInput(InputComponent):
     @abc.abstractmethod
     def render_scalar_input(
         self,
-        st: DeltaGenerator,
+        st: "KiaraStreamlitAPI",
         options: InputOptions,
     ) -> Any:
         pass
@@ -55,7 +57,7 @@ class BooleanInput(ScalarInput):
 
     def render_scalar_input(
         self,
-        st: DeltaGenerator,
+        st: "KiaraStreamlitAPI",
         options: InputOptions,
     ):
         default = options.get_default()
@@ -92,7 +94,7 @@ class StringInput(ScalarInput):
 
     def render_scalar_input(
         self,
-        st: DeltaGenerator,
+        st: "KiaraStreamlitAPI",
         options: InputOptions,
     ):
 
@@ -137,7 +139,7 @@ class IntegerInput(ScalarInput):
 
     def render_scalar_input(
         self,
-        st: DeltaGenerator,
+        st: "KiaraStreamlitAPI",
         options: InputOptions,
     ):
 
@@ -211,7 +213,7 @@ class FloatInput(ScalarInput):
 
     def render_scalar_input(
         self,
-        st: DeltaGenerator,
+        st: "KiaraStreamlitAPI",
         options: InputOptions,
     ):
 

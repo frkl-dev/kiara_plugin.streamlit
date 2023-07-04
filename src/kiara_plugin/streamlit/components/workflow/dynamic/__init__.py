@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
-from typing import Dict, List, Union
+from typing import TYPE_CHECKING, Dict, List, Union
 
 from pydantic import Field
 
 from kiara.api import Value
 from kiara.interfaces.python_api import OperationInfo, Workflow
 from kiara_plugin.streamlit.components.workflow import WorkflowSession
+
+if TYPE_CHECKING:
+    pass
 
 LEFT_COLUMN = 1
 RIGHT_COLUMN = 4
