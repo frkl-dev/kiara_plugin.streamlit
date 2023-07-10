@@ -37,6 +37,7 @@ dependencies = [
     "importlib-resources",
     "pydot>=1.4.0",
     "pygwalker>=0.1.11",
+    "streamlit-scrollable-textbox>=0.0.3",
     "streamlit-tags>=1.2.8"
 ]
 dynamic = ["version"]
@@ -146,7 +147,7 @@ select = [
     "PLW",
     "PIE",
 ]
-ignore = ["E501", "S101", "SIM118", "SIM108", "PLR2004", "PLR0913", "S110", "PLR0912", "PLR0915", "PIE810", "T201", "PD011", "F405", "RUF012", "RUF013", "F403"]
+ignore = ["E501", "S101", "SIM118", "SIM108", "PLR2004", "PLR0913", "S110", "PLR0912", "PLR0915", "PIE810", "T201", "PD011", "F405", "RUF012", "RUF013", "F403", "PLR0911"]
 
 fix = true
 fixable = ["E", "F", "RUF100", "I001", "Q"]

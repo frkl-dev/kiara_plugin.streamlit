@@ -108,6 +108,14 @@ class KiaraComponentInfoComponent(KiaraInfoComponent[ComponentInfo]):
             arg_table["default"].append("" if arg.default is None else str(arg.default))
             arg_table["description"].append(arg.description)
 
+        hide_table_row_index = """
+                    <style>
+                    thead tr th:first-child {display:none}
+                    tbody th {display:none}
+                    </style>
+                    """
+        # Inject CSS with Markdown
+        st.markdown(hide_table_row_index, unsafe_allow_html=True)
         st.table(arg_table)
 
         st.markdown("##### Usage")
@@ -168,14 +176,24 @@ result = st.kiara.{}({})
                             st.error(e)
                             result = None
                         if result:
+                            title = "**Component result (not rendered)**"
                             if isinstance(result, Value):
-                                with self._st.expander("*result*"):
+                                with self._st.expander(title):
+                                    self._st.markdown(
+                                        "Result type: [`Value`](https://dharpa.org/kiara/latest/reference/kiara/models/values/value/#kiara.models.values.value.Value)"
+                                    )
                                     self.kiara_streamlit.preview(result)
                             elif isinstance(result, ValueMap):
-                                with self._st.expander("*result*"):
+                                with self._st.expander(title):
+                                    self._st.markdown(
+                                        "Result type: [`ValueMap`]()https://dharpa.org/kiara/latest/reference/kiara/models/values/value/#kiara.models.values.value.ValueMap"
+                                    )
                                     self.kiara_streamlit.value_map_preview(
                                         value_map=dict(result)
                                     )
                             else:
-                                with self._st.expander("*result*"):
-                                    self._st.markdown(f"***Result***: {result}")
+                                with self._st.expander(title):
+                                    self._st.markdown(
+                                        f"Result type: Python instace of type ``{type(result)}`'"
+                                    )
+                                    self._st.write(result)

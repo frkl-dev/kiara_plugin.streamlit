@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING, Any, Dict
 
+import humanfriendly
+import streamlit_scrollable_textbox as stx
+
 from kiara.models.data_types import KiaraDict
 from kiara.models.filesystem import KiaraFile, KiaraFileBundle
 from kiara.utils.json import orjson_dumps
@@ -89,7 +92,7 @@ class FileBundlePreview(PreviewComponent):
             table.setdefault("size", []).append(file_info.size)
             table.setdefault("mime-type", []).append(file_info.mime_type)
 
-        st.dataframe(table, use_container_width=True)
+        st.dataframe(table, use_container_width=True, hide_index=True)
 
 
 class FilePreview(PreviewComponent):
@@ -107,17 +110,43 @@ class FilePreview(PreviewComponent):
         _value = self.api.get_value(options.value)
         file_model: KiaraFile = _value.data
 
-        table: Dict[str, Any] = {"key": [], "value": []}
-        table["key"].append("path")
-        table["value"].append(file_model.path)
-        table["key"].append("size")
-        table["value"].append(file_model.size)
-        table["key"].append("mime-type")
-        table["value"].append(file_model.mime_type)
-        table["key"].append("content")
-        table["value"].append(file_model.read_text())
-        st.table(table)
+        _key = options.create_key("file", "preview")
 
+        if options.display_style == "default":
+            # TODO: check if binary file?
+            max_lines = 100
+            with open(file_model.path, "rt") as f:
+                if max_lines <= 0:
+                    content = f.read()
+                else:
+                    lines = []
+                    idx = 0
+                    while idx < max_lines:
+                        lines.append(f.readline())
+                        idx += 1
+
+                    if idx >= max_lines:
+                        lines.append("...\n")
+                        lines.append("...")
+                    content = "".join(lines)
+            stx.scrollableTextbox(content, height=150, fontFamily="monospace", key=_key)
+
+        elif options.display_style == "metadata":
+
+            table: Dict[str, Any] = {"key": [], "value": []}
+            table["key"].append("path")
+            table["value"].append(file_model.path)
+            table["key"].append("size")
+            table["value"].append(humanfriendly.format_size(file_model.size))
+            table["key"].append("mime-type")
+            table["value"].append(file_model.mime_type)
+            table["key"].append("content")
+            table["value"].append(file_model.read_text())
+            st.dataframe(table, hide_index=True)
+        else:
+            raise Exception(
+                f"Unknown display style for file preview: {options.display_style}"
+            )
         # st.table(table, use_container_width=True)
 
 

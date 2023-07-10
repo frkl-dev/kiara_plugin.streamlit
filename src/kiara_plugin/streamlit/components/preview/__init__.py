@@ -173,6 +173,9 @@ class ValueMapPreviewOptions(ComponentOptions):
         description="Whether to add the type of the value to the tab titles.",
         default=True,
     )
+    add_save_option: bool = Field(
+        description="Whether to add a save option for every value.", default=False
+    )
     value_map: Mapping[str, Union[str, uuid.UUID, Value]] = Field(
         description="The values to display."
     )
@@ -215,32 +218,40 @@ class ValueMapPreview(KiaraComponent[ValueMapPreviewOptions]):
                 )
                 if component is None:
                     component = self.kiara_streamlit.get_preview_component("any")
-                center, right = tabs[idx].columns([4, 1])
+
+                if options.add_save_option:
+                    center, right = tabs[idx].columns([4, 1])
+                else:
+                    center = tabs[idx]
+                    right = None
 
                 _key = options.create_key("preview", f"{idx}_{field}")
                 preview_opts = PreviewOptions(key=_key, value=value)
                 component.render_preview(st=center, options=preview_opts)  # type: ignore
 
-                right.write("Save value")
-                with right.form(key=options.create_key("save_form", f"{idx}_{field}")):
-                    _key = options.create_key("alias", f"{idx}_{field}")
-                    alias = self._st.text_input(
-                        "alias",
-                        value="",
-                        key=_key,
-                        placeholder="alias",
-                        label_visibility="hidden",
-                    )
-                    _key = options.create_key("save", f"{idx}_{field}")
-                    save = self._st.form_submit_button("Save")
+                if options.add_save_option:
+                    right.write("Save value")
+                    with right.form(
+                        key=options.create_key("save_form", f"{idx}_{field}")
+                    ):
+                        _key = options.create_key("alias", f"{idx}_{field}")
+                        alias = self._st.text_input(
+                            "alias",
+                            value="",
+                            key=_key,
+                            placeholder="alias",
+                            label_visibility="hidden",
+                        )
+                        _key = options.create_key("save", f"{idx}_{field}")
+                        save = self._st.form_submit_button("Save")
 
-                if save and alias:
-                    store_result = self.api.store_value(
-                        value=value, alias=alias, allow_overwrite=False
-                    )
-                    if store_result.error:
-                        right.error(store_result.error)
-                    else:
-                        right.success("Value saved")
+                    if save and alias:
+                        store_result = self.api.store_value(
+                            value=value, alias=alias, allow_overwrite=False
+                        )
+                        if store_result.error:
+                            right.error(store_result.error)
+                        else:
+                            right.success("Value saved")
 
         return _values

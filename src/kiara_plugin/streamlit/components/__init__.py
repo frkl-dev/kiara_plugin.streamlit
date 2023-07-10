@@ -9,6 +9,7 @@ from typing import (
     Dict,
     Generic,
     List,
+    Tuple,
     Type,
     TypeVar,
     Union,
@@ -46,6 +47,7 @@ class ComponentOptions(BaseModel):
     )
 
     def create_key(self, *args) -> str:
+        """Create a unique key for a component."""
 
         base = ["kiara", self.key]
         base.extend(args)
@@ -129,6 +131,24 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
 
         session_key = options.get_session_key(*key)
         self._session_state[session_key] = value
+
+    def _create_session_store_callback(
+        self, options: ComponentOptions, *key, default=None
+    ) -> Tuple[Callable, str]:
+
+        _widget_key = options.create_key(*key)
+
+        current = self.get_session_var(options, *key, default=default)
+
+        if current is not None and _widget_key not in self._session_state:
+            self._session_state[_widget_key] = current
+
+        def callback():
+            self._st.session_state[
+                options.get_session_key(*key)
+            ] = self._st.session_state[_widget_key]
+
+        return callback, _widget_key
 
     def render_func(self, st: Union[DeltaGenerator, None] = None) -> Callable:
 

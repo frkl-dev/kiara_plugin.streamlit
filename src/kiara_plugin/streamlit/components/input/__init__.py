@@ -2,7 +2,16 @@
 import abc
 import copy
 import uuid
-from typing import TYPE_CHECKING, Any, Callable, Iterable, List, Tuple, TypeVar, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Iterable,
+    List,
+    Mapping,
+    TypeVar,
+    Union,
+)
 
 from pydantic import Field
 
@@ -10,6 +19,11 @@ from kiara.api import Value, ValueSchema
 from kiara.defaults import DEFAULT_NO_DESC_VALUE, SpecialValue
 from kiara.registries.data import ValueLink
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
+from kiara_plugin.streamlit.components.modals import (
+    ModalConfig,
+    ModalRequest,
+    ModalResult,
+)
 from kiara_plugin.streamlit.defaults import (
     NO_LABEL_MARKER,
     NO_VALUE_MARKER,
@@ -29,12 +43,12 @@ class InputOptions(ComponentOptions):
     smart_label: bool = Field(
         description="Whether to try to shorten the label.", default=True
     )
-    label: str = Field(
-        description="The label to use for the input field.", default=NO_LABEL_MARKER
-    )
     help: Union[str, None] = Field(
         description="The help to display for this input field.",
         default=DEFAULT_NO_DESC_VALUE,
+    )
+    label: str = Field(
+        description="The label to use for the input field.", default=NO_LABEL_MARKER
     )
     value_schema: Union[None, ValueSchema] = Field(
         description="The schema for the value in question."
@@ -55,8 +69,13 @@ class InputComponent(KiaraComponent[INPUT_OPTIONS_TYPE]):
 
     @classmethod
     @abc.abstractmethod
-    def get_data_type(cls) -> str:
-        pass
+    def get_data_type(cls) -> Union[str, None]:
+        """Return the 'kiara' data type name this input component can handle.
+
+        This is used to dynamically register and auto-generate components on the
+        root 'KiaraStreamlit' instance. If 'None' is returned, the component will
+        be ignored in the registration process but can still be used manually.
+        """
 
     @classmethod
     def get_input_profile(cls) -> str:
@@ -64,7 +83,7 @@ class InputComponent(KiaraComponent[INPUT_OPTIONS_TYPE]):
 
     @classmethod
     def get_default_label(cls) -> str:
-        if cls.get_data_type() == "any":
+        if cls.get_data_type() in ["any", None]:
             return "Select value"
         else:
             return f"Select {cls.get_data_type()} value"
@@ -90,34 +109,20 @@ class InputComponent(KiaraComponent[INPUT_OPTIONS_TYPE]):
         else:
             return self.api.get_value(value)  # type: ignore
 
-    def _create_session_store_callback(
-        self, options: ComponentOptions, *key, default=None
-    ) -> Tuple[Callable, str]:
-
-        _widget_key = options.create_key(*key)
-
-        current = self.get_session_var(options, *key, default=default)
-
-        if current is not None and _widget_key not in self._session_state:
-            self._session_state[_widget_key] = current
-
-        def callback():
-            self._st.session_state[
-                options.get_session_key(*key)
-            ] = self._st.session_state[_widget_key]
-
-        return callback, _widget_key
-
 
 class DefaultInputOptions(InputOptions):
 
+    add_no_value_option: bool = Field(
+        description="Add an option so the user can chose to select no value. This is overwritten by a potential value_schema (if supplied).",
+        default=False,
+    )
     value_has_alias: bool = Field(
         description="Whether the values to present need to have a registered alias.",
         default=True,
     )
-    preview: str = Field(
-        description="The preview profile to use for the value. Use the 'no' string to disable.",
-        default="auto",
+    show_preview: Union[bool, None] = Field(
+        description="Whether to show a preview of the value. If not provided, a selectbox will be rendered so the user can choose.",
+        default=None,
     )
     display_value_type: Union[bool, None] = Field(
         description="Whether to display the data type in the list. By default it hides it for a single 'data type' option, and shows for multiple.",
@@ -126,9 +131,18 @@ class DefaultInputOptions(InputOptions):
     data_type: Union[str, List[str], None] = Field(
         description="The data type(s) to display as selection.", default=None
     )
-    add_create_widget: Union[str, None, bool] = Field(
+    add_import_widget: Union[str, None, bool] = Field(
         description="The name of a widget that can be used to create a new value. If specified, a 'Create' button is added that calls that widget. If 'True', the widget will be chosen automatically, if a string, the component with that name will be used.",
         default=None,
+    )
+
+
+class ImportResult(ModalResult):
+    value: Union[Value, None] = Field(
+        description="The value that was imported.", default=None
+    )
+    alias: Union[str, None] = Field(
+        description="The alias that was used to store the value.", default=None
     )
 
 
@@ -200,22 +214,39 @@ class DefaultInputComponent(InputComponent):
                 copy_options.key = _key_selectbox
                 return inp_comp.render_input_field(st, options=copy_options)
 
-        if not options.add_create_widget:
+        if not options.add_import_widget:
             return self._render_default_selectbox(st, options, data_types=data_types)
         else:
 
-            columns = st.columns([5, 1])
-            result = self._render_default_selectbox(st=columns[0], options=options, data_types=data_types)  # type: ignore
-            columns[1].header("")
-            create_widget = columns[1].button("Create")
-            if create_widget:
-
-                from kiara_plugin.streamlit.components.modals import (
-                    KiaraStreamlitModalCreate,
+            if len(data_types) > 1:
+                raise Exception(
+                    "Cannot use 'add_create_widget' when multiple data types are specified."
                 )
 
-                modal = KiaraStreamlitModalCreate()
-                st.session_state[WANTS_MODAL_MARKER_KEY] = modal  # type: ignore
+            data_type = data_types[0]
+
+            columns = st.columns([5, 1])
+            result, select_box_key = self._render_default_selectbox(st=columns[0], options=options, data_types=data_types, label=f"Select existing {data_type} value", also_return_key=True)  # type: ignore
+            columns[1].header("")
+
+            import_comp = st.kiara.get_import_component(data_type)
+            if import_comp is None:
+                help = f"No import component available for data type '{data_type}'. Contact the developers and ask them to implement one."
+            else:
+                help = f"Import (or create) a new value of type '{data_type}'."
+            create_widget = columns[1].button(
+                f"Import {data_type}",
+                disabled=not import_comp,
+                help=help,
+                key=f"{_key}_import_button",
+            )
+            if create_widget:
+                modal_result = ImportResult()
+                modal_config = ModalConfig(store_alias_key=select_box_key)
+                modal_request = ModalRequest(
+                    modal=import_comp, config=modal_config, result=modal_result
+                )
+                st.session_state[WANTS_MODAL_MARKER_KEY].append(modal_request)  # type: ignore
                 st.experimental_rerun()
 
             return result
@@ -225,6 +256,8 @@ class DefaultInputComponent(InputComponent):
         st: "KiaraStreamlitAPI",
         options: DefaultInputOptions,
         data_types: List[str],
+        label: Union[str, None] = None,
+        also_return_key: bool = False,
     ):
 
         has_alias = options.value_has_alias
@@ -235,8 +268,8 @@ class DefaultInputComponent(InputComponent):
                 data_types=list(data_types), has_alias=False
             )
 
-        optional = False
         default = None
+
         if options.value_schema:
             if options.value_schema.default not in [
                 SpecialValue.NO_VALUE,
@@ -245,6 +278,8 @@ class DefaultInputComponent(InputComponent):
             ]:
                 default = options.value_schema.default
             optional = options.value_schema.optional
+        else:
+            optional = options.add_no_value_option
 
         display_type = options.display_value_type
         if display_type is None and len(data_types) != 1:
@@ -267,63 +302,172 @@ class DefaultInputComponent(InputComponent):
         else:
             _item_options = list(available_values.keys())
 
-        with_preview = options.preview
-
-        if with_preview == "auto":
-            with_preview = "checkbox"
-
         callback, _select_key = self._create_session_store_callback(
             options, "input", "value", "select", default=default
         )
 
-        if not with_preview or with_preview.lower() in ["false", "no"]:
-            result = st.selectbox(
-                label=options.label,
-                options=_item_options,
-                key=_select_key,
-                format_func=format_func,
-                on_change=callback,
-                help=options.help,
+        if label is None:
+            label = options.label
+
+        result = st.selectbox(
+            label=label,
+            options=_item_options,
+            key=_select_key,
+            format_func=format_func,
+            on_change=callback,
+            help=options.help,
+        )
+        if result == NO_VALUE_MARKER:
+            result = None
+
+        if options.show_preview is None:
+            if result:
+                _key = options.create_key("preview", result)
+            else:
+                _key = options.create_key("preview", "no_value")
+            if result is None:
+                disabled = True
+            else:
+                disabled = False
+            show_preview = st.checkbox(
+                "Preview", key=f"preview_{_select_key}", disabled=disabled
             )
+            if show_preview:
+                comp = self.get_component("preview")
+                if hasattr(st, "__enter__"):
+                    with st:
+                        comp.render_func(st)(key=_key, value=result)
+                else:
+                    comp.render_func(st)(key=_key, value=result)
+        elif options.show_preview is True:
+            # TODO: support preview profiles
+            if result is not None:
+                _key = options.create_key("preview", result)
+                comp = self.get_component("preview")
+                if hasattr(st, "__enter__"):
+                    with st:
+                        comp.render_func(st)(key=_key, value=result)
+                else:
+                    comp.render_func(st)(key=_key, value=result)
+
+        if not also_return_key:
+            return result
         else:
-            result = st.selectbox(
-                label=options.label,
-                options=_item_options,
-                key=_select_key,
-                format_func=format_func,
-                on_change=callback,
-                help=options.help,
+            return result, _select_key
+
+
+class PickValueInputOptions(InputOptions):
+
+    display_value_type: Union[bool, None] = Field(
+        description="Whether to display the data type in the list. By default it hides it for a single 'data type' option, and shows for multiple.",
+        default=None,
+    )
+    show_preview: Union[None, bool] = Field(
+        description="Whether to show a preview of the value. If not provided, a selectbox will be rendered so the user can choose.",
+        default=None,
+    )
+    values: Mapping[str, Value] = Field(description="The values to pick from.")
+
+
+class PickValueComponent(InputComponent):
+    """Render a selectbox with the provided all the values in the provided value map."""
+
+    _component_name = "pick_value"
+    _options = PickValueInputOptions  # type: ignore
+
+    @classmethod
+    def get_data_type(cls) -> Union[str, None]:
+        return None
+
+    def render_input_field(
+        self,
+        st: "KiaraStreamlitAPI",
+        options: PickValueInputOptions,
+    ) -> Union[ValueLink, None, str, uuid.UUID]:
+
+        if options.smart_label:
+            options.label = options.label.split("__")[-1]
+
+        data_types = []
+
+        for name, value in options.values.items():
+            data_type = value.data_type_name
+            if data_type not in data_types:
+                data_types.append(value.data_type_name)
+
+        return self._render_default_selectbox(st, options, data_types=data_types)
+
+    def _render_default_selectbox(
+        self,
+        st: "KiaraStreamlitAPI",
+        options: PickValueInputOptions,
+        data_types: List[str],
+    ):
+
+        available_values = options.values
+
+        display_type = options.display_value_type
+        if display_type is None and len(data_types) != 1:
+            display_type = True
+        elif display_type is None:
+            display_type = False
+
+        format_func: Callable = str
+        if display_type:
+
+            def format_func(v: Any) -> str:
+                if v == NO_VALUE_MARKER:
+                    return v
+                return f"{v} ({available_values[v].data_type_name})"
+
+        _item_options = list(available_values.keys())
+
+        # if _item_options:
+        #     default = _item_options[0]
+        # else:
+        #     default = None
+
+        callback, _select_key = self._create_session_store_callback(
+            options, "input", "pick", "value"
+        )
+
+        result = st.selectbox(
+            label=options.label,
+            options=_item_options,
+            key=_select_key,
+            format_func=format_func,
+            on_change=callback,
+            help=options.help,
+        )
+
+        if options.show_preview is None:
+            if result:
+                _key = options.create_key("preview", result)
+            else:
+                _key = options.create_key("preview", "no_value")
+            if result is None:
+                disabled = True
+            else:
+                disabled = False
+            show_preview = st.checkbox(
+                "Preview", key=f"preview_{_select_key}", disabled=disabled
             )
-            if result == NO_VALUE_MARKER:
-                result = None
-            if with_preview == "checkbox":
-                if result:
-                    _key = options.create_key("preview", result)
-                else:
-                    _key = options.create_key("preview", "no_value")
-                if result is None:
-                    disabled = True
-                else:
-                    disabled = False
-                show_preview = st.checkbox(
-                    "Preview", key=f"preview_{_select_key}", disabled=disabled
-                )
-                if show_preview:
-                    comp = self.get_component("preview")
-                    if hasattr(st, "__enter__"):
-                        with st:
-                            comp.render_func(st)(key=_key, value=result)
-                    else:
+            if show_preview:
+                comp = self.get_component("preview")
+                if hasattr(st, "__enter__"):
+                    with st:
                         comp.render_func(st)(key=_key, value=result)
-            elif with_preview:
-                # TODO: support preview profiles
-                if result is not None:
-                    _key = options.create_key("preview", result)
-                    comp = self.get_component("preview")
-                    if hasattr(st, "__enter__"):
-                        with st:
-                            comp.render_func(st)(key=_key, value=result)
-                    else:
+                else:
+                    comp.render_func(st)(key=_key, value=result)
+        elif options.show_preview is True:
+            # TODO: support preview profiles
+            if result is not None:
+                _key = options.create_key("preview", result)
+                comp = self.get_component("preview")
+                if hasattr(st, "__enter__"):
+                    with st:
                         comp.render_func(st)(key=_key, value=result)
+                else:
+                    comp.render_func(st)(key=_key, value=result)
 
         return result

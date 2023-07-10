@@ -9,7 +9,10 @@ from typing import Dict, Mapping, Union
 import streamlit as st
 from kiara.api import KiaraAPI
 from kiara.context import KiaraConfig, KiaraContextConfig, KiaraRuntimeConfig
+from kiara.interfaces.python_api import JobDesc
+from kiara.models.values.value import ValueMapReadOnly
 from kiara_plugin.streamlit.components import KiaraComponent
+from kiara_plugin.streamlit.components.data_import import DataImportComponent
 from kiara_plugin.streamlit.components.input import InputComponent
 from kiara_plugin.streamlit.components.preview import PreviewComponent
 from kiara_plugin.streamlit.defaults import (
@@ -37,6 +40,7 @@ class ComponentMgmt(object):
             Dict[str, Dict[str, PreviewComponent]], None
         ] = None
         self._input_components: Union[Dict[str, InputComponent], None] = None
+        self._import_components: Union[Dict[str, DataImportComponent], None] = None
 
     def add_component(self, name: str, component: KiaraComponent):
 
@@ -81,6 +85,10 @@ class ComponentMgmt(object):
             raise Exception(f"No input component found for data type: '{data_type}'")
         return result
 
+    def get_import_component(self, data_type: str) -> Union[DataImportComponent, None]:
+        result = self.import_components.get(data_type, None)
+        return result
+
     @property
     def components(self) -> Mapping[str, KiaraComponent]:
 
@@ -90,6 +98,7 @@ class ComponentMgmt(object):
         components = {}
         preview_components: Dict[str, Dict[str, PreviewComponent]] = {}
         input_components: Dict[str, InputComponent] = {}  # type: ignore
+        import_components: Dict[str, DataImportComponent] = {}  # type: ignore
 
         base_input_cls = None
         for name, cls in find_all_kiara_streamlit_components().items():
@@ -100,7 +109,7 @@ class ComponentMgmt(object):
 
             components[name] = instance
             if issubclass(cls, PreviewComponent):
-                data_type = cls.get_data_type()
+                data_type: Union[None, str] = cls.get_data_type()
                 preview_name = cls.get_preview_name()
                 if (
                     preview_components.get("data_type", {}).get("preview_name", None)
@@ -111,20 +120,33 @@ class ComponentMgmt(object):
                     )
                 preview_components.setdefault(data_type, {})[preview_name] = instance  # type: ignore
 
-            if issubclass(cls, InputComponent):
+            elif issubclass(cls, InputComponent):
                 data_type = cls.get_data_type()
-                if data_type in input_components.keys():
-                    raise Exception(
-                        f"Multiple input components for data type: {data_type}"
-                    )
-                input_components[data_type] = instance  # type: ignore
+                if data_type:
+                    if data_type in input_components.keys():
+                        raise Exception(
+                            f"Multiple input components for data type: {data_type}"
+                        )
+                    input_components[data_type] = instance  # type: ignore
+
+            elif issubclass(cls, DataImportComponent):
+                data_type = cls.get_data_type()
+                if data_type:
+                    if data_type in import_components.keys():
+                        raise Exception(
+                            f"Multiple data import components for data type: {data_type}"
+                        )
+                    import_components[data_type] = instance  # type: ignore
 
         for data_type in self._kiara_streamlit.api.list_data_type_names():
 
             if self._kiara_streamlit.api.is_internal_data_type(data_type):
                 continue
 
-            if data_type not in input_components.keys():
+            if (
+                data_type in ["file", "file_bundle"]
+                or data_type not in input_components.keys()
+            ):
 
                 _doc = f"Render an input widget that prompts the user for a value of type '{data_type}'."
                 _name = f"select_{data_type}"
@@ -142,6 +164,7 @@ class ComponentMgmt(object):
         self._components = components
         self._preview_components = preview_components
         self._input_components = input_components
+        self._import_components = import_components
         return self._components
 
     @property
@@ -155,6 +178,12 @@ class ComponentMgmt(object):
         if self._input_components is None:
             self.components
         return self._input_components  # type: ignore
+
+    @property
+    def import_components(self) -> Mapping[str, DataImportComponent]:
+        if self._import_components is None:
+            self.components
+        return self._import_components  # type: ignore
 
 
 class KiaraStreamlit(object):
@@ -175,13 +204,13 @@ class KiaraStreamlit(object):
             if self._api_outside_streamlit is None:
                 kc = KiaraConfig()
                 self._api_outside_streamlit = KiaraAPI(kc)
-            self.api = self._api_outside_streamlit
+            self._api = self._api_outside_streamlit
         else:
             if "__kiara_api__" not in st.session_state.keys():
                 kc = KiaraConfig()
                 kiara_api = KiaraAPI(kc)
                 st.session_state["__kiara_api__"] = kiara_api
-            self.api = st.session_state.__kiara_api__
+            self._api = st.session_state.__kiara_api__
 
         self._component_mgmt = ComponentMgmt(
             kiara_streamlit=self, example_base_dir=None
@@ -191,15 +220,21 @@ class KiaraStreamlit(object):
             kiara_stremalit_app_dirs.user_cache_dir, str(uuid.uuid4())
         )
 
+        self._job_cache: Dict[str, ValueMapReadOnly] = {}
+
         def del_temp_dir():
             shutil.rmtree(self._temp_dir, ignore_errors=True)
 
         atexit.register(del_temp_dir)
 
-        self.api
+        # self._api
 
         # self.add_component("test", TestComponent(kiara_streamlit=self))
         # self.add_component("help", HelpComponent(kiara_streamlit=self))
+
+    @property
+    def api(self) -> KiaraAPI:
+        return self._api
 
     def __getattr__(self, item):
 
@@ -233,6 +268,10 @@ class KiaraStreamlit(object):
         result = self._component_mgmt.get_input_component(data_type=data_type)
         return result
 
+    def get_import_component(self, data_type: str) -> Union[DataImportComponent, None]:
+        result = self._component_mgmt.get_import_component(data_type=data_type)
+        return result
+
     def wants_modal(self) -> bool:
         wants_modal = st.session_state.get(WANTS_MODAL_MARKER_KEY, None)
         if wants_modal and wants_modal.get("enabled", False) is True:
@@ -247,3 +286,34 @@ class KiaraStreamlit(object):
         if not component:
             raise Exception(f"No component availble for name: {component_name}")
         return component
+
+    def run_job(self, job: JobDesc, reuse_previous: bool = False) -> ValueMapReadOnly:
+        """Run a job and return the result.
+
+        Arguments:
+            job: the job to run
+            reuse_previous: if True, the result of the job will be cached and returned if the same job is run again.
+        """
+
+        job_cache_key = job.instance_id
+        if reuse_previous:
+            if job_cache_key in self._job_cache.keys():
+                return self._job_cache[job_cache_key]
+
+        result = self._api.run_job(operation=job)
+        if reuse_previous:
+            self._job_cache[job_cache_key] = result
+        return result
+
+    def has_job_result(self, job: JobDesc) -> bool:
+        """Check if a job has already been run and has a result available.
+
+        Arguments:
+            job: the job to check
+        """
+
+        return job.instance_id in self._job_cache.keys()
+
+    def get_previous_job_result(self, job: JobDesc) -> Union[None, ValueMapReadOnly]:
+
+        return self._job_cache.get(job.instance_id, None)

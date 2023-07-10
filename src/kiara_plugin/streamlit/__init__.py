@@ -4,7 +4,7 @@
 import os
 import typing
 import warnings
-from typing import Dict, Union
+from typing import Dict, List, Union
 
 # import streamlit as st
 from kiara.utils.class_loading import (
@@ -15,7 +15,7 @@ from kiara.utils.class_loading import (
     find_kiara_renderers_under,
     find_pipeline_base_path_for_module,
 )
-from kiara_plugin.streamlit.components.modals import KiaraStreamlitModal
+from kiara_plugin.streamlit.components.modals import ModalRequest
 from kiara_plugin.streamlit.defaults import WANTS_MODAL_MARKER_KEY
 
 # import kiara_plugin.streamlit.utils.monkey_patches
@@ -130,17 +130,22 @@ def init(
         ktx = get_ktx()
         setattr(st, "kiara", ktx)
 
-    modal = st.session_state.get(WANTS_MODAL_MARKER_KEY, None)
-    if modal is not None:
+    if WANTS_MODAL_MARKER_KEY not in st.session_state.keys():
+        st.session_state[WANTS_MODAL_MARKER_KEY] = []
 
-        if not issubclass(modal.__class__, KiaraStreamlitModal):
+    modal_requests: List[ModalRequest] = st.session_state[WANTS_MODAL_MARKER_KEY]
+
+    if modal_requests:
+        modal_request = modal_requests[-1]
+
+        if not isinstance(modal_request, ModalRequest):
             raise Exception(
-                f"Invalid modal object in session state, must implement the 'KiaraStreamlitModal' protocol, not: '{type(modal)}'"
+                f"Invalid modal object in session state, must inherit from 'ModalRequest': '{type(modal_request)}'"
             )
 
-        modal_finished = modal.show_modal(st=st)
-        if modal_finished:
-            st.session_state.pop(WANTS_MODAL_MARKER_KEY)
+        modal_request.modal.show_modal(st=st, request=modal_request)  # type: ignore
+        if modal_request.result.modal_finished:
+            st.session_state[WANTS_MODAL_MARKER_KEY].pop()
             st.experimental_rerun()
         else:
             st.stop()

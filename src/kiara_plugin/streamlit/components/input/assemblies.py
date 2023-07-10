@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import abc
 import uuid
-from typing import TYPE_CHECKING, Any, Dict, Mapping, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, TypeVar, Union
 
 from pydantic import Field
 
@@ -198,11 +198,15 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
 
 
 class OperationInputsOptions(AssemblyOptions):
-    operation_id: str = Field(
-        description="The id of the operation to render the inputs for."
-    )
+
     module_config: Union[Dict[str, Any], None] = Field(
         description="Optional module config.", default=None
+    )
+    ignore_inputs: List[str] = Field(
+        description="Don't render input widgets for those fields.", default_factory=list
+    )
+    operation_id: str = Field(
+        description="The id of the operation to render the inputs for."
     )
 
 
@@ -228,7 +232,15 @@ class OperationInputs(InputAssemblyComponent):
             "module_config": options.module_config,
         }
         op = self.api.get_operation(data)
-        return op.inputs_schema
+
+        if not options.ignore_inputs:
+            return op.inputs_schema
+        else:
+            return {
+                k: v
+                for k, v in op.inputs_schema.items()
+                if k not in options.ignore_inputs
+            }
 
 
 class InputFieldsOptions(AssemblyOptions):

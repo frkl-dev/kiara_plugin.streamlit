@@ -5,7 +5,7 @@ from pydantic import Field, validator
 
 from kiara.api import ValueMap
 from kiara.exceptions import KiaraException
-from kiara.interfaces.python_api import OperationInfo
+from kiara.interfaces.python_api import JobDesc, OperationInfo
 from kiara.models.module.operation import Operation
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 
@@ -13,12 +13,96 @@ if TYPE_CHECKING:
     from kiara_plugin.streamlit.api import KiaraStreamlitAPI
 
 
-class OperationProcessOptions(ComponentOptions):
+class RunJobOptions(ComponentOptions):
 
-    operation_id: str = Field(description="The id of the operation to use.")
+    reuse_previous_result: bool = Field(
+        description="Whether to cache previous results and return them straight away.",
+        default=False,
+    )
+    preview_result: bool = Field(
+        description="Whether to preview the result.", default=False
+    )
+    run_instantly: bool = Field(
+        description="Whether to not display a 'Process' button and run the job instantly.",
+        default=False,
+    )
+    disabled: bool = Field(
+        description="Whether the component is disabled.", default=False
+    )
+    job_desc: Union[JobDesc, None] = Field(
+        description="The description of the job to run."
+    )
+
+
+class RunJobPanel(KiaraComponent[RunJobOptions]):
+
+    _component_name = "run_job_panel"
+    _options = RunJobOptions
+
+    def _render(
+        self, st: "KiaraStreamlitAPI", options: RunJobOptions
+    ) -> Union[ValueMap, None]:
+
+        job_desc = options.job_desc
+        if job_desc is None:
+            raise Exception("No job description provided")
+
+        disabled = options.disabled or job_desc is None
+
+        has_previous_result = False
+        if options.reuse_previous_result:
+            if st.kiara.has_job_result(job_desc):
+                has_previous_result = True
+
+        if not options.run_instantly:
+            process_btn = st.button("Process", disabled=disabled or has_previous_result)
+            if has_previous_result:
+                process_btn = True
+        else:
+            process_btn = True
+
+        result: Union[None, ValueMap] = None
+        if process_btn:
+            if disabled:
+                st.write("This panel is disabled, not running job...")
+            else:
+                with st.container():
+                    with self._st.spinner("Processing..."):  # type: ignore
+                        try:
+                            result = st.kiara.run_job(
+                                job=job_desc,
+                                reuse_previous=options.reuse_previous_result,
+                            )
+                        except Exception as e:
+                            st.error(KiaraException.get_root_details(e))
+
+        if result is None:
+            return None
+        elif options.preview_result:
+            comp = self.get_component("value_map_preview")
+            st.write("**Result preview**")
+            comp.render_func(st)(
+                value_map=dict(result),
+                key=options.create_key("result", job_desc.operation),
+            )
+
+        return result
+
+
+class OperationProcessOptions(ComponentOptions):
+    reuse_previous_result: bool = Field(
+        description="Whether to cache previous results and return them straight away.",
+        default=False,
+    )
+
     module_config: Union[Dict[str, Any], None] = Field(
         description="Optional module config.", default=None
     )
+    fixed_inputs: Dict[str, Any] = Field(
+        description="Use those fixed values and Don't render input widgets for their fields.",
+        default_factory=dict,
+    )
+    operation_id: str = Field(description="The id of the operation to use.")
 
     @validator("operation_id")
     def _validate_operation_id(cls, v: str) -> str:
@@ -35,7 +119,7 @@ class OperationProcessOptions(ComponentOptions):
 
 class OperationProcessPanel(KiaraComponent[OperationProcessOptions]):
 
-    _component_name = "process_operation"
+    _component_name = "operation_process_panel"
     _options = OperationProcessOptions
 
     def _render(
@@ -63,8 +147,10 @@ class OperationProcessPanel(KiaraComponent[OperationProcessOptions]):
             with st.container():
                 with self._st.spinner("Processing..."):  # type: ignore
                     try:
-                        result = self.api.run_job(
-                            operation=options.operation_id, inputs=operation_inputs
+                        result = self.api.run_job_panel(
+                            operation=options.operation_id,
+                            inputs=operation_inputs,
+                            reuse_previous_result=options.reuse_previous_result,
                         )
                     except Exception as e:
                         st.error(KiaraException.get_root_details(e))

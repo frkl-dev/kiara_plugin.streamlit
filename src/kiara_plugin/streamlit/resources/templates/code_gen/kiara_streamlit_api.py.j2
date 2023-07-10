@@ -3,6 +3,8 @@
 
 from typing import *  # noqa: F403
 from streamlit.delta_generator import DeltaGenerator
+from kiara_plugin.streamlit.streamlit import KiaraStreamlit
+
 # imports
 if TYPE_CHECKING:
 {% for module, classes in imports.items() -%}{%  if not classes %}  import {{ module }}{%  else %}
@@ -26,11 +28,14 @@ class KiaraStreamlitComponents(Protocol):
 
 {% endfor %}
 
+class KiaraStreamlitAugmented(KiaraStreamlit, KiaraStreamlitComponents):
+  """A dummy class to help IDEs with type hinting."""
+
 class KiaraStreamlitAPIProtocol(Protocol):
   """A protocol class that contains all the dynamically discovered kiara-streamlit components."""
 
   @property
-  def kiara(self) -> "KiaraStreamlitComponents":
+  def kiara(self) -> "KiaraStreamlitAugmented":
     """Returns the Kiara context used by the API."""
 
 class KiaraStreamlitAPI(DeltaGenerator, KiaraStreamlitAPIProtocol):

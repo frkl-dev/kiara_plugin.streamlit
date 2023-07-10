@@ -46,7 +46,12 @@ class TablePreview(PreviewComponent):
         _value = self.api.get_value(options.value)
         table: KiaraTable = _value.data
 
-        st.dataframe(table.to_pandas_dataframe(), use_container_width=True)
+        st.dataframe(
+            table.to_pandas_dataframe(),
+            use_container_width=True,
+            hide_index=True,
+            height=options.height,
+        )
 
 
 class DatabasePreview(PreviewComponent):
@@ -72,7 +77,9 @@ class DatabasePreview(PreviewComponent):
             # of how tabs are implemented in streamlit
             # maybe there is an easy way to do this better, otherwise, maybe not use tabs
             table = db.get_table_as_pandas_df(table_name)
-            tabs[idx].dataframe(table, use_container_width=True, hide_index=True)
+            tabs[idx].dataframe(
+                table, use_container_width=True, hide_index=True, height=options.height
+            )
 
 
 class TablesPreview(PreviewComponent):
@@ -98,4 +105,6 @@ class TablesPreview(PreviewComponent):
             # of how tabs are implemented in streamlit
             # maybe there is an easy way to do this better, otherwise, maybe not use tabs
             table = tables.get_table(table_name).to_pandas_dataframe()
-            tabs[idx].dataframe(table, use_container_width=True, hide_index=True)
+            tabs[idx].dataframe(
+                table, use_container_width=True, hide_index=True, height=options.height
+            )

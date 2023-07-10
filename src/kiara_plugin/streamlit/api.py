@@ -3,6 +3,7 @@
 
 from typing import *
 
+from kiara_plugin.streamlit.streamlit import KiaraStreamlit
 from streamlit.delta_generator import DeltaGenerator
 
 # imports
@@ -11,6 +12,7 @@ if TYPE_CHECKING:
 
     import kiara
     import streamlit
+    from kiara.interfaces.python_api.models.job import JobDesc
     from kiara.models.values.value import Value
     from kiara.models.values.value_schema import ValueSchema
     from kiara_plugin.streamlit.components.workflow import WorkflowSession
@@ -110,20 +112,56 @@ class KiaraStreamlitComponents(Protocol):
         This is mostly used to display the input requirements of an operation or pipeline to users.
         """
 
+    def import_network_data(
+        self,
+        result_field: "Union[None, str]" = None,
+        label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
+        display_style: "Union[None, str]" = "default",
+        reuse_previous_preview_results: "Union[None, bool]" = True,
+        key: "Union[None, str]" = "-- generated --",
+    ):
+        """-- n/a --"""
+
+    def import_table(
+        self,
+        result_field: "Union[None, str]" = None,
+        label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
+        display_style: "Union[None, str]" = "default",
+        reuse_previous_preview_results: "Union[None, bool]" = True,
+        key: "Union[None, str]" = "-- generated --",
+    ):
+        """-- n/a --"""
+
     def input_boolean(
         self,
-        help: "Union[None, str]" = "-- n/a --",
         label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
         smart_label: "Union[None, bool]" = True,
         display_style: "Union[None, str]" = "default",
         key: "Union[None, str]" = "-- generated --",
     ):
         """Render a checkbox for a boolean input."""
 
+    def input_file(
+        self,
+        accepted_file_extensions: "List[str]",
+        allowed_input_methods: "List[str]",
+        show_preview: "Union[None, bool]" = None,
+        add_existing_file_option: "Union[None, bool]" = False,
+        label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
+        smart_label: "Union[None, bool]" = True,
+        display_style: "Union[None, str]" = "default",
+        key: "Union[None, str]" = "-- generated --",
+    ):
+        """Render a text input widget."""
+
     def input_float(
         self,
-        help: "Union[None, str]" = "-- n/a --",
         label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
         smart_label: "Union[None, bool]" = True,
         display_style: "Union[None, str]" = "default",
         key: "Union[None, str]" = "-- generated --",
@@ -137,8 +175,8 @@ class KiaraStreamlitComponents(Protocol):
 
     def input_integer(
         self,
-        help: "Union[None, str]" = "-- n/a --",
         label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
         smart_label: "Union[None, bool]" = True,
         display_style: "Union[None, str]" = "default",
         key: "Union[None, str]" = "-- generated --",
@@ -152,8 +190,8 @@ class KiaraStreamlitComponents(Protocol):
 
     def input_list(
         self,
-        help: "Union[None, str]" = "-- n/a --",
         label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
         smart_label: "Union[None, bool]" = True,
         display_style: "Union[None, str]" = "default",
         key: "Union[None, str]" = "-- generated --",
@@ -165,8 +203,8 @@ class KiaraStreamlitComponents(Protocol):
 
     def input_string(
         self,
-        help: "Union[None, str]" = "-- n/a --",
         label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
         smart_label: "Union[None, bool]" = True,
         display_style: "Union[None, str]" = "default",
         key: "Union[None, str]" = "-- generated --",
@@ -185,16 +223,6 @@ class KiaraStreamlitComponents(Protocol):
 
         The type of input widgets is determined by the type of each field schema.
         """
-
-    def onboard_file(
-        self,
-        help: "Union[None, str]" = "-- n/a --",
-        label: "Union[None, str]" = "-- no label --",
-        smart_label: "Union[None, bool]" = True,
-        display_style: "Union[None, str]" = "default",
-        key: "Union[None, str]" = "-- generated --",
-    ):
-        """Render a text input widget."""
 
     def operation_documentation(self, key: "Union[None, str]" = "-- generated --"):
         """Displays documentation for all available operations."""
@@ -217,14 +245,38 @@ class KiaraStreamlitComponents(Protocol):
 
     def operation_inputs(
         self,
-        module_config: "Dict[str, Any]",
         operation_id: "str",
+        ignore_inputs: "List[str]",
+        module_config: "Dict[str, Any]",
         smart_label: "Union[None, bool]" = True,
         profile: "Union[None, str]" = "default",
         max_columns: "Union[None, int]" = 3,
         key: "Union[None, str]" = "-- generated --",
     ):
         """Render all inputs for a specifc operation."""
+
+    def operation_process_panel(
+        self,
+        operation_id: "str",
+        fixed_inputs: "Dict[str, Any]",
+        module_config: "Dict[str, Any]",
+        reuse_previous_result: "Union[None, bool]" = False,
+        key: "Union[None, str]" = "-- generated --",
+    ):
+        """-- n/a --"""
+
+    def pick_value(
+        self,
+        values: "Mapping[str, kiara.models.values.value.Value]",
+        show_preview: "Union[None, bool]" = None,
+        display_value_type: "Union[None, bool]" = None,
+        label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
+        smart_label: "Union[None, bool]" = True,
+        display_style: "Union[None, str]" = "default",
+        key: "Union[None, str]" = "-- generated --",
+    ):
+        """Render a selectbox with the provided all the values in the provided value map."""
 
     def pipeline_graph(
         self,
@@ -372,106 +424,56 @@ class KiaraStreamlitComponents(Protocol):
     ):
         """Preview a value of type 'tables'."""
 
-    def process_operation(
+    def run_job_panel(
         self,
-        module_config: "Dict[str, Any]",
-        operation_id: "str",
+        job_desc: "JobDesc",
+        disabled: "Union[None, bool]" = False,
+        run_instantly: "Union[None, bool]" = False,
+        preview_result: "Union[None, bool]" = False,
+        reuse_previous_result: "Union[None, bool]" = False,
         key: "Union[None, str]" = "-- generated --",
     ):
         """-- n/a --"""
 
     def select_array(
         self,
-        add_create_widget: "Union[str, None, bool]" = None,
+        add_import_widget: "Union[str, None, bool]" = None,
         display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
+        show_preview: "Union[None, bool]" = None,
         value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
+        add_no_value_option: "Union[None, bool]" = False,
         label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
         smart_label: "Union[None, bool]" = True,
         display_style: "Union[None, str]" = "default",
         key: "Union[None, str]" = "-- generated --",
     ):
         """Render an input widget that prompts the user for a value of type 'array'."""
 
-    def select_binary_file(
-        self,
-        add_create_widget: "Union[str, None, bool]" = None,
-        display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
-        value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
-        label: "Union[None, str]" = "-- no label --",
-        smart_label: "Union[None, bool]" = True,
-        display_style: "Union[None, str]" = "default",
-        key: "Union[None, str]" = "-- generated --",
-    ):
-        """Render an input widget that prompts the user for a value of type 'binary_file'."""
-
-    def select_binary_file_bundle(
-        self,
-        add_create_widget: "Union[str, None, bool]" = None,
-        display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
-        value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
-        label: "Union[None, str]" = "-- no label --",
-        smart_label: "Union[None, bool]" = True,
-        display_style: "Union[None, str]" = "default",
-        key: "Union[None, str]" = "-- generated --",
-    ):
-        """Render an input widget that prompts the user for a value of type 'binary_file_bundle'."""
-
     def select_bytes(
         self,
-        add_create_widget: "Union[str, None, bool]" = None,
+        add_import_widget: "Union[str, None, bool]" = None,
         display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
+        show_preview: "Union[None, bool]" = None,
         value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
+        add_no_value_option: "Union[None, bool]" = False,
         label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
         smart_label: "Union[None, bool]" = True,
         display_style: "Union[None, str]" = "default",
         key: "Union[None, str]" = "-- generated --",
     ):
         """Render an input widget that prompts the user for a value of type 'bytes'."""
 
-    def select_csv_file(
-        self,
-        add_create_widget: "Union[str, None, bool]" = None,
-        display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
-        value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
-        label: "Union[None, str]" = "-- no label --",
-        smart_label: "Union[None, bool]" = True,
-        display_style: "Union[None, str]" = "default",
-        key: "Union[None, str]" = "-- generated --",
-    ):
-        """Render an input widget that prompts the user for a value of type 'csv_file'."""
-
-    def select_csv_file_bundle(
-        self,
-        add_create_widget: "Union[str, None, bool]" = None,
-        display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
-        value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
-        label: "Union[None, str]" = "-- no label --",
-        smart_label: "Union[None, bool]" = True,
-        display_style: "Union[None, str]" = "default",
-        key: "Union[None, str]" = "-- generated --",
-    ):
-        """Render an input widget that prompts the user for a value of type 'csv_file_bundle'."""
-
     def select_database(
         self,
-        add_create_widget: "Union[str, None, bool]" = None,
+        add_import_widget: "Union[str, None, bool]" = None,
         display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
+        show_preview: "Union[None, bool]" = None,
         value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
+        add_no_value_option: "Union[None, bool]" = False,
         label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
         smart_label: "Union[None, bool]" = True,
         display_style: "Union[None, str]" = "default",
         key: "Union[None, str]" = "-- generated --",
@@ -480,12 +482,13 @@ class KiaraStreamlitComponents(Protocol):
 
     def select_date(
         self,
-        add_create_widget: "Union[str, None, bool]" = None,
+        add_import_widget: "Union[str, None, bool]" = None,
         display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
+        show_preview: "Union[None, bool]" = None,
         value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
+        add_no_value_option: "Union[None, bool]" = False,
         label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
         smart_label: "Union[None, bool]" = True,
         display_style: "Union[None, str]" = "default",
         key: "Union[None, str]" = "-- generated --",
@@ -494,26 +497,43 @@ class KiaraStreamlitComponents(Protocol):
 
     def select_dict(
         self,
-        add_create_widget: "Union[str, None, bool]" = None,
+        add_import_widget: "Union[str, None, bool]" = None,
         display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
+        show_preview: "Union[None, bool]" = None,
         value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
+        add_no_value_option: "Union[None, bool]" = False,
         label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
         smart_label: "Union[None, bool]" = True,
         display_style: "Union[None, str]" = "default",
         key: "Union[None, str]" = "-- generated --",
     ):
         """Render an input widget that prompts the user for a value of type 'dict'."""
 
+    def select_file(
+        self,
+        add_import_widget: "Union[str, None, bool]" = None,
+        display_value_type: "Union[None, bool]" = None,
+        show_preview: "Union[None, bool]" = None,
+        value_has_alias: "Union[None, bool]" = True,
+        add_no_value_option: "Union[None, bool]" = False,
+        label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
+        smart_label: "Union[None, bool]" = True,
+        display_style: "Union[None, str]" = "default",
+        key: "Union[None, str]" = "-- generated --",
+    ):
+        """Render an input widget that prompts the user for a value of type 'file'."""
+
     def select_file_bundle(
         self,
-        add_create_widget: "Union[str, None, bool]" = None,
+        add_import_widget: "Union[str, None, bool]" = None,
         display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
+        show_preview: "Union[None, bool]" = None,
         value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
+        add_no_value_option: "Union[None, bool]" = False,
         label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
         smart_label: "Union[None, bool]" = True,
         display_style: "Union[None, str]" = "default",
         key: "Union[None, str]" = "-- generated --",
@@ -522,54 +542,28 @@ class KiaraStreamlitComponents(Protocol):
 
     def select_html(
         self,
-        add_create_widget: "Union[str, None, bool]" = None,
+        add_import_widget: "Union[str, None, bool]" = None,
         display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
+        show_preview: "Union[None, bool]" = None,
         value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
+        add_no_value_option: "Union[None, bool]" = False,
         label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
         smart_label: "Union[None, bool]" = True,
         display_style: "Union[None, str]" = "default",
         key: "Union[None, str]" = "-- generated --",
     ):
         """Render an input widget that prompts the user for a value of type 'html'."""
 
-    def select_json_file(
-        self,
-        add_create_widget: "Union[str, None, bool]" = None,
-        display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
-        value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
-        label: "Union[None, str]" = "-- no label --",
-        smart_label: "Union[None, bool]" = True,
-        display_style: "Union[None, str]" = "default",
-        key: "Union[None, str]" = "-- generated --",
-    ):
-        """Render an input widget that prompts the user for a value of type 'json_file'."""
-
-    def select_json_file_bundle(
-        self,
-        add_create_widget: "Union[str, None, bool]" = None,
-        display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
-        value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
-        label: "Union[None, str]" = "-- no label --",
-        smart_label: "Union[None, bool]" = True,
-        display_style: "Union[None, str]" = "default",
-        key: "Union[None, str]" = "-- generated --",
-    ):
-        """Render an input widget that prompts the user for a value of type 'json_file_bundle'."""
-
     def select_kiara_model(
         self,
-        add_create_widget: "Union[str, None, bool]" = None,
+        add_import_widget: "Union[str, None, bool]" = None,
         display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
+        show_preview: "Union[None, bool]" = None,
         value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
+        add_no_value_option: "Union[None, bool]" = False,
         label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
         smart_label: "Union[None, bool]" = True,
         display_style: "Union[None, str]" = "default",
         key: "Union[None, str]" = "-- generated --",
@@ -578,12 +572,13 @@ class KiaraStreamlitComponents(Protocol):
 
     def select_kiara_model_list(
         self,
-        add_create_widget: "Union[str, None, bool]" = None,
+        add_import_widget: "Union[str, None, bool]" = None,
         display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
+        show_preview: "Union[None, bool]" = None,
         value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
+        add_no_value_option: "Union[None, bool]" = False,
         label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
         smart_label: "Union[None, bool]" = True,
         display_style: "Union[None, str]" = "default",
         key: "Union[None, str]" = "-- generated --",
@@ -592,12 +587,13 @@ class KiaraStreamlitComponents(Protocol):
 
     def select_network_data(
         self,
-        add_create_widget: "Union[str, None, bool]" = None,
+        add_import_widget: "Union[str, None, bool]" = None,
         display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
+        show_preview: "Union[None, bool]" = None,
         value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
+        add_no_value_option: "Union[None, bool]" = False,
         label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
         smart_label: "Union[None, bool]" = True,
         display_style: "Union[None, str]" = "default",
         key: "Union[None, str]" = "-- generated --",
@@ -606,12 +602,13 @@ class KiaraStreamlitComponents(Protocol):
 
     def select_pipeline(
         self,
-        add_create_widget: "Union[str, None, bool]" = None,
+        add_import_widget: "Union[str, None, bool]" = None,
         display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
+        show_preview: "Union[None, bool]" = None,
         value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
+        add_no_value_option: "Union[None, bool]" = False,
         label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
         smart_label: "Union[None, bool]" = True,
         display_style: "Union[None, str]" = "default",
         key: "Union[None, str]" = "-- generated --",
@@ -620,12 +617,13 @@ class KiaraStreamlitComponents(Protocol):
 
     def select_table(
         self,
-        add_create_widget: "Union[str, None, bool]" = None,
+        add_import_widget: "Union[str, None, bool]" = None,
         display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
+        show_preview: "Union[None, bool]" = None,
         value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
+        add_no_value_option: "Union[None, bool]" = False,
         label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
         smart_label: "Union[None, bool]" = True,
         display_style: "Union[None, str]" = "default",
         key: "Union[None, str]" = "-- generated --",
@@ -634,56 +632,30 @@ class KiaraStreamlitComponents(Protocol):
 
     def select_tables(
         self,
-        add_create_widget: "Union[str, None, bool]" = None,
+        add_import_widget: "Union[str, None, bool]" = None,
         display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
+        show_preview: "Union[None, bool]" = None,
         value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
+        add_no_value_option: "Union[None, bool]" = False,
         label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
         smart_label: "Union[None, bool]" = True,
         display_style: "Union[None, str]" = "default",
         key: "Union[None, str]" = "-- generated --",
     ):
         """Render an input widget that prompts the user for a value of type 'tables'."""
 
-    def select_text_file(
-        self,
-        add_create_widget: "Union[str, None, bool]" = None,
-        display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
-        value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
-        label: "Union[None, str]" = "-- no label --",
-        smart_label: "Union[None, bool]" = True,
-        display_style: "Union[None, str]" = "default",
-        key: "Union[None, str]" = "-- generated --",
-    ):
-        """Render an input widget that prompts the user for a value of type 'text_file'."""
-
-    def select_text_file_bundle(
-        self,
-        add_create_widget: "Union[str, None, bool]" = None,
-        display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
-        value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
-        label: "Union[None, str]" = "-- no label --",
-        smart_label: "Union[None, bool]" = True,
-        display_style: "Union[None, str]" = "default",
-        key: "Union[None, str]" = "-- generated --",
-    ):
-        """Render an input widget that prompts the user for a value of type 'text_file_bundle'."""
-
     def select_value(
         self,
         value_schema: "ValueSchema",
-        add_create_widget: "Union[str, None, bool]" = None,
+        add_import_widget: "Union[str, None, bool]" = None,
         data_type: "Union[str, List[str], None]" = None,
         display_value_type: "Union[None, bool]" = None,
-        preview: "Union[None, str]" = "auto",
+        show_preview: "Union[None, bool]" = None,
         value_has_alias: "Union[None, bool]" = True,
-        help: "Union[None, str]" = "-- n/a --",
+        add_no_value_option: "Union[None, bool]" = False,
         label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
         smart_label: "Union[None, bool]" = True,
         display_style: "Union[None, str]" = "default",
         key: "Union[None, str]" = "-- generated --",
@@ -726,6 +698,7 @@ class KiaraStreamlitComponents(Protocol):
     def value_map_preview(
         self,
         value_map: "Mapping[str, Union[str, uuid.UUID, kiara.models.values.value.Value]]",
+        add_save_option: "Union[None, bool]" = False,
         add_value_types: "Union[None, bool]" = True,
         key: "Union[None, str]" = "-- generated --",
     ):
@@ -759,11 +732,15 @@ class KiaraStreamlitComponents(Protocol):
         """-- n/a --"""
 
 
+class KiaraStreamlitAugmented(KiaraStreamlit, KiaraStreamlitComponents):
+    """A dummy class to help IDEs with type hinting."""
+
+
 class KiaraStreamlitAPIProtocol(Protocol):
     """A protocol class that contains all the dynamically discovered kiara-streamlit components."""
 
     @property
-    def kiara(self) -> "KiaraStreamlitComponents":
+    def kiara(self) -> "KiaraStreamlitAugmented":
         """Returns the Kiara context used by the API."""
 
 
