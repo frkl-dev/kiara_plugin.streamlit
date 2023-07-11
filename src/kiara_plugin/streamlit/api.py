@@ -43,7 +43,7 @@ class KiaraStreamlitComponents(Protocol):
     def component_info(
         self,
         items: "Union[str, List[str], None]" = None,
-        height: "Union[None, int]" = None,
+        height: "Union[None, int]" = 400,
         columns: "Union[Tuple[int, int], Tuple[streamlit.delta_generator.DeltaGenerator, streamlit.delta_generator.DeltaGenerator], None]" = (
             1,
             4,
@@ -224,13 +224,17 @@ class KiaraStreamlitComponents(Protocol):
         The type of input widgets is determined by the type of each field schema.
         """
 
-    def operation_documentation(self, key: "Union[None, str]" = "-- generated --"):
+    def operation_documentation(
+        self,
+        height: "Union[None, int]" = 400,
+        key: "Union[None, str]" = "-- generated --",
+    ):
         """Displays documentation for all available operations."""
 
     def operation_info(
         self,
         items: "Union[str, List[str], None]" = None,
-        height: "Union[None, int]" = None,
+        height: "Union[None, int]" = 400,
         columns: "Union[Tuple[int, int], Tuple[streamlit.delta_generator.DeltaGenerator, streamlit.delta_generator.DeltaGenerator], None]" = (
             1,
             4,

@@ -21,7 +21,7 @@ class InfoCompOptions(ComponentOptions):
         Tuple[int, int], Tuple[DeltaGenerator, DeltaGenerator], None
     ] = Field(description="The column layout to use for the next step.", default=(1, 4))
     height: Union[int, None] = Field(
-        description="The height of the list component.", default=None
+        description="The height of the list component.", default=400
     )
     items: Union[str, List[str], None] = Field(
         description="The item(s) to show info for."
@@ -125,11 +125,13 @@ class KiaraInfoComponent(KiaraComponent[InfoCompOptions], Generic[ITEM_TYPE]):
 
         info_type_name = self.__class__.get_info_type().__name__.lower()
 
+        _key = options.create_key(*items.keys(), key, info_type_name, "list")
+
         selected_op = create_list_component(
             st=left,
             title=info_type_name.capitalize(),
             items=list(items.keys()),
-            key=f"{key}_{info_type_name}_list",
+            key=_key,
             height=options.height,
         )
 

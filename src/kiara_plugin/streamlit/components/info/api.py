@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING, ClassVar, Mapping, Type, Union
 
+from pydantic import Field
+
 from kiara.interfaces.python_api import OperationInfo
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
 from kiara_plugin.streamlit.components.info import InfoCompOptions, KiaraInfoComponent
@@ -137,7 +139,9 @@ class KiaraOperationInfoComponent(KiaraInfoComponent[OperationInfo]):
 
 
 class OperationDocsOptions(ComponentOptions):
-    pass
+    height: Union[int, None] = Field(
+        description="The height of the list component.", default=400
+    )
 
 
 class OperationDocs(KiaraComponent):
@@ -161,7 +165,9 @@ class OperationDocs(KiaraComponent):
 
         op_info = self.get_component("operation_info")
         selected: Union[OperationInfo, None] = op_info.render_func(st)(
-            key=options.create_key("ops_info"), columns=(left, overview), height=500
+            key=options.create_key("ops_info"),
+            columns=(left, overview),
+            height=options.height,
         )
 
         if not selected:
@@ -177,7 +183,7 @@ result = st.kiara.process_operation("{}")
             )
 
             demo.code(code)
-            comp = self.get_component("process_operation")
+            comp = self.get_component("operation_process_panel")
             comp.render_func(demo)(
                 key=options.create_key("demo"),
                 operation_id=selected.operation.operation_id,

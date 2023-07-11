@@ -36,6 +36,7 @@ dependencies = [
     "kiara_plugin.html>=0.4.4",
     "streamlit>=1.24.0",
     "streamlit-aggrid>=0.3.4",
+    "streamlit-option-menu>=0.3.6",
     "importlib-resources",
     "pydot>=1.4.0",
     "pygwalker>=0.1.11",
