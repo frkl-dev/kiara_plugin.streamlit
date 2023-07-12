@@ -57,11 +57,13 @@ class DataImportComponent(KiaraComponent[ONBOARDING_OPTIONS_TYPE]):
     ) -> Union[Value, None]:
 
         job_desc = self.render_onboarding_page(st=st, options=options)
-
-        job_result = st.kiara.run_job_panel(
-            job_desc=job_desc,
-            reuse_previous_result=options.reuse_previous_preview_results,
-        )
+        if job_desc:
+            job_result = st.kiara.run_job_panel(
+                job_desc=job_desc,
+                reuse_previous_result=options.reuse_previous_preview_results,
+            )
+        else:
+            job_result = None
 
         result_value = None
         if job_result:
@@ -190,6 +192,8 @@ class DataImportComponent(KiaraComponent[ONBOARDING_OPTIONS_TYPE]):
             if not alias:
                 with button_area:
                     st.error("No alias specified.")
+            elif not result_value:
+                st.error("No value to import.")
             else:
 
                 self.api.store_value(result_value, alias=alias, allow_overwrite=True)
@@ -198,6 +202,6 @@ class DataImportComponent(KiaraComponent[ONBOARDING_OPTIONS_TYPE]):
                 request.result.alias = alias  # type: ignore
 
                 if request.config.store_alias_key:
-                    st.session_state[request.config.store_alias_key] = alias
+                    st.session_state[request.config.store_alias_key] = alias  # type: ignore
                 if request.config.store_value_key:
-                    st.session_state[request.config.store_value_key] = result_value
+                    st.session_state[request.config.store_value_key] = result_value  # type: ignore

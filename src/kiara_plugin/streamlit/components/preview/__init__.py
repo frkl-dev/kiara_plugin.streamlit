@@ -50,6 +50,26 @@ class PreviewComponent(KiaraComponent[PreviewOptions]):
         self.render_preview(st=st, options=options)
 
 
+class PropertiesViewOptions(ComponentOptions):
+    """Options for the properties view component."""
+
+    value: Union[str, uuid.UUID, Value] = Field(description="The value to preview.")
+
+
+class PropertiesViewComponent(KiaraComponent[PropertiesViewOptions]):
+    """Display the properties of a value."""
+
+    _component_name = "display_value_properties"
+    _options = PropertiesViewOptions
+
+    def _render(self, st: "KiaraStreamlitAPI", options: PropertiesViewOptions):
+
+        value = self.api.get_value(value=options.value)
+
+        for prop_name, prop_value in value.property_values.items():
+            st.write(f"**{prop_name}**: {prop_value.data}")
+
+
 class DefaultPreviewComponent(PreviewComponent):
     """The default preview component, will render a preview component dependent on the data type of the provided value."""
 
@@ -230,6 +250,7 @@ class ValueMapPreview(KiaraComponent[ValueMapPreviewOptions]):
                 component.render_preview(st=center, options=preview_opts)  # type: ignore
 
                 if options.add_save_option:
+                    assert right is not None
                     right.write("Save value")
                     with right.form(
                         key=options.create_key("save_form", f"{idx}_{field}")

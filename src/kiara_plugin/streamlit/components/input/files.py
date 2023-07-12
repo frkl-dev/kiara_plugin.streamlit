@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Dict, List, Union
 from pydantic import Field
 
 from kiara.exceptions import KiaraException
+from kiara.interfaces.python_api import JobDesc
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.filesystem import KiaraFile
 from kiara.models.values.value import Value
@@ -91,7 +92,7 @@ class FileOnboarding(InputComponent):
         )
 
         last_value_key = f"{method_key}_last_value"
-        last_value: Union[None, Value] = st.session_state.get(last_value_key, None)
+        last_value: Union[None, Value] = st.session_state.get(last_value_key, None)  # type: ignore
 
         if len(methods_to_use) > 1:
             method = st.radio(
@@ -131,8 +132,8 @@ class FileOnboarding(InputComponent):
         )
 
         if changed or kiara_file is None:
-            st.session_state[last_value_key] = kiara_file
-            st.session_state[preview_key] = False
+            st.session_state[last_value_key] = kiara_file  # type: ignore
+            st.session_state[preview_key] = False  # type: ignore
 
         preview = False
         if options.show_preview is None:
@@ -194,7 +195,7 @@ class FileOnboarding(InputComponent):
         )
 
         last_value_key = f"{upload_key}_last_value"
-        last_value = st.session_state.get(last_value_key, None)
+        last_value = st.session_state.get(last_value_key, None)  # type: ignore
 
         file_types = options.accepted_file_extensions
         if not file_types:
@@ -204,7 +205,7 @@ class FileOnboarding(InputComponent):
         )
 
         if not uploaded_file:
-            st.session_state[last_value_key] = None
+            st.session_state[last_value_key] = None  # type: ignore
             return None
 
         # TODO: in some very edge cases this change detection can still go wrong
@@ -239,7 +240,7 @@ class FileOnboarding(InputComponent):
             kiara_file, data_type="file", reuse_existing=True
         )
 
-        st.session_state[last_value_key] = {
+        st.session_state[last_value_key] = {  # type: ignore
             "uploaded_file": uploaded_file.name,
             "size": uploaded_file.size,
             "value": value,
@@ -256,10 +257,10 @@ class FileOnboarding(InputComponent):
         )
 
         last_value_key = f"{download_key}_last_value"
-        last_value = st.session_state.get(last_value_key, None)
+        last_value = st.session_state.get(last_value_key, None)  # type: ignore
 
         with st.form(key=f"{download_key}_form"):
-            url = st.text_input(
+            url: Union[str, None] = st.text_input(
                 label="Enter the URL to download the file from",
                 help=options.help,
                 key=download_key,
@@ -276,7 +277,7 @@ class FileOnboarding(InputComponent):
         else:
             changed = True
             last_value = None
-            st.session_state[last_value_key] = None
+            st.session_state[last_value_key] = None  # type: ignore
 
         if not changed:
             if last_value:
@@ -298,7 +299,7 @@ class FileOnboarding(InputComponent):
         if options.accepted_file_extensions:
             match = False
             for ext in options.accepted_file_extensions:
-                if url.endswith(ext):
+                if url and url.endswith(ext):
                     match = True
                     break
             if not match:
@@ -310,13 +311,14 @@ class FileOnboarding(InputComponent):
         inputs = {"source": url, "onboard_type": "url"}
 
         try:
-            result = self.api.run_job_panel("import.file", inputs=inputs)
+            job_desc = JobDesc(operation="import.file", inputs=inputs)
+            result = st.kiara.run_job_panel(job_desc=job_desc)
         except Exception as e:
             msg = KiaraException.get_root_details(e)
             st.error(msg)
             return None
 
         value = result.get_value_obj("file")
-        st.session_state[last_value_key] = {"url": url, "value": value}
+        st.session_state[last_value_key] = {"url": url, "value": value}  # type: ignore
 
         return value
