@@ -7,6 +7,9 @@ from pydantic import Field
 
 from kiara.api import Value, ValueMap
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
+from kiara_plugin.streamlit.components.models import (
+    create_recursive_table_from_model_object,
+)
 from kiara_plugin.streamlit.utils.components import create_list_component
 
 if TYPE_CHECKING:
@@ -15,6 +18,9 @@ if TYPE_CHECKING:
 
 class PreviewOptions(ComponentOptions):
 
+    show_properties: bool = Field(
+        description="Whether to show the properties of the value.", default=True
+    )
     height: Union[int, None] = Field(
         description="The height of the preview.", default=None
     )
@@ -67,7 +73,22 @@ class PropertiesViewComponent(KiaraComponent[PropertiesViewOptions]):
         value = self.api.get_value(value=options.value)
 
         for prop_name, prop_value in value.property_values.items():
-            st.write(f"**{prop_name}**: {prop_value.data}")
+            _prop_name = prop_name.replace("metadata.", "")
+            st.write(f"Metadata item: **{_prop_name}**")
+
+            table_data = create_recursive_table_from_model_object(prop_value.data)
+            name_col, val_col = st.columns([1, 3])
+
+            for key, value in table_data.items():
+
+                with name_col:
+                    name_col.write(key)
+
+                with val_col:
+                    if isinstance(value, (Mapping, List)):
+                        val_col.json(value, expanded=False)
+                    else:
+                        val_col.write(value)
 
 
 class DefaultPreviewComponent(PreviewComponent):
