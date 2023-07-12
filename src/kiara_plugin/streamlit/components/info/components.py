@@ -64,10 +64,9 @@ class KiaraComponentInfoComponent(KiaraInfoComponent[ComponentInfo]):
         if item.examples:
             details_tab, examples_tab = st.tabs(["Details", "Examples"])
         else:
-            details_tab = st.tabs(["Details"])
+            tabs = st.tabs(["Details"])  # type: ignore
             # no idea, bug in streamlit?
-            if isinstance(details_tab, tuple):
-                details_tab = details_tab[0]
+            details_tab = tabs[0]
 
         with details_tab:
             details_tab.markdown(item.documentation.full_doc)
