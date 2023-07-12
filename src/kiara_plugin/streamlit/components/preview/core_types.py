@@ -110,7 +110,7 @@ class FilePreview(PreviewComponent):
         _value = self.api.get_value(options.value)
         file_model: KiaraFile = _value.data
 
-        _key = options.create_key("file", "preview")
+        _key = options.create_key("file", "preview", file_model.path)
 
         if options.display_style == "default":
             # TODO: check if binary file?

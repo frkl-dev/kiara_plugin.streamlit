@@ -3,6 +3,7 @@ import abc
 from typing import TYPE_CHECKING, Any
 
 from kiara.defaults import SpecialValue
+from kiara.exceptions import KiaraException
 from kiara_plugin.streamlit.components.input import InputComponent, InputOptions
 
 if TYPE_CHECKING:
@@ -61,18 +62,63 @@ class BooleanInput(ScalarInput):
         options: InputOptions,
     ):
         default = options.get_default()
-        if default in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
-            default = False
+
+        if options.value_schema and options.value_schema.optional:
+            if default in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
+                default = None
+            else:
+                default = bool(default)
+
+            callback, _key = self._create_session_store_callback(
+                options,
+                "input",
+                "scalar",
+                "radio",
+                self.__class__.get_data_type(),
+                default=default,
+            )
+
+            choices = ["auto", "true", "false"]
+            if default is None:
+                idx = 0
+            elif default:
+                idx = 1
+            else:
+                idx = 2
+
+            result = st.radio(
+                label=options.label,
+                options=choices,
+                index=idx,
+                key=_key,
+                help=options.help,
+                on_change=callback,
+                horizontal=True,
+            )
+            if result == "auto":
+                inp = None
+            elif result == "true":
+                inp = True
+            else:
+                inp = False
         else:
-            default = bool(default)
+            if default in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
+                default = False
+            else:
+                default = bool(default)
 
-        callback, _key = self._create_session_store_callback(
-            options, "input", "scalar", self.__class__.get_data_type(), default=default
-        )
+            callback, _key = self._create_session_store_callback(
+                options,
+                "input",
+                "scalar",
+                "checkbox",
+                self.__class__.get_data_type(),
+                default=default,
+            )
 
-        inp = st.checkbox(
-            label=options.label, key=_key, help=options.help, on_change=callback
-        )
+            inp = st.checkbox(
+                label=options.label, key=_key, help=options.help, on_change=callback
+            )
         return inp
 
 
@@ -176,10 +222,12 @@ class IntegerInput(ScalarInput):
                 on_change=callback,
                 help=options.help,
             )
+            if not number_str:
+                return None
             try:
                 number = int(number_str)
             except Exception:
-                number = None
+                raise KiaraException(f"Can't parse input as integer: {number_str}.")
         else:
             raise Exception(f"Invalid style argument: {style}.")
 
@@ -249,10 +297,12 @@ class FloatInput(ScalarInput):
                 on_change=callback,
                 help=options.help,
             )
+            if not number_str:
+                return None
             try:
                 number = float(number_str)
             except Exception:
-                number = None
+                raise KiaraException(f"Can't parse input as float: {number_str}")
         else:
             raise Exception(f"Invalid style argument: {style}.")
 

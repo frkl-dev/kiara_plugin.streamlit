@@ -141,16 +141,23 @@ class OperationProcessPanel(KiaraComponent[OperationProcessOptions]):
                 txt += f"- {k}: {v}\n"
             st.error(txt)
 
-        process_btn = st.button("Process", disabled=bool(invalid))
+        job_desc = JobDesc(
+            operation=options.operation_id, inputs=dict(operation_inputs)
+        )
+        _key = options.create_key("process_panel", job_desc.operation)
+
+        process_btn = st.button("Process", disabled=bool(invalid), key=f"{_key}_btn")
         result: Union[None, ValueMap] = None
         if process_btn:
             with st.container():
                 with self._st.spinner("Processing..."):  # type: ignore
+
                     try:
-                        result = self.api.run_job_panel(
-                            operation=options.operation_id,
-                            inputs=operation_inputs,
+                        result = self.kiara_streamlit.run_job_panel(
+                            job_desc=job_desc,
                             reuse_previous_result=options.reuse_previous_result,
+                            key=f"{_key}_run_job_panel",
+                            run_instantly=True,
                         )
                     except Exception as e:
                         st.error(KiaraException.get_root_details(e))

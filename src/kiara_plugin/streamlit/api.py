@@ -75,11 +75,19 @@ class KiaraStreamlitComponents(Protocol):
     ):
         """-- n/a --"""
 
+    def display_value_properties(
+        self,
+        value: "Union[str, uuid.UUID, kiara.models.values.value.Value]",
+        key: "Union[None, str]" = "-- generated --",
+    ):
+        """Display the properties of a value."""
+
     def explore_database(
         self,
         value: "Union[str, uuid.UUID, kiara.models.values.value.Value]",
         display_style: "Union[None, str]" = "default",
         height: "Union[None, int]" = None,
+        show_properties: "Union[None, bool]" = True,
         key: "Union[None, str]" = "-- generated --",
     ):
         """Preview a value of type 'database'."""
@@ -89,6 +97,7 @@ class KiaraStreamlitComponents(Protocol):
         value: "Union[str, uuid.UUID, kiara.models.values.value.Value]",
         display_style: "Union[None, str]" = "default",
         height: "Union[None, int]" = None,
+        show_properties: "Union[None, bool]" = True,
         key: "Union[None, str]" = "-- generated --",
     ):
         """Explore a 'table' value visually."""
@@ -98,6 +107,7 @@ class KiaraStreamlitComponents(Protocol):
         value: "Union[str, uuid.UUID, kiara.models.values.value.Value]",
         display_style: "Union[None, str]" = "default",
         height: "Union[None, int]" = None,
+        show_properties: "Union[None, bool]" = True,
         key: "Union[None, str]" = "-- generated --",
     ):
         """Preview a value of type 'tables'."""
@@ -295,6 +305,7 @@ class KiaraStreamlitComponents(Protocol):
         value: "Union[str, uuid.UUID, kiara.models.values.value.Value]",
         display_style: "Union[None, str]" = "default",
         height: "Union[None, int]" = None,
+        show_properties: "Union[None, bool]" = True,
         key: "Union[None, str]" = "-- generated --",
     ):
         """The default preview component, will render a preview component dependent on the data type of the provided value."""
@@ -304,6 +315,7 @@ class KiaraStreamlitComponents(Protocol):
         value: "Union[str, uuid.UUID, kiara.models.values.value.Value]",
         display_style: "Union[None, str]" = "default",
         height: "Union[None, int]" = None,
+        show_properties: "Union[None, bool]" = True,
         key: "Union[None, str]" = "-- generated --",
     ):
         """Preview a value of type 'array'."""
@@ -313,6 +325,7 @@ class KiaraStreamlitComponents(Protocol):
         value: "Union[str, uuid.UUID, kiara.models.values.value.Value]",
         display_style: "Union[None, str]" = "default",
         height: "Union[None, int]" = None,
+        show_properties: "Union[None, bool]" = True,
         key: "Union[None, str]" = "-- generated --",
     ):
         """Preview a value of type 'boolean'."""
@@ -322,6 +335,7 @@ class KiaraStreamlitComponents(Protocol):
         value: "Union[str, uuid.UUID, kiara.models.values.value.Value]",
         display_style: "Union[None, str]" = "default",
         height: "Union[None, int]" = None,
+        show_properties: "Union[None, bool]" = True,
         key: "Union[None, str]" = "-- generated --",
     ):
         """Preview a value of type 'database'."""
@@ -331,6 +345,7 @@ class KiaraStreamlitComponents(Protocol):
         value: "Union[str, uuid.UUID, kiara.models.values.value.Value]",
         display_style: "Union[None, str]" = "default",
         height: "Union[None, int]" = None,
+        show_properties: "Union[None, bool]" = True,
         key: "Union[None, str]" = "-- generated --",
     ):
         """Preview a value of type 'dict'."""
@@ -340,6 +355,7 @@ class KiaraStreamlitComponents(Protocol):
         value: "Union[str, uuid.UUID, kiara.models.values.value.Value]",
         display_style: "Union[None, str]" = "default",
         height: "Union[None, int]" = None,
+        show_properties: "Union[None, bool]" = True,
         key: "Union[None, str]" = "-- generated --",
     ):
         """Preview a value of type 'file'."""
@@ -349,6 +365,7 @@ class KiaraStreamlitComponents(Protocol):
         value: "Union[str, uuid.UUID, kiara.models.values.value.Value]",
         display_style: "Union[None, str]" = "default",
         height: "Union[None, int]" = None,
+        show_properties: "Union[None, bool]" = True,
         key: "Union[None, str]" = "-- generated --",
     ):
         """Preview a value of type 'file_bundle'."""
@@ -358,6 +375,7 @@ class KiaraStreamlitComponents(Protocol):
         value: "Union[str, uuid.UUID, kiara.models.values.value.Value]",
         display_style: "Union[None, str]" = "default",
         height: "Union[None, int]" = None,
+        show_properties: "Union[None, bool]" = True,
         key: "Union[None, str]" = "-- generated --",
     ):
         """Preview a value of type 'float'."""
@@ -367,6 +385,7 @@ class KiaraStreamlitComponents(Protocol):
         value: "Union[str, uuid.UUID, kiara.models.values.value.Value]",
         display_style: "Union[None, str]" = "default",
         height: "Union[None, int]" = None,
+        show_properties: "Union[None, bool]" = True,
         key: "Union[None, str]" = "-- generated --",
     ):
         """Preview a value of type 'integer'."""
@@ -376,6 +395,7 @@ class KiaraStreamlitComponents(Protocol):
         value: "Union[str, uuid.UUID, kiara.models.values.value.Value]",
         display_style: "Union[None, str]" = "default",
         height: "Union[None, int]" = None,
+        show_properties: "Union[None, bool]" = True,
         key: "Union[None, str]" = "-- generated --",
     ):
         """Preview a value of type 'list'."""
@@ -385,6 +405,7 @@ class KiaraStreamlitComponents(Protocol):
         value: "Union[str, uuid.UUID, kiara.models.values.value.Value]",
         display_style: "Union[None, str]" = "default",
         height: "Union[None, int]" = None,
+        show_properties: "Union[None, bool]" = True,
         key: "Union[None, str]" = "-- generated --",
     ):
         """Preview a value of type 'network data'.
@@ -397,6 +418,7 @@ class KiaraStreamlitComponents(Protocol):
         value: "Union[str, uuid.UUID, kiara.models.values.value.Value]",
         display_style: "Union[None, str]" = "default",
         height: "Union[None, int]" = None,
+        show_properties: "Union[None, bool]" = True,
         key: "Union[None, str]" = "-- generated --",
     ):
         """Preview a none-type value, you should not need this'."""
@@ -406,6 +428,7 @@ class KiaraStreamlitComponents(Protocol):
         value: "Union[str, uuid.UUID, kiara.models.values.value.Value]",
         display_style: "Union[None, str]" = "default",
         height: "Union[None, int]" = None,
+        show_properties: "Union[None, bool]" = True,
         key: "Union[None, str]" = "-- generated --",
     ):
         """Preview a value of type 'string'."""
@@ -415,6 +438,7 @@ class KiaraStreamlitComponents(Protocol):
         value: "Union[str, uuid.UUID, kiara.models.values.value.Value]",
         display_style: "Union[None, str]" = "default",
         height: "Union[None, int]" = None,
+        show_properties: "Union[None, bool]" = True,
         key: "Union[None, str]" = "-- generated --",
     ):
         """Preview a value of type 'table'."""
@@ -424,6 +448,7 @@ class KiaraStreamlitComponents(Protocol):
         value: "Union[str, uuid.UUID, kiara.models.values.value.Value]",
         display_style: "Union[None, str]" = "default",
         height: "Union[None, int]" = None,
+        show_properties: "Union[None, bool]" = True,
         key: "Union[None, str]" = "-- generated --",
     ):
         """Preview a value of type 'tables'."""
