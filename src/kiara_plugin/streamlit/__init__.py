@@ -111,6 +111,7 @@ def init(
     page_config: Union[None, Dict[str, typing.Any]] = None,
 ) -> "KiaraStreamlitAPI":
 
+    import kiara_plugin.streamlit.utils.monkey_patches  # noqa
     import streamlit as st
     from kiara_plugin.streamlit.streamlit import KiaraStreamlit
 
