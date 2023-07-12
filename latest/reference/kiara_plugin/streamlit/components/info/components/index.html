@@ -1824,7 +1824,30 @@
 <span class="normal">196</span>
 <span class="normal">197</span>
 <span class="normal">198</span>
-<span class="normal">199</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraComponentInfoComponent</span><span class="p">(</span><span class="n">KiaraInfoComponent</span><span class="p">[</span><span class="n">ComponentInfo</span><span class="p">]):</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraComponentInfoComponent</span><span class="p">(</span><span class="n">KiaraInfoComponent</span><span class="p">[</span><span class="n">ComponentInfo</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Display information about a kiara streamlit component.</span>
 
 <span class="sd">    This is used to create what you see here.</span>
@@ -1874,143 +1897,166 @@
         <span class="bp">self</span><span class="p">,</span> <span class="n">st</span><span class="p">:</span> <span class="s2">&quot;KiaraStreamlitAPI&quot;</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">ComponentInfo</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">InfoCompOptions</span>  <span class="c1"># type: ignore</span>
     <span class="p">):</span>
         <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#### Component: `</span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">type_name</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
-        <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">full_doc</span><span class="p">)</span>
-
-        <span class="n">expander</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="s2">&quot;Component details&quot;</span><span class="p">,</span> <span class="n">expanded</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-        <span class="n">pkg_name</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">labels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;package&quot;</span><span class="p">,</span> <span class="s2">&quot;-- n/a --&quot;</span><span class="p">)</span>
-        <span class="n">table_md</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        | attribute | value |</span>
-<span class="s2">        | --------- | ----- |</span>
-<span class="s2">        | Python class      | `</span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">full_name</span><span class="si">}</span><span class="s2">` |</span>
-<span class="s2">        | Plugin            | `</span><span class="si">{</span><span class="n">pkg_name</span><span class="si">}</span><span class="s2">` |</span>
-<span class="s2">        &quot;&quot;&quot;</span>
-        <span class="n">expander</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">table_md</span><span class="p">)</span>
-        <span class="n">expander</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;---&quot;</span><span class="p">)</span>
-        <span class="n">expander</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;##### Source code&quot;</span><span class="p">)</span>
-        <span class="n">expander</span><span class="o">.</span><span class="n">code</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_source_code</span><span class="p">())</span>
-
-        <span class="n">comp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_component</span><span class="p">(</span><span class="s2">&quot;fields_info&quot;</span><span class="p">)</span>
-        <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;##### Arguments&quot;</span><span class="p">)</span>
-        <span class="n">arg_table</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="p">[],</span>
-        <span class="p">}</span>
-
-        <span class="n">is_type_specific_select_comp</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">item</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">full_name</span>
-            <span class="o">==</span> <span class="s2">&quot;kiara_plugin.streamlit.components.input.DefaultInputComponent&quot;</span>
-            <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">type_name</span> <span class="o">!=</span> <span class="s2">&quot;select_value&quot;</span>
-        <span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">arguments</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-
-            <span class="c1"># better hide this argument, otherwise it might be confusing</span>
-            <span class="k">if</span> <span class="n">is_type_specific_select_comp</span> <span class="ow">and</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="p">[</span>
-                <span class="s2">&quot;value_schema&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;data_type&quot;</span><span class="p">,</span>
-            <span class="p">]:</span>
-                <span class="k">continue</span>
-
-            <span class="n">arg</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="n">arg_name</span><span class="p">]</span>
-            <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;field&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_name</span><span class="p">)</span>
-            <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">python_type_string</span><span class="p">)</span>
-            <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;required&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;yes&quot;</span> <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">required</span> <span class="k">else</span> <span class="s2">&quot;no&quot;</span><span class="p">)</span>
-            <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">default</span><span class="p">))</span>
-            <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
-
-        <span class="n">hide_table_row_index</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">                    &lt;style&gt;</span>
-<span class="s2">                    thead tr th:first-child {display:none}</span>
-<span class="s2">                    tbody th {display:none}</span>
-<span class="s2">                    &lt;/style&gt;</span>
-<span class="s2">                    &quot;&quot;&quot;</span>
-        <span class="c1"># Inject CSS with Markdown</span>
-        <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">hide_table_row_index</span><span class="p">,</span> <span class="n">unsafe_allow_html</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">st</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">arg_table</span><span class="p">)</span>
-
-        <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;##### Usage&quot;</span><span class="p">)</span>
-        <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;import streamlit as st</span>
-<span class="s2">import kiara_plugin.streamlit as kst</span>
-<span class="s2">kst.init()</span>
-
-<span class="s2">result = st.kiara.</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2">)</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">item</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="s2">&quot;&lt;options&gt;&quot;</span>
-        <span class="p">)</span>
-        <span class="n">st</span><span class="o">.</span><span class="n">code</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">examples</span><span class="p">:</span>
-            <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;##### Examples&quot;</span><span class="p">)</span>
-            <span class="n">comp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_component</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">type_name</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">example</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">examples</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-                <span class="n">doc</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">doc</span><span class="p">:</span>
-                    <span class="n">d</span> <span class="o">=</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
-                    <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;**Example**: *</span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">*&quot;</span>
-                    <span class="n">txt</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">doc</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;**Example** *#</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">*&quot;</span>
-                    <span class="n">txt</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">details_tab</span><span class="p">,</span> <span class="n">examples_tab</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">tabs</span><span class="p">([</span><span class="s2">&quot;Details&quot;</span><span class="p">,</span> <span class="s2">&quot;Examples&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tabs</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">tabs</span><span class="p">([</span><span class="s2">&quot;Details&quot;</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
+            <span class="c1"># no idea, bug in streamlit?</span>
+            <span class="n">details_tab</span> <span class="o">=</span> <span class="n">tabs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-                <span class="k">with</span> <span class="n">st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">expanded</span><span class="o">=</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">details_tab</span><span class="p">:</span>
+            <span class="n">details_tab</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">full_doc</span><span class="p">)</span>
 
-                    <span class="k">if</span> <span class="n">txt</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+            <span class="n">expander</span> <span class="o">=</span> <span class="n">details_tab</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="s2">&quot;Component details&quot;</span><span class="p">,</span> <span class="n">expanded</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-                    <span class="n">_options</span> <span class="o">=</span> <span class="p">[]</span>
-                    <span class="n">example_args</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span>
-                    <span class="k">for</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">arguments</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                        <span class="k">if</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">example_args</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                            <span class="n">v</span> <span class="o">=</span> <span class="n">example_args</span><span class="p">[</span><span class="n">arg_name</span><span class="p">]</span>
-                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                                <span class="n">v</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
-                            <span class="k">else</span><span class="p">:</span>
-                                <span class="n">v</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-                            <span class="n">_options</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">arg_name</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">pkg_name</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">labels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;package&quot;</span><span class="p">,</span> <span class="s2">&quot;-- n/a --&quot;</span><span class="p">)</span>
+            <span class="n">table_md</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            | attribute | value |</span>
+<span class="s2">            | --------- | ----- |</span>
+<span class="s2">            | Python class      | `</span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">full_name</span><span class="si">}</span><span class="s2">` |</span>
+<span class="s2">            | Plugin            | `</span><span class="si">{</span><span class="n">pkg_name</span><span class="si">}</span><span class="s2">` |</span>
+<span class="s2">            &quot;&quot;&quot;</span>
+            <span class="n">expander</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">table_md</span><span class="p">)</span>
+            <span class="n">expander</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;---&quot;</span><span class="p">)</span>
+            <span class="n">expander</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;##### Source code&quot;</span><span class="p">)</span>
+            <span class="n">expander</span><span class="o">.</span><span class="n">code</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_source_code</span><span class="p">())</span>
 
-                    <span class="n">arg_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_options</span><span class="p">)</span>
+            <span class="c1"># comp = self.get_component(&quot;fields_info&quot;)</span>
+            <span class="n">details_tab</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;##### Arguments&quot;</span><span class="p">)</span>
+            <span class="n">arg_table</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">}</span>
 
-                    <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;result = st.kiara.</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2">)</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                        <span class="n">item</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="n">arg_str</span>
-                    <span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">code</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+            <span class="n">is_type_specific_select_comp</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">full_name</span>
+                <span class="o">==</span> <span class="s2">&quot;kiara_plugin.streamlit.components.input.DefaultInputComponent&quot;</span>
+                <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">type_name</span> <span class="o">!=</span> <span class="s2">&quot;select_value&quot;</span>
+            <span class="p">)</span>
 
-                    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="s2">&quot;***Rendered component***&quot;</span><span class="p">,</span> <span class="n">expanded</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">arguments</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 
-                        <span class="k">try</span><span class="p">:</span>
-                            <span class="n">result</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">render_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="p">)(</span>
-                                <span class="o">**</span><span class="n">example</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span>
-                            <span class="p">)</span>
-                        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                            <span class="n">st</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-                            <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
-                        <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
-                            <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;**Component result (not rendered)**&quot;</span>
-                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
-                                <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span>
-                                        <span class="s2">&quot;Result type: [`Value`](https://dharpa.org/kiara/latest/reference/kiara/models/values/value/#kiara.models.values.value.Value)&quot;</span>
-                                    <span class="p">)</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">kiara_streamlit</span><span class="o">.</span><span class="n">preview</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-                            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">ValueMap</span><span class="p">):</span>
-                                <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span>
-                                        <span class="s2">&quot;Result type: [`ValueMap`]()https://dharpa.org/kiara/latest/reference/kiara/models/values/value/#kiara.models.values.value.ValueMap&quot;</span>
-                                    <span class="p">)</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">kiara_streamlit</span><span class="o">.</span><span class="n">value_map_preview</span><span class="p">(</span>
-                                        <span class="n">value_map</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-                                    <span class="p">)</span>
-                            <span class="k">else</span><span class="p">:</span>
-                                <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span>
-                                        <span class="sa">f</span><span class="s2">&quot;Result type: Python instace of type ``</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="si">}</span><span class="s2">`&#39;&quot;</span>
-                                    <span class="p">)</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                <span class="c1"># better hide this argument, otherwise it might be confusing</span>
+                <span class="k">if</span> <span class="n">is_type_specific_select_comp</span> <span class="ow">and</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="p">[</span>
+                    <span class="s2">&quot;value_schema&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;data_type&quot;</span><span class="p">,</span>
+                <span class="p">]:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">arg</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="n">arg_name</span><span class="p">]</span>
+                <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;field&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_name</span><span class="p">)</span>
+                <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">python_type_string</span><span class="p">)</span>
+                <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;required&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;yes&quot;</span> <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">required</span> <span class="k">else</span> <span class="s2">&quot;no&quot;</span><span class="p">)</span>
+                <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+
+            <span class="n">hide_table_row_index</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                        &lt;style&gt;</span>
+<span class="s2">                        thead tr th:first-child {display:none}</span>
+<span class="s2">                        tbody th {display:none}</span>
+<span class="s2">                        &lt;/style&gt;</span>
+<span class="s2">                        &quot;&quot;&quot;</span>
+            <span class="c1"># Inject CSS with Markdown</span>
+            <span class="n">details_tab</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">hide_table_row_index</span><span class="p">,</span> <span class="n">unsafe_allow_html</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">details_tab</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">arg_table</span><span class="p">)</span>
+
+            <span class="n">details_tab</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;##### Usage&quot;</span><span class="p">)</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;from kiara_plugin.streamlit import kiara_streamlit_init</span>
+<span class="s2">st = kiara_streamlit_init</span>
+
+<span class="s2">result = st.kiara.</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2">)</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="s2">&quot;&lt;options&gt;&quot;</span>
+            <span class="p">)</span>
+            <span class="n">details_tab</span><span class="o">.</span><span class="n">code</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">examples</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">examples_tab</span><span class="p">:</span>
+                <span class="n">examples_tab</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;##### Examples&quot;</span><span class="p">)</span>
+                <span class="n">comp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_component</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">type_name</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">example</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">examples</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="n">doc</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">examples</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">idx_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; #</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">idx_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                    <span class="k">if</span> <span class="n">doc</span><span class="p">:</span>
+                        <span class="n">d</span> <span class="o">=</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+                        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;**Example</span><span class="si">{</span><span class="n">idx_str</span><span class="si">}</span><span class="s2">**: *</span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">*&quot;</span>
+                        <span class="n">txt</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">doc</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;**Example</span><span class="si">{</span><span class="n">idx_str</span><span class="si">}</span><span class="s2">** *#</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">*&quot;</span>
+                        <span class="n">txt</span> <span class="o">=</span> <span class="kc">None</span>
+
+                    <span class="k">with</span> <span class="n">examples_tab</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">expanded</span><span class="o">=</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+
+                        <span class="k">if</span> <span class="n">txt</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+
+                        <span class="n">_options</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="n">example_args</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span>
+                        <span class="k">for</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">arguments</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                            <span class="k">if</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">example_args</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                                <span class="n">v</span> <span class="o">=</span> <span class="n">example_args</span><span class="p">[</span><span class="n">arg_name</span><span class="p">]</span>
+                                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                                    <span class="n">v</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">v</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                                <span class="n">_options</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">arg_name</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                        <span class="n">arg_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_options</span><span class="p">)</span>
+
+                        <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;from kiara_plugin.streamlit import kiara_streamlit_init</span>
+<span class="s2">st = kiara_streamlit_init</span>
+
+<span class="s2">result = st.kiara.</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2">)</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">item</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="n">arg_str</span>
+                        <span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">code</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+
+                        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span>
+                            <span class="s2">&quot;***Rendered component***&quot;</span><span class="p">,</span> <span class="n">expanded</span><span class="o">=</span><span class="kc">True</span>
+                        <span class="p">):</span>
+
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">result</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">render_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="p">)(</span>
+                                    <span class="o">**</span><span class="n">example</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span>
+                                <span class="p">)</span>
+                            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                                <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+                            <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+                                <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;**Component result (not rendered)**&quot;</span>
+                                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
+                                    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span>
+                                            <span class="s2">&quot;Result type: [`Value`](https://dharpa.org/kiara/latest/reference/kiara/models/values/value/#kiara.models.values.value.Value)&quot;</span>
+                                        <span class="p">)</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">kiara_streamlit</span><span class="o">.</span><span class="n">preview</span><span class="p">(</span>
+                                            <span class="n">result</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">_example_result_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span>
+                                        <span class="p">)</span>
+                                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">ValueMap</span><span class="p">):</span>
+                                    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span>
+                                            <span class="s2">&quot;Result type: [`ValueMap`](https://dharpa.org/kiara/latest/reference/kiara/models/values/value/#kiara.models.values.value.ValueMap)&quot;</span>
+                                        <span class="p">)</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">kiara_streamlit</span><span class="o">.</span><span class="n">value_map_preview</span><span class="p">(</span>
+                                            <span class="n">value_map</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">result</span><span class="p">),</span>
+                                            <span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">_example_result_map_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                        <span class="p">)</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span>
+                                            <span class="sa">f</span><span class="s2">&quot;Result type: Python instace of type ``</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="si">}</span><span class="s2">`&#39;&quot;</span>
+                                        <span class="p">)</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
         </details>
 
@@ -2297,147 +2343,193 @@
 <span class="normal">196</span>
 <span class="normal">197</span>
 <span class="normal">198</span>
-<span class="normal">199</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span> <span class="nf">render_info</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span> <span class="nf">render_info</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">st</span><span class="p">:</span> <span class="s2">&quot;KiaraStreamlitAPI&quot;</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">ComponentInfo</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">InfoCompOptions</span>  <span class="c1"># type: ignore</span>
     <span class="p">):</span>
         <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#### Component: `</span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">type_name</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
-        <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">full_doc</span><span class="p">)</span>
-
-        <span class="n">expander</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="s2">&quot;Component details&quot;</span><span class="p">,</span> <span class="n">expanded</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-        <span class="n">pkg_name</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">labels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;package&quot;</span><span class="p">,</span> <span class="s2">&quot;-- n/a --&quot;</span><span class="p">)</span>
-        <span class="n">table_md</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        | attribute | value |</span>
-<span class="s2">        | --------- | ----- |</span>
-<span class="s2">        | Python class      | `</span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">full_name</span><span class="si">}</span><span class="s2">` |</span>
-<span class="s2">        | Plugin            | `</span><span class="si">{</span><span class="n">pkg_name</span><span class="si">}</span><span class="s2">` |</span>
-<span class="s2">        &quot;&quot;&quot;</span>
-        <span class="n">expander</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">table_md</span><span class="p">)</span>
-        <span class="n">expander</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;---&quot;</span><span class="p">)</span>
-        <span class="n">expander</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;##### Source code&quot;</span><span class="p">)</span>
-        <span class="n">expander</span><span class="o">.</span><span class="n">code</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_source_code</span><span class="p">())</span>
-
-        <span class="n">comp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_component</span><span class="p">(</span><span class="s2">&quot;fields_info&quot;</span><span class="p">)</span>
-        <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;##### Arguments&quot;</span><span class="p">)</span>
-        <span class="n">arg_table</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="p">[],</span>
-        <span class="p">}</span>
-
-        <span class="n">is_type_specific_select_comp</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">item</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">full_name</span>
-            <span class="o">==</span> <span class="s2">&quot;kiara_plugin.streamlit.components.input.DefaultInputComponent&quot;</span>
-            <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">type_name</span> <span class="o">!=</span> <span class="s2">&quot;select_value&quot;</span>
-        <span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">arguments</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-
-            <span class="c1"># better hide this argument, otherwise it might be confusing</span>
-            <span class="k">if</span> <span class="n">is_type_specific_select_comp</span> <span class="ow">and</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="p">[</span>
-                <span class="s2">&quot;value_schema&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;data_type&quot;</span><span class="p">,</span>
-            <span class="p">]:</span>
-                <span class="k">continue</span>
-
-            <span class="n">arg</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="n">arg_name</span><span class="p">]</span>
-            <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;field&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_name</span><span class="p">)</span>
-            <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">python_type_string</span><span class="p">)</span>
-            <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;required&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;yes&quot;</span> <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">required</span> <span class="k">else</span> <span class="s2">&quot;no&quot;</span><span class="p">)</span>
-            <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">default</span><span class="p">))</span>
-            <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
-
-        <span class="n">hide_table_row_index</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">                    &lt;style&gt;</span>
-<span class="s2">                    thead tr th:first-child {display:none}</span>
-<span class="s2">                    tbody th {display:none}</span>
-<span class="s2">                    &lt;/style&gt;</span>
-<span class="s2">                    &quot;&quot;&quot;</span>
-        <span class="c1"># Inject CSS with Markdown</span>
-        <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">hide_table_row_index</span><span class="p">,</span> <span class="n">unsafe_allow_html</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">st</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">arg_table</span><span class="p">)</span>
-
-        <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;##### Usage&quot;</span><span class="p">)</span>
-        <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;import streamlit as st</span>
-<span class="s2">import kiara_plugin.streamlit as kst</span>
-<span class="s2">kst.init()</span>
-
-<span class="s2">result = st.kiara.</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2">)</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">item</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="s2">&quot;&lt;options&gt;&quot;</span>
-        <span class="p">)</span>
-        <span class="n">st</span><span class="o">.</span><span class="n">code</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">examples</span><span class="p">:</span>
-            <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;##### Examples&quot;</span><span class="p">)</span>
-            <span class="n">comp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_component</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">type_name</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">example</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">examples</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-                <span class="n">doc</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">doc</span><span class="p">:</span>
-                    <span class="n">d</span> <span class="o">=</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
-                    <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;**Example**: *</span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">*&quot;</span>
-                    <span class="n">txt</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">doc</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;**Example** *#</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">*&quot;</span>
-                    <span class="n">txt</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">details_tab</span><span class="p">,</span> <span class="n">examples_tab</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">tabs</span><span class="p">([</span><span class="s2">&quot;Details&quot;</span><span class="p">,</span> <span class="s2">&quot;Examples&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tabs</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">tabs</span><span class="p">([</span><span class="s2">&quot;Details&quot;</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
+            <span class="c1"># no idea, bug in streamlit?</span>
+            <span class="n">details_tab</span> <span class="o">=</span> <span class="n">tabs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-                <span class="k">with</span> <span class="n">st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">expanded</span><span class="o">=</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">details_tab</span><span class="p">:</span>
+            <span class="n">details_tab</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">full_doc</span><span class="p">)</span>
 
-                    <span class="k">if</span> <span class="n">txt</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+            <span class="n">expander</span> <span class="o">=</span> <span class="n">details_tab</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="s2">&quot;Component details&quot;</span><span class="p">,</span> <span class="n">expanded</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-                    <span class="n">_options</span> <span class="o">=</span> <span class="p">[]</span>
-                    <span class="n">example_args</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span>
-                    <span class="k">for</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">arguments</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                        <span class="k">if</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">example_args</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                            <span class="n">v</span> <span class="o">=</span> <span class="n">example_args</span><span class="p">[</span><span class="n">arg_name</span><span class="p">]</span>
-                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                                <span class="n">v</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
-                            <span class="k">else</span><span class="p">:</span>
-                                <span class="n">v</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-                            <span class="n">_options</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">arg_name</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">pkg_name</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">labels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;package&quot;</span><span class="p">,</span> <span class="s2">&quot;-- n/a --&quot;</span><span class="p">)</span>
+            <span class="n">table_md</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            | attribute | value |</span>
+<span class="s2">            | --------- | ----- |</span>
+<span class="s2">            | Python class      | `</span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">full_name</span><span class="si">}</span><span class="s2">` |</span>
+<span class="s2">            | Plugin            | `</span><span class="si">{</span><span class="n">pkg_name</span><span class="si">}</span><span class="s2">` |</span>
+<span class="s2">            &quot;&quot;&quot;</span>
+            <span class="n">expander</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">table_md</span><span class="p">)</span>
+            <span class="n">expander</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;---&quot;</span><span class="p">)</span>
+            <span class="n">expander</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;##### Source code&quot;</span><span class="p">)</span>
+            <span class="n">expander</span><span class="o">.</span><span class="n">code</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_source_code</span><span class="p">())</span>
 
-                    <span class="n">arg_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_options</span><span class="p">)</span>
+            <span class="c1"># comp = self.get_component(&quot;fields_info&quot;)</span>
+            <span class="n">details_tab</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;##### Arguments&quot;</span><span class="p">)</span>
+            <span class="n">arg_table</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">}</span>
 
-                    <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;result = st.kiara.</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2">)</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                        <span class="n">item</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="n">arg_str</span>
-                    <span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">code</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+            <span class="n">is_type_specific_select_comp</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">full_name</span>
+                <span class="o">==</span> <span class="s2">&quot;kiara_plugin.streamlit.components.input.DefaultInputComponent&quot;</span>
+                <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">type_name</span> <span class="o">!=</span> <span class="s2">&quot;select_value&quot;</span>
+            <span class="p">)</span>
 
-                    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="s2">&quot;***Rendered component***&quot;</span><span class="p">,</span> <span class="n">expanded</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">arguments</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 
-                        <span class="k">try</span><span class="p">:</span>
-                            <span class="n">result</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">render_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="p">)(</span>
-                                <span class="o">**</span><span class="n">example</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span>
-                            <span class="p">)</span>
-                        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                            <span class="n">st</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-                            <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
-                        <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
-                            <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;**Component result (not rendered)**&quot;</span>
-                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
-                                <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span>
-                                        <span class="s2">&quot;Result type: [`Value`](https://dharpa.org/kiara/latest/reference/kiara/models/values/value/#kiara.models.values.value.Value)&quot;</span>
-                                    <span class="p">)</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">kiara_streamlit</span><span class="o">.</span><span class="n">preview</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-                            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">ValueMap</span><span class="p">):</span>
-                                <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span>
-                                        <span class="s2">&quot;Result type: [`ValueMap`]()https://dharpa.org/kiara/latest/reference/kiara/models/values/value/#kiara.models.values.value.ValueMap&quot;</span>
-                                    <span class="p">)</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">kiara_streamlit</span><span class="o">.</span><span class="n">value_map_preview</span><span class="p">(</span>
-                                        <span class="n">value_map</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-                                    <span class="p">)</span>
-                            <span class="k">else</span><span class="p">:</span>
-                                <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span>
-                                        <span class="sa">f</span><span class="s2">&quot;Result type: Python instace of type ``</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="si">}</span><span class="s2">`&#39;&quot;</span>
-                                    <span class="p">)</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                <span class="c1"># better hide this argument, otherwise it might be confusing</span>
+                <span class="k">if</span> <span class="n">is_type_specific_select_comp</span> <span class="ow">and</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="p">[</span>
+                    <span class="s2">&quot;value_schema&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;data_type&quot;</span><span class="p">,</span>
+                <span class="p">]:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">arg</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="n">arg_name</span><span class="p">]</span>
+                <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;field&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_name</span><span class="p">)</span>
+                <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">python_type_string</span><span class="p">)</span>
+                <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;required&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;yes&quot;</span> <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">required</span> <span class="k">else</span> <span class="s2">&quot;no&quot;</span><span class="p">)</span>
+                <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">arg_table</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+
+            <span class="n">hide_table_row_index</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                        &lt;style&gt;</span>
+<span class="s2">                        thead tr th:first-child {display:none}</span>
+<span class="s2">                        tbody th {display:none}</span>
+<span class="s2">                        &lt;/style&gt;</span>
+<span class="s2">                        &quot;&quot;&quot;</span>
+            <span class="c1"># Inject CSS with Markdown</span>
+            <span class="n">details_tab</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">hide_table_row_index</span><span class="p">,</span> <span class="n">unsafe_allow_html</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">details_tab</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">arg_table</span><span class="p">)</span>
+
+            <span class="n">details_tab</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;##### Usage&quot;</span><span class="p">)</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;from kiara_plugin.streamlit import kiara_streamlit_init</span>
+<span class="s2">st = kiara_streamlit_init</span>
+
+<span class="s2">result = st.kiara.</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2">)</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="s2">&quot;&lt;options&gt;&quot;</span>
+            <span class="p">)</span>
+            <span class="n">details_tab</span><span class="o">.</span><span class="n">code</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">examples</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">examples_tab</span><span class="p">:</span>
+                <span class="n">examples_tab</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;##### Examples&quot;</span><span class="p">)</span>
+                <span class="n">comp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_component</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">type_name</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">example</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">examples</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="n">doc</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">examples</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">idx_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; #</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">idx_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                    <span class="k">if</span> <span class="n">doc</span><span class="p">:</span>
+                        <span class="n">d</span> <span class="o">=</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+                        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;**Example</span><span class="si">{</span><span class="n">idx_str</span><span class="si">}</span><span class="s2">**: *</span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">*&quot;</span>
+                        <span class="n">txt</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">doc</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;**Example</span><span class="si">{</span><span class="n">idx_str</span><span class="si">}</span><span class="s2">** *#</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">*&quot;</span>
+                        <span class="n">txt</span> <span class="o">=</span> <span class="kc">None</span>
+
+                    <span class="k">with</span> <span class="n">examples_tab</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">expanded</span><span class="o">=</span><span class="n">idx</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+
+                        <span class="k">if</span> <span class="n">txt</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+
+                        <span class="n">_options</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="n">example_args</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span>
+                        <span class="k">for</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">arguments</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                            <span class="k">if</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">example_args</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                                <span class="n">v</span> <span class="o">=</span> <span class="n">example_args</span><span class="p">[</span><span class="n">arg_name</span><span class="p">]</span>
+                                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                                    <span class="n">v</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">v</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                                <span class="n">_options</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">arg_name</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                        <span class="n">arg_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_options</span><span class="p">)</span>
+
+                        <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;from kiara_plugin.streamlit import kiara_streamlit_init</span>
+<span class="s2">st = kiara_streamlit_init</span>
+
+<span class="s2">result = st.kiara.</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2">)</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">item</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="n">arg_str</span>
+                        <span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">code</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+
+                        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span>
+                            <span class="s2">&quot;***Rendered component***&quot;</span><span class="p">,</span> <span class="n">expanded</span><span class="o">=</span><span class="kc">True</span>
+                        <span class="p">):</span>
+
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">result</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">render_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="p">)(</span>
+                                    <span class="o">**</span><span class="n">example</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span>
+                                <span class="p">)</span>
+                            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                                <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+                            <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+                                <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;**Component result (not rendered)**&quot;</span>
+                                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
+                                    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span>
+                                            <span class="s2">&quot;Result type: [`Value`](https://dharpa.org/kiara/latest/reference/kiara/models/values/value/#kiara.models.values.value.Value)&quot;</span>
+                                        <span class="p">)</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">kiara_streamlit</span><span class="o">.</span><span class="n">preview</span><span class="p">(</span>
+                                            <span class="n">result</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">_example_result_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span>
+                                        <span class="p">)</span>
+                                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">ValueMap</span><span class="p">):</span>
+                                    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span>
+                                            <span class="s2">&quot;Result type: [`ValueMap`](https://dharpa.org/kiara/latest/reference/kiara/models/values/value/#kiara.models.values.value.ValueMap)&quot;</span>
+                                        <span class="p">)</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">kiara_streamlit</span><span class="o">.</span><span class="n">value_map_preview</span><span class="p">(</span>
+                                            <span class="n">value_map</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">result</span><span class="p">),</span>
+                                            <span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">_example_result_map_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                        <span class="p">)</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">expander</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span>
+                                            <span class="sa">f</span><span class="s2">&quot;Result type: Python instace of type ``</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="si">}</span><span class="s2">`&#39;&quot;</span>
+                                        <span class="p">)</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>

@@ -2423,7 +2423,14 @@
 <span class="normal">164</span>
 <span class="normal">165</span>
 <span class="normal">166</span>
-<span class="normal">167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">OperationProcessPanel</span><span class="p">(</span><span class="n">KiaraComponent</span><span class="p">[</span><span class="n">OperationProcessOptions</span><span class="p">]):</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">OperationProcessPanel</span><span class="p">(</span><span class="n">KiaraComponent</span><span class="p">[</span><span class="n">OperationProcessOptions</span><span class="p">]):</span>
 
     <span class="n">_component_name</span> <span class="o">=</span> <span class="s2">&quot;operation_process_panel&quot;</span>
     <span class="n">_options</span> <span class="o">=</span> <span class="n">OperationProcessOptions</span>
@@ -2447,16 +2454,23 @@
                 <span class="n">txt</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;- </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">st</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
 
-        <span class="n">process_btn</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;Process&quot;</span><span class="p">,</span> <span class="n">disabled</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">invalid</span><span class="p">))</span>
+        <span class="n">job_desc</span> <span class="o">=</span> <span class="n">JobDesc</span><span class="p">(</span>
+            <span class="n">operation</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">operation_id</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">operation_inputs</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">_key</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">create_key</span><span class="p">(</span><span class="s2">&quot;process_panel&quot;</span><span class="p">,</span> <span class="n">job_desc</span><span class="o">.</span><span class="n">operation</span><span class="p">)</span>
+
+        <span class="n">process_btn</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;Process&quot;</span><span class="p">,</span> <span class="n">disabled</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">invalid</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_key</span><span class="si">}</span><span class="s2">_btn&quot;</span><span class="p">)</span>
         <span class="n">result</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ValueMap</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">process_btn</span><span class="p">:</span>
             <span class="k">with</span> <span class="n">st</span><span class="o">.</span><span class="n">container</span><span class="p">():</span>
                 <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_st</span><span class="o">.</span><span class="n">spinner</span><span class="p">(</span><span class="s2">&quot;Processing...&quot;</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+
                     <span class="k">try</span><span class="p">:</span>
-                        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">run_job_panel</span><span class="p">(</span>
-                            <span class="n">operation</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">operation_id</span><span class="p">,</span>
-                            <span class="n">inputs</span><span class="o">=</span><span class="n">operation_inputs</span><span class="p">,</span>
+                        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kiara_streamlit</span><span class="o">.</span><span class="n">run_job_panel</span><span class="p">(</span>
+                            <span class="n">job_desc</span><span class="o">=</span><span class="n">job_desc</span><span class="p">,</span>
                             <span class="n">reuse_previous_result</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">reuse_previous_result</span><span class="p">,</span>
+                            <span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_key</span><span class="si">}</span><span class="s2">_run_job_panel&quot;</span><span class="p">,</span>
+                            <span class="n">run_instantly</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                         <span class="p">)</span>
                     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                         <span class="n">st</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">KiaraException</span><span class="o">.</span><span class="n">get_root_details</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
