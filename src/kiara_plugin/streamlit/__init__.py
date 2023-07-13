@@ -15,7 +15,6 @@ from kiara.utils.class_loading import (
     find_kiara_renderers_under,
     find_pipeline_base_path_for_module,
 )
-from kiara_plugin.streamlit.components.modals import ModalRequest
 from kiara_plugin.streamlit.defaults import WANTS_MODAL_MARKER_KEY
 
 # import kiara_plugin.streamlit.utils.monkey_patches
@@ -114,6 +113,7 @@ def init(
     import kiara_plugin.streamlit.utils.monkey_patches  # noqa
     import streamlit as st
     from kiara_plugin.streamlit.streamlit import KiaraStreamlit
+    from kiara_plugin.streamlit.components.modals import ModalRequest
 
     if page_config is not None:
         st.set_page_config(**page_config)
