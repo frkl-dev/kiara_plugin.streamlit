@@ -63,7 +63,11 @@ class BooleanInput(ScalarInput):
     ):
         default = options.get_default()
 
-        if options.value_schema and options.value_schema.optional:
+        if (
+            options.value_schema
+            and options.value_schema.optional
+            and options.value_schema.default is None
+        ):
             if default in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
                 default = None
             else:
