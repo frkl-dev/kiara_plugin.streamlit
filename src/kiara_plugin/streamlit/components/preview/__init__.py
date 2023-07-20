@@ -284,7 +284,7 @@ class ValueMapPreview(KiaraComponent[ValueMapPreviewOptions]):
                             placeholder="alias",
                             label_visibility="hidden",
                         )
-                        _key = options.create_key("save", f"{idx}_{field}")
+                        # _key = options.create_key("save", f"{idx}_{field}")
                         save = self._st.form_submit_button("Save")
 
                     if save and alias:
@@ -295,5 +295,6 @@ class ValueMapPreview(KiaraComponent[ValueMapPreviewOptions]):
                             right.error(store_result.error)
                         else:
                             right.success("Value saved")
+                            st.experimental_rerun()
 
         return _values

@@ -144,7 +144,7 @@ class DynamicWorkflow(KiaraComponent):
             # Users the option to change the initial value
 
             with left:
-                init_value: Value = self.kiara_streamlit.value_input(
+                init_value: Value = self.kiara_streamlit.select_value(
                     label="**Select initial value**", preview=False
                 )
 

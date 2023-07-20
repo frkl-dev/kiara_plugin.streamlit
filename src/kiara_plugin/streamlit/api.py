@@ -224,6 +224,7 @@ class KiaraStreamlitComponents(Protocol):
     def inputs_for_fields(
         self,
         fields: "Mapping[str, kiara.models.values.value_schema.ValueSchema]",
+        constants: "Dict[str, Any]",
         smart_label: "Union[None, bool]" = True,
         profile: "Union[None, str]" = "default",
         max_columns: "Union[None, int]" = 3,
@@ -262,6 +263,7 @@ class KiaraStreamlitComponents(Protocol):
         operation_id: "str",
         ignore_inputs: "List[str]",
         module_config: "Dict[str, Any]",
+        constants: "Dict[str, Any]",
         smart_label: "Union[None, bool]" = True,
         profile: "Union[None, str]" = "default",
         max_columns: "Union[None, int]" = 3,
@@ -459,6 +461,7 @@ class KiaraStreamlitComponents(Protocol):
         disabled: "Union[None, bool]" = False,
         run_instantly: "Union[None, bool]" = False,
         preview_result: "Union[None, bool]" = False,
+        add_save_option: "Union[None, bool]" = False,
         reuse_previous_result: "Union[None, bool]" = False,
         key: "Union[None, str]" = "-- generated --",
     ):
@@ -614,6 +617,21 @@ class KiaraStreamlitComponents(Protocol):
     ):
         """Render an input widget that prompts the user for a value of type 'kiara_model_list'."""
 
+    def select_kiara_pipeline(
+        self,
+        add_import_widget: "Union[str, None, bool]" = None,
+        display_value_type: "Union[None, bool]" = None,
+        show_preview: "Union[None, bool]" = None,
+        value_has_alias: "Union[None, bool]" = True,
+        add_no_value_option: "Union[None, bool]" = False,
+        label: "Union[None, str]" = "-- no label --",
+        help: "Union[None, str]" = "-- n/a --",
+        smart_label: "Union[None, bool]" = True,
+        display_style: "Union[None, str]" = "default",
+        key: "Union[None, str]" = "-- generated --",
+    ):
+        """Render an input widget that prompts the user for a value of type 'kiara_pipeline'."""
+
     def select_network_data(
         self,
         add_import_widget: "Union[str, None, bool]" = None,
@@ -630,19 +648,9 @@ class KiaraStreamlitComponents(Protocol):
         """Render an input widget that prompts the user for a value of type 'network_data'."""
 
     def select_pipeline(
-        self,
-        add_import_widget: "Union[str, None, bool]" = None,
-        display_value_type: "Union[None, bool]" = None,
-        show_preview: "Union[None, bool]" = None,
-        value_has_alias: "Union[None, bool]" = True,
-        add_no_value_option: "Union[None, bool]" = False,
-        label: "Union[None, str]" = "-- no label --",
-        help: "Union[None, str]" = "-- n/a --",
-        smart_label: "Union[None, bool]" = True,
-        display_style: "Union[None, str]" = "default",
-        key: "Union[None, str]" = "-- generated --",
+        self, filters: "List[str]", key: "Union[None, str]" = "-- generated --"
     ):
-        """Render an input widget that prompts the user for a value of type 'pipeline'."""
+        """-- n/a --"""
 
     def select_table(
         self,

@@ -27,6 +27,10 @@ class AssemblyOptions(ComponentOptions):
     smart_label: bool = Field(
         description="Whether to try to shorten the label.", default=True
     )
+    constants: Dict[str, Any] = Field(
+        description="Constants, no input fields will be rendered for them, and they will be included in the result.",
+        default_factory=dict,
+    )
 
 
 ASSEMBLY_OPTIONS_TYPE = TypeVar("ASSEMBLY_OPTIONS_TYPE", bound=AssemblyOptions)
@@ -52,9 +56,23 @@ class InputAssemblyComponent(KiaraComponent[ASSEMBLY_OPTIONS_TYPE]):
         if not hasattr(self, method_name):
             raise Exception(f"No input fields render profile '{profile}' available.'")
 
-        fields = self.get_input_fields(options=options)
+        fields: Mapping[str, Any] = self.get_input_fields(options=options)
+
+        if options.constants:
+            _fields_input = {}
+            for k, v in fields.items():
+                if k in options.constants.keys():
+                    continue
+                _fields_input[k] = v
+            fields_input: Mapping[str, Any] = _fields_input
+        else:
+            fields_input = fields
+
         func = getattr(self, method_name)
-        result = func(st, fields, options=options)
+        result = func(st, fields_input, options=options)
+
+        if options.constants:
+            result.update(options.constants)
 
         value_map = self.api.assemble_value_map(result, values_schema=fields)
         return value_map

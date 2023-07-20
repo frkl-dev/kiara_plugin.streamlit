@@ -17,6 +17,10 @@ class RunJobOptions(ComponentOptions):
 
     reuse_previous_result: bool = Field(
         description="Whether to cache previous results and return them straight away.",
+        default=True,
+    )
+    add_save_option: bool = Field(
+        description="Add a save option to the preview (if preview enabled).",
         default=False,
     )
     preview_result: bool = Field(
@@ -44,9 +48,6 @@ class RunJobPanel(KiaraComponent[RunJobOptions]):
     ) -> Union[ValueMap, None]:
 
         job_desc = options.job_desc
-        if job_desc is None:
-            raise Exception("No job description provided")
-
         disabled = options.disabled or job_desc is None
 
         has_previous_result = False
@@ -83,7 +84,8 @@ class RunJobPanel(KiaraComponent[RunJobOptions]):
             st.write("**Result preview**")
             comp.render_func(st)(
                 value_map=dict(result),
-                key=options.create_key("result", job_desc.operation),
+                key=options.create_key("result", job_desc.operation),  # type: ignore
+                add_save_option=options.add_save_option,
             )
 
         return result

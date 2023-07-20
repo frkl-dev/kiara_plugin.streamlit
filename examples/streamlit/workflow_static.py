@@ -2,18 +2,15 @@
 import os
 
 import nltk
-import streamlit as st
 
-import kiara_plugin.streamlit as kiara_streamlit
+import kiara_plugin.streamlit as kst
 from kiara.interfaces.python_api import OperationInfo
 from kiara_plugin.streamlit.components.workflow.static import WorkflowSessionStatic
 
-st.set_page_config(layout="wide")
+st = kst.init(page_config={"layout": "wide"})
 
 nltk.download("punkt")
 nltk.download("stopwords")
-
-kst = kiara_streamlit.init()
 
 EXPLANATION = """
 This is an example of how to render a pre-assembled pipeline as a workflow UI. All of this is rendered auto-matically, using the content of this pipeline:
@@ -58,14 +55,14 @@ with st.expander("Notes (click to hide)", expanded=True):
     st.markdown(EXPLANATION)
 
 
-current = kst.api.get_current_context_name()
+current = st.kiara.api.get_current_context_name()
 with st.sidebar:
     selected_context = st.kiara.context_switch_control(allow_create=True, key="xxx")
     context_changed = current != selected_context
 
 
 with st.spinner("Registering pipelines ..."):
-    if "topic_modeling" not in kst.api.list_operation_ids():
+    if "topic_modeling" not in st.kiara.api.list_operation_ids():
         pipelines_path = os.path.join(
             os.path.dirname(__file__), "pipelines", "topic_modeling.yaml"
         )
@@ -97,25 +94,25 @@ if "example_corpus" not in st.kiara.api.list_alias_names():
     with st.spinner("Downloading example data ..."):
 
         result = st.kiara.api.run_job(
-            operation="download.file",
+            operation="import.file",
             inputs={
-                "url": "https://github.com/DHARPA-Project/kiara.examples/raw/main/examples/data/network_analysis/journals/JournalNodes1902.csv"
+                "source": "https://github.com/DHARPA-Project/kiara.examples/raw/main/examples/data/network_analysis/journals/JournalNodes1902.csv"
             },
         )
         st.kiara.api.store_value(value=result["file"], alias="journal_nodes_file")
 
         result = st.kiara.api.run_job(
-            operation="download.file",
+            operation="import.file",
             inputs={
-                "url": "https://github.com/DHARPA-Project/kiara.examples/raw/main/examples/data/network_analysis/journals/JournalEdges1902.csv"
+                "source": "https://github.com/DHARPA-Project/kiara.examples/raw/main/examples/data/network_analysis/journals/JournalEdges1902.csv"
             },
         )
         st.kiara.api.store_value(value=result["file"], alias="journal_edges_file")
 
         result = st.kiara.api.run_job(
-            operation="download.file_bundle",
+            operation="import.file_bundle",
             inputs={
-                "url": "https://github.com/DHARPA-Project/kiara.examples/archive/refs/heads/main.zip",
+                "source": "https://github.com/DHARPA-Project/kiara.examples/archive/refs/heads/main.zip",
                 "sub_path": "kiara.examples-main/examples/data/language_processing/text_corpus/data",
             },
         )

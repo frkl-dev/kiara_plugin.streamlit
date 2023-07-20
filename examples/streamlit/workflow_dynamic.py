@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
-import streamlit as st
-
-import kiara_plugin.streamlit as kiara_streamlit
+import kiara_plugin.streamlit as kst
 from kiara_plugin.streamlit.components.workflow.dynamic import WorkflowSessionDynamic
 
-st.set_page_config(layout="wide")
+st = kst.init(page_config={"layout": "wide"})
 
-kst = kiara_streamlit.init()
 
 EXPLANATION = """
 This is an example of how an exploratory data-science workflow could (not should!) look like in 'pure' UI (without code), usually you'd use notebook tech like Jupyter for that. Obviously there are limitations, but there is also some 'guidance' inbuilt (which those notebooks lack), because all the possible operations for the dataset you choose are pre-filtered for you. Also, it ships with the documentation about everything it can do, which is kinda nice.
@@ -43,7 +40,7 @@ An example workflow, to create network_data from an edges file would be:
 with st.expander("Notes (click to hide)", expanded=True):
     st.markdown(EXPLANATION)
 
-current = kst.api.get_current_context_name()
+current = st.kiara.api.get_current_context_name()
 with st.sidebar:
     selected_context = st.kiara.context_switch_control(allow_create=True, key="xxx")
     context_changed = current != selected_context
@@ -60,17 +57,17 @@ if not st.kiara.api.list_alias_names():
     with st.spinner("Downloading example data ..."):
 
         result = st.kiara.api.run_job(
-            operation="download.file",
+            operation="import.file",
             inputs={
-                "url": "https://github.com/DHARPA-Project/kiara.examples/raw/main/examples/data/network_analysis/journals/JournalNodes1902.csv"
+                "source": "https://github.com/DHARPA-Project/kiara.examples/raw/main/examples/data/network_analysis/journals/JournalNodes1902.csv"
             },
         )
         st.kiara.api.store_value(value=result["file"], alias="journal_nodes_file")
 
         result = st.kiara.api.run_job(
-            operation="download.file",
+            operation="import.file",
             inputs={
-                "url": "https://github.com/DHARPA-Project/kiara.examples/raw/main/examples/data/network_analysis/journals/JournalEdges1902.csv"
+                "source": "https://github.com/DHARPA-Project/kiara.examples/raw/main/examples/data/network_analysis/journals/JournalEdges1902.csv"
             },
         )
         st.kiara.api.store_value(value=result["file"], alias="journal_edges_file")

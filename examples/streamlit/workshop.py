@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import streamlit as st
-
 import kiara_plugin.streamlit as kst
 from kiara.api import KiaraAPI
 
@@ -13,8 +11,7 @@ from kiara.api import KiaraAPI
 # via the 'st' object
 # a list of components can be found here: https://kiara-doc-components.streamlit.app/
 
-
-kst.init()
+st = kst.init(page_config={"layout": "wide"})
 
 # for convenience, and for IDS to help us autocomplete, we assign the kiara api to a variable
 kiara: KiaraAPI = st.kiara.api
@@ -33,7 +30,7 @@ kiara: KiaraAPI = st.kiara.api
 
 # Downloading files
 
-# Great, now we know the different kind of operations we can use with kiara. Let’s start by introducing some files to our application, using the download.file function.  First we want to find out what this operation does, and just as importantly, what inputs it needs to work.
+# Great, now we know the different kind of operations we can use with kiara. Let’s start by introducing some files to our application, using the 'import.file' function.  First we want to find out what this operation does, and just as importantly, what inputs it needs to work.
 
 # We'll put the result in an expander, because it's a lot of text.
 
@@ -41,24 +38,24 @@ kiara: KiaraAPI = st.kiara.api
 
 *kiara* will download a csv file from a url you provide, it will execute the 'download.file' operation. For details about this operation, click on the expander below.
 """
-with st.expander("Show operation info 'download.file'", expanded=False):
-    st.write(st.kiara.operation_info("download.file"))
+with st.expander("Show operation info 'import.file'", expanded=False):
+    st.write(st.kiara.operation_info("import.file"))
 
-# So from this, we know that download.file will download a single file from a remote location for us to use in kiara.  We need to give the function a url and, if we want, a file name. These are the inputs.  In return, we will get the file and metadata about the file as our outputs.
+# So from this, we know that `import.file` will download a single file from a remote location for us to use in kiara.  We need to give the function at least a source (url) and, if we want, a file name. These are the inputs.  In return, we will get the file and metadata about the file as our outputs.
 # Let’s give this a go using some kiara sample data.
-# First we define our inputs, then use kiara.run_job with our chosen operation, download.file, and save this as our outputs.
+# First we define our inputs, then use kiara.run_job with our chosen operation, `import.file`, and save this as our outputs.
 
 # For the url, we can actually ask the user, but giving them a default value in case they don't have one at hand.
 
-default_url = "https://raw.githubusercontent.com/DHARPA-Project/kiara.examples/main/examples/data/journals/JournalNodes1902.csv"
+default_url = "https://raw.githubusercontent.com/DHARPA-Project/kiara.examples/main/examples/data/network_analysis/journals/JournalNodes1902.csv"
 url = st.text_input("Please provide a url to download", value=default_url)
 
 # we want the user to kick of the download process, so we need to have a button they can use
 download_button = st.button("Download file")
 if download_button:
     # after looking at the operation info, we know that we need to provide a url and a file name
-    inputs = {"url": url, "file_name": url.split("/")[-1]}
-    outputs = kiara.run_job("download.file", inputs=inputs)
+    inputs = {"source": url, "file_name": url.split("/")[-1]}
+    outputs = kiara.run_job("import.file", inputs=inputs)
     # we need to store the download result in the session state, otherwise it would be lost after a script rerun
     st.session_state["download_result"] = outputs
 
@@ -99,6 +96,13 @@ create_table_info = kiara.retrieve_operation_info(op_id)
 with st.expander(f"Show operation info '{op_id}'", expanded=False):
     st.kiara.operation_info(op_id)
 
+# As we can see from the operation info, in addition to the file input, we can also specify whether the files' first row is a header,
+# or not. This is important since if it's a header, we want the table names to follow it's content, and if not, we also need to know.
+# This is a simple as operation inputs go, so let's render an input widget so the user can tell us what to do (by default, without any input,
+# kiara will try to auto-determine the header status).
+
+is_header = st.kiara.input_boolean(label="Is the first row a header?", key="is_header")
+
 # Great, we have all the information we need now.
 # Let’s go again.
 # First we define our inputs, the downloaded file we saved earlier.
@@ -107,7 +111,7 @@ with st.expander(f"Show operation info '{op_id}'", expanded=False):
 
 create_table_btn = st.button("Create table")
 if create_table_btn:
-    inputs = {"file": downloaded_file}
+    inputs = {"file": downloaded_file, "first_row_is_header": is_header}
     outputs = kiara.run_job(op_id, inputs=inputs)
     st.session_state["create_table_result"] = outputs
 
