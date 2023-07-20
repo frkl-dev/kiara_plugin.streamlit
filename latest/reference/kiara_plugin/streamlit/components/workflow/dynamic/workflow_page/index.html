@@ -17,7 +17,7 @@
         <link rel="next" href="../../requirements/__init__/">
       
       <link rel="icon" href="../../../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
     
     
       
@@ -25,7 +25,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../../../assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../../../../../../../assets/stylesheets/main.eebd395e.min.css">
       
       
 
@@ -1020,13 +1020,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara_plugin.streamlit.components.workflow.dynamic.workflow_page.DynamicWorkflow-attributes" class="md-nav__link">
-    Attributes
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#kiara_plugin.streamlit.components.workflow.dynamic.workflow_page.DynamicWorkflow-functions" class="md-nav__link">
     Functions
   </a>
@@ -1559,13 +1552,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara_plugin.streamlit.components.workflow.dynamic.workflow_page.DynamicWorkflow-attributes" class="md-nav__link">
-    Attributes
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#kiara_plugin.streamlit.components.workflow.dynamic.workflow_page.DynamicWorkflow-functions" class="md-nav__link">
     Functions
   </a>
@@ -1679,21 +1665,20 @@
 
 
 <h3 id="kiara_plugin.streamlit.components.workflow.dynamic.workflow_page.DynamicWorkflow" class="doc doc-heading">
-        <code>DynamicWorkflow</code>
+          <code>DynamicWorkflow</code>
 
 
 <a href="#kiara_plugin.streamlit.components.workflow.dynamic.workflow_page.DynamicWorkflow" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="kiara_plugin.streamlit.components.KiaraComponent" href="../../../__init__/#kiara_plugin.streamlit.components.KiaraComponent">KiaraComponent</a></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><a class="autorefs autorefs-internal" title="kiara_plugin.streamlit.components.KiaraComponent" href="../../../__init__/#kiara_plugin.streamlit.components.KiaraComponent">KiaraComponent</a></code></p>
 
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/components/workflow/dynamic/workflow_page.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 23</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/components/workflow/dynamic/workflow_page.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 23</span>
 <span class="normal"> 24</span>
 <span class="normal"> 25</span>
 <span class="normal"> 26</span>
@@ -2121,7 +2106,7 @@
             <span class="c1"># Users the option to change the initial value</span>
 
             <span class="k">with</span> <span class="n">left</span><span class="p">:</span>
-                <span class="n">init_value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kiara_streamlit</span><span class="o">.</span><span class="n">value_input</span><span class="p">(</span>
+                <span class="n">init_value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kiara_streamlit</span><span class="o">.</span><span class="n">select_value</span><span class="p">(</span>
                     <span class="n">label</span><span class="o">=</span><span class="s2">&quot;**Select initial value**&quot;</span><span class="p">,</span> <span class="n">preview</span><span class="o">=</span><span class="kc">False</span>
                 <span class="p">)</span>
 
@@ -2303,7 +2288,7 @@
             <span class="n">session</span><span class="o">.</span><span class="n">last_operation</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">st</span><span class="o">.</span><span class="n">experimental_rerun</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -2313,9 +2298,10 @@
 
 
 
-<h4 id="kiara_plugin.streamlit.components.workflow.dynamic.workflow_page.DynamicWorkflow-attributes">Attributes<a href="#kiara_plugin.streamlit.components.workflow.dynamic.workflow_page.DynamicWorkflow-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
 
 <h4 id="kiara_plugin.streamlit.components.workflow.dynamic.workflow_page.DynamicWorkflow-functions">Functions<a href="#kiara_plugin.streamlit.components.workflow.dynamic.workflow_page.DynamicWorkflow-functions" class="headerlink" title="Permanent link">&para;</a></h4>
+
 
 <div class="doc doc-object doc-function">
 
@@ -2329,9 +2315,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/components/workflow/dynamic/workflow_page.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/components/workflow/dynamic/workflow_page.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span>
 <span class="normal">31</span>
@@ -2373,10 +2359,11 @@
 
     <span class="n">workflow_session</span><span class="o">.</span><span class="n">last_step_processed</span> <span class="o">=</span> <span class="kc">False</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -2390,9 +2377,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/components/workflow/dynamic/workflow_page.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">50</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/components/workflow/dynamic/workflow_page.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">50</span>
 <span class="normal">51</span>
 <span class="normal">52</span>
 <span class="normal">53</span>
@@ -2404,10 +2391,11 @@
     <span class="n">st</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">workflow_session</span><span class="o">.</span><span class="n">input_values</span><span class="p">)</span>
     <span class="n">st</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">workflow_session</span><span class="o">.</span><span class="n">pipeline_steps</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -2421,9 +2409,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/components/workflow/dynamic/workflow_page.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">57</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/components/workflow/dynamic/workflow_page.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">57</span>
 <span class="normal">58</span>
 <span class="normal">59</span>
 <span class="normal">60</span>
@@ -2453,10 +2441,11 @@
     <span class="n">workflow_session</span><span class="o">.</span><span class="n">current_outputs</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">workflow_session</span><span class="o">.</span><span class="n">last_operation</span> <span class="o">=</span> <span class="n">operation</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -2470,9 +2459,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/components/workflow/dynamic/workflow_page.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">73</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/components/workflow/dynamic/workflow_page.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">73</span>
 <span class="normal">74</span>
 <span class="normal">75</span>
 <span class="normal">76</span>
@@ -2506,10 +2495,11 @@
         <span class="n">doc</span> <span class="o">=</span> <span class="n">DocumentationMetadataModel</span><span class="p">()</span>
     <span class="n">right</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">full_doc</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -2523,9 +2513,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/components/workflow/dynamic/workflow_page.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 91</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/components/workflow/dynamic/workflow_page.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 91</span>
 <span class="normal"> 92</span>
 <span class="normal"> 93</span>
 <span class="normal"> 94</span>
@@ -2583,10 +2573,11 @@
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">selected_value</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -2600,9 +2591,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/components/workflow/dynamic/workflow_page.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">121</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/components/workflow/dynamic/workflow_page.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">121</span>
 <span class="normal">122</span>
 <span class="normal">123</span>
 <span class="normal">124</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">write_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">st</span><span class="p">:</span> <span class="s2">&quot;KiaraStreamlitAPI&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DeltaGenerator</span><span class="p">]:</span>
@@ -2610,10 +2601,11 @@
     <span class="n">columns</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">columns</span><span class="p">((</span><span class="n">LEFT_COLUMN</span><span class="p">,</span> <span class="n">RIGHT_COLUMN</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">columns</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -2627,15 +2619,15 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/components/workflow/dynamic/workflow_page.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">126</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/components/workflow/dynamic/workflow_page.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">126</span>
 <span class="normal">127</span>
 <span class="normal">128</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">write_separator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">st</span><span class="p">:</span> <span class="s2">&quot;KiaraStreamlitAPI&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
     <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;---&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>

@@ -17,7 +17,7 @@
         <link rel="next" href="../../streamlit/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
     
     
       
@@ -25,7 +25,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.eebd395e.min.css">
       
       
 
@@ -1861,23 +1861,22 @@
 
 
 <h3 id="kiara_plugin.streamlit.renderers.PipelineRendererStreamlit" class="doc doc-heading">
-        <code>PipelineRendererStreamlit</code>
+          <code>PipelineRendererStreamlit</code>
 
 
 <a href="#kiara_plugin.streamlit.renderers.PipelineRendererStreamlit" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-external" title="kiara.renderers.jinja.BaseJinjaRenderer" href="https://dharpa.org/kiara/latest/reference/kiara/renderers/jinja/#kiara.renderers.jinja.BaseJinjaRenderer">BaseJinjaRenderer</a>[<a class="autorefs autorefs-external" title="kiara.models.module.pipeline.pipeline.Pipeline" href="https://dharpa.org/kiara/latest/reference/kiara/models/module/pipeline/pipeline/#kiara.models.module.pipeline.pipeline.Pipeline">Pipeline</a>, <a class="autorefs autorefs-external" title="kiara.renderers.RenderInputsSchema" href="https://dharpa.org/kiara/latest/reference/kiara/renderers/__init__/#kiara.renderers.RenderInputsSchema">RenderInputsSchema</a>]</code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><a class="autorefs autorefs-external" title="kiara.renderers.jinja.BaseJinjaRenderer" href="https://dharpa.org/kiara/latest/reference/kiara/renderers/jinja/#kiara.renderers.jinja.BaseJinjaRenderer">BaseJinjaRenderer</a>[<a class="autorefs autorefs-external" title="kiara.models.module.pipeline.pipeline.Pipeline" href="https://dharpa.org/kiara/latest/reference/kiara/models/module/pipeline/pipeline/#kiara.models.module.pipeline.pipeline.Pipeline">Pipeline</a>, <a class="autorefs autorefs-external" title="kiara.renderers.RenderInputsSchema" href="https://dharpa.org/kiara/latest/reference/kiara/renderers/__init__/#kiara.renderers.RenderInputsSchema">RenderInputsSchema</a>]</code></p>
 
   
       <p>Renders a basic streamlit app from a pipeline structure.</p>
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">20</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">20</span>
 <span class="normal">21</span>
 <span class="normal">22</span>
 <span class="normal">23</span>
@@ -1967,7 +1966,7 @@
             <span class="p">)</span>
             <span class="k">return</span> <span class="n">rendered</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -1981,6 +1980,7 @@
 
 <h4 id="kiara_plugin.streamlit.renderers.PipelineRendererStreamlit-functions">Functions<a href="#kiara_plugin.streamlit.renderers.PipelineRendererStreamlit-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
+
 <div class="doc doc-object doc-function">
 
 
@@ -1993,9 +1993,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">25</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">25</span>
 <span class="normal">26</span>
 <span class="normal">27</span>
 <span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_jinja_env</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JinjaEnv</span><span class="p">:</span>
@@ -2003,10 +2003,11 @@
     <span class="n">jinja_env</span> <span class="o">=</span> <span class="n">JinjaEnv</span><span class="p">(</span><span class="n">template_base</span><span class="o">=</span><span class="s2">&quot;kiara_plugin.streamlit&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">jinja_env</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -2020,16 +2021,17 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">30</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">30</span>
 <span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_render_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="s2">&quot;pipeline&quot;</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -2043,16 +2045,17 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">33</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">33</span>
 <span class="normal">34</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_render_targets</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
     <span class="k">return</span> <span class="s2">&quot;streamlit_app&quot;</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -2066,16 +2069,17 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">36</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">36</span>
 <span class="normal">37</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_source_transformers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">SourceTransformer</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">PipelineTransformer</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)]</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -2089,18 +2093,19 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
 <span class="normal">40</span>
 <span class="normal">41</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">RenderInputsSchema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Template</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_jinja_env</span><span class="p">()</span><span class="o">.</span><span class="n">get_template</span><span class="p">(</span><span class="s2">&quot;pipeline/streamlit_app.py.j2&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -2114,9 +2119,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">43</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">43</span>
 <span class="normal">44</span>
 <span class="normal">45</span>
 <span class="normal">46</span>
@@ -2130,7 +2135,7 @@
     <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;pipeline&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">instance</span>
     <span class="k">return</span> <span class="n">inputs</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
@@ -2148,21 +2153,20 @@
 
 
 <h3 id="kiara_plugin.streamlit.renderers.KiaraStreamlitTransformer" class="doc doc-heading">
-        <code>KiaraStreamlitTransformer</code>
+          <code>KiaraStreamlitTransformer</code>
 
 
 <a href="#kiara_plugin.streamlit.renderers.KiaraStreamlitTransformer" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-external" title="kiara.renderers.SourceTransformer" href="https://dharpa.org/kiara/latest/reference/kiara/renderers/__init__/#kiara.renderers.SourceTransformer">SourceTransformer</a></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><a class="autorefs autorefs-external" title="kiara.renderers.SourceTransformer" href="https://dharpa.org/kiara/latest/reference/kiara/renderers/__init__/#kiara.renderers.SourceTransformer">SourceTransformer</a></code></p>
 
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">67</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">67</span>
 <span class="normal">68</span>
 <span class="normal">69</span>
 <span class="normal">70</span>
@@ -2204,7 +2208,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -2218,6 +2222,7 @@
 
 <h4 id="kiara_plugin.streamlit.renderers.KiaraStreamlitTransformer-functions">Functions<a href="#kiara_plugin.streamlit.renderers.KiaraStreamlitTransformer-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
+
 <div class="doc doc-object doc-function">
 
 
@@ -2230,16 +2235,17 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">72</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">72</span>
 <span class="normal">73</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_python_classes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Type</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -2253,16 +2259,17 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">75</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">75</span>
 <span class="normal">76</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_inputs_descs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
     <span class="k">return</span> <span class="p">[]</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -2276,9 +2283,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">78</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">78</span>
 <span class="normal">79</span>
 <span class="normal">80</span>
 <span class="normal">81</span>
@@ -2298,7 +2305,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
@@ -2316,24 +2323,23 @@
 
 
 <h3 id="kiara_plugin.streamlit.renderers.KiaraStreamlitAPIClassRenderer" class="doc doc-heading">
-        <code>KiaraStreamlitAPIClassRenderer</code>
+          <code>KiaraStreamlitAPIClassRenderer</code>
 
 
 <a href="#kiara_plugin.streamlit.renderers.KiaraStreamlitAPIClassRenderer" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-external" title="kiara.renderers.jinja.BaseJinjaRenderer" href="https://dharpa.org/kiara/latest/reference/kiara/renderers/jinja/#kiara.renderers.jinja.BaseJinjaRenderer">BaseJinjaRenderer</a>[<a class="autorefs autorefs-internal" title="kiara_plugin.streamlit.streamlit.KiaraStreamlit" href="../../streamlit/#kiara_plugin.streamlit.streamlit.KiaraStreamlit">KiaraStreamlit</a>, <a class="autorefs autorefs-external" title="kiara.renderers.RenderInputsSchema" href="https://dharpa.org/kiara/latest/reference/kiara/renderers/__init__/#kiara.renderers.RenderInputsSchema">RenderInputsSchema</a>]</code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><a class="autorefs autorefs-external" title="kiara.renderers.jinja.BaseJinjaRenderer" href="https://dharpa.org/kiara/latest/reference/kiara/renderers/jinja/#kiara.renderers.jinja.BaseJinjaRenderer">BaseJinjaRenderer</a>[<a class="autorefs autorefs-internal" title="kiara_plugin.streamlit.streamlit.KiaraStreamlit" href="../../streamlit/#kiara_plugin.streamlit.streamlit.KiaraStreamlit">KiaraStreamlit</a>, <a class="autorefs autorefs-external" title="kiara.renderers.RenderInputsSchema" href="https://dharpa.org/kiara/latest/reference/kiara/renderers/__init__/#kiara.renderers.RenderInputsSchema">RenderInputsSchema</a>]</code></p>
 
   
       <p>Renders a Python module containing a Protocol Class.</p>
 <p>This is useful for development, so all the dynamic components can be picked up by IDEs.</p>
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 90</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 90</span>
 <span class="normal"> 91</span>
 <span class="normal"> 92</span>
 <span class="normal"> 93</span>
@@ -2607,7 +2613,7 @@
             <span class="p">)</span>
             <span class="k">return</span> <span class="n">rendered</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -2621,6 +2627,7 @@
 
 <h4 id="kiara_plugin.streamlit.renderers.KiaraStreamlitAPIClassRenderer-functions">Functions<a href="#kiara_plugin.streamlit.renderers.KiaraStreamlitAPIClassRenderer-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
+
 <div class="doc doc-object doc-function">
 
 
@@ -2633,9 +2640,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">100</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">100</span>
 <span class="normal">101</span>
 <span class="normal">102</span>
 <span class="normal">103</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_jinja_env</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JinjaEnv</span><span class="p">:</span>
@@ -2643,10 +2650,11 @@
     <span class="n">jinja_env</span> <span class="o">=</span> <span class="n">JinjaEnv</span><span class="p">(</span><span class="n">template_base</span><span class="o">=</span><span class="s2">&quot;kiara_plugin.streamlit&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">jinja_env</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -2660,16 +2668,17 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">105</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">105</span>
 <span class="normal">106</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_render_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="s2">&quot;kiara_streamlit&quot;</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -2683,16 +2692,17 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">108</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">108</span>
 <span class="normal">109</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_render_targets</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
     <span class="k">return</span> <span class="s2">&quot;python_code&quot;</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -2706,16 +2716,17 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">111</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">111</span>
 <span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_source_transformers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">SourceTransformer</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">KiaraStreamlitTransformer</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)]</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -2729,18 +2740,19 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">114</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">114</span>
 <span class="normal">115</span>
 <span class="normal">116</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">RenderInputsSchema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Template</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_jinja_env</span><span class="p">()</span><span class="o">.</span><span class="n">get_template</span><span class="p">(</span><span class="s2">&quot;code_gen/kiara_streamlit_api.py.j2&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -2754,9 +2766,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">118</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/renderers/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">118</span>
 <span class="normal">119</span>
 <span class="normal">120</span>
 <span class="normal">121</span>
@@ -2944,7 +2956,7 @@
 
     <span class="k">return</span> <span class="n">data</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>

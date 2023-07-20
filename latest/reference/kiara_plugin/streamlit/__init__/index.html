@@ -17,7 +17,7 @@
         <link rel="next" href="../api/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
     
     
       
@@ -25,7 +25,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.eebd395e.min.css">
       
       
 
@@ -1555,7 +1555,7 @@
 
 
 <h3 id="kiara_plugin.streamlit.find_modules" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">find_modules</span><span class="p">:</span> <span class="n">KiaraEntryPointItem</span> <span class="o">=</span> <span class="n">find_kiara_modules_under</span><span class="p">,</span> <span class="s1">&#39;kiara_plugin.streamlit.modules&#39;</span></code>
+<code class="highlight language-python"><span class="n">find_modules</span><span class="p">:</span> <span class="n">KiaraEntryPointItem</span> <span class="o">=</span> <span class="p">(</span><span class="n">find_kiara_modules_under</span><span class="p">,</span> <span class="s1">&#39;kiara_plugin.streamlit.modules&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
@@ -1574,7 +1574,7 @@
 
 
 <h3 id="kiara_plugin.streamlit.find_model_classes" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">find_model_classes</span><span class="p">:</span> <span class="n">KiaraEntryPointItem</span> <span class="o">=</span> <span class="n">find_kiara_model_classes_under</span><span class="p">,</span> <span class="s1">&#39;kiara_plugin.streamlit.models&#39;</span></code>
+<code class="highlight language-python"><span class="n">find_model_classes</span><span class="p">:</span> <span class="n">KiaraEntryPointItem</span> <span class="o">=</span> <span class="p">(</span><span class="n">find_kiara_model_classes_under</span><span class="p">,</span> <span class="s1">&#39;kiara_plugin.streamlit.models&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
@@ -1593,7 +1593,7 @@
 
 
 <h3 id="kiara_plugin.streamlit.find_data_types" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">find_data_types</span><span class="p">:</span> <span class="n">KiaraEntryPointItem</span> <span class="o">=</span> <span class="n">find_data_types_under</span><span class="p">,</span> <span class="s1">&#39;kiara_plugin.streamlit.data_types&#39;</span></code>
+<code class="highlight language-python"><span class="n">find_data_types</span><span class="p">:</span> <span class="n">KiaraEntryPointItem</span> <span class="o">=</span> <span class="p">(</span><span class="n">find_data_types_under</span><span class="p">,</span> <span class="s1">&#39;kiara_plugin.streamlit.data_types&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
@@ -1612,7 +1612,7 @@
 
 
 <h3 id="kiara_plugin.streamlit.find_pipelines" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">find_pipelines</span><span class="p">:</span> <span class="n">KiaraEntryPointItem</span> <span class="o">=</span> <span class="n">find_pipeline_base_path_for_module</span><span class="p">,</span> <span class="s1">&#39;kiara_plugin.streamlit.pipelines&#39;</span><span class="p">,</span> <span class="n">KIARA_METADATA</span></code>
+<code class="highlight language-python"><span class="n">find_pipelines</span><span class="p">:</span> <span class="n">KiaraEntryPointItem</span> <span class="o">=</span> <span class="p">(</span><span class="n">find_pipeline_base_path_for_module</span><span class="p">,</span> <span class="s1">&#39;kiara_plugin.streamlit.pipelines&#39;</span><span class="p">,</span> <span class="n">KIARA_METADATA</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
@@ -1631,7 +1631,7 @@
 
 
 <h3 id="kiara_plugin.streamlit.find_kiara_streamlit_components" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">find_kiara_streamlit_components</span><span class="p">:</span> <span class="n">KiaraEntryPointItem</span> <span class="o">=</span> <span class="n">find_kiara_streamlit_components_under</span><span class="p">,</span> <span class="s1">&#39;kiara_plugin.streamlit.components&#39;</span></code>
+<code class="highlight language-python"><span class="n">find_kiara_streamlit_components</span><span class="p">:</span> <span class="n">KiaraEntryPointItem</span> <span class="o">=</span> <span class="p">(</span><span class="n">find_kiara_streamlit_components_under</span><span class="p">,</span> <span class="s1">&#39;kiara_plugin.streamlit.components&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
@@ -1650,7 +1650,7 @@
 
 
 <h3 id="kiara_plugin.streamlit.find_renderer_classes" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">find_renderer_classes</span><span class="p">:</span> <span class="n">KiaraEntryPointItem</span> <span class="o">=</span> <span class="n">find_kiara_renderers_under</span><span class="p">,</span> <span class="s1">&#39;kiara_plugin.streamlit.renderers&#39;</span></code>
+<code class="highlight language-python"><span class="n">find_renderer_classes</span><span class="p">:</span> <span class="n">KiaraEntryPointItem</span> <span class="o">=</span> <span class="p">(</span><span class="n">find_kiara_renderers_under</span><span class="p">,</span> <span class="s1">&#39;kiara_plugin.streamlit.renderers&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
@@ -1685,6 +1685,7 @@
 <h2 id="kiara_plugin.streamlit-classes">Classes<a href="#kiara_plugin.streamlit-classes" class="headerlink" title="Permanent link">&para;</a></h2>
 <h2 id="kiara_plugin.streamlit-functions">Functions<a href="#kiara_plugin.streamlit-functions" class="headerlink" title="Permanent link">&para;</a></h2>
 
+
 <div class="doc doc-object doc-function">
 
 
@@ -1697,9 +1698,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 80</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 80</span>
 <span class="normal"> 81</span>
 <span class="normal"> 82</span>
 <span class="normal"> 83</span>
@@ -1749,10 +1750,11 @@
 
     <span class="k">return</span> <span class="n">__version__</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -1766,9 +1768,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">107</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.11.4/x64/lib/python3.11/site-packages/kiara_plugin/streamlit/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">107</span>
 <span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
@@ -1862,7 +1864,7 @@
 
     <span class="k">return</span> <span class="n">st</span>  <span class="c1"># type: ignore</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
