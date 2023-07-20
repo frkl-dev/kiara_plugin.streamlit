@@ -51,7 +51,7 @@ class RunJobPanel(KiaraComponent[RunJobOptions]):
         disabled = options.disabled or job_desc is None
 
         has_previous_result = False
-        if options.reuse_previous_result:
+        if job_desc and options.reuse_previous_result:
             if st.kiara.has_job_result(job_desc):
                 has_previous_result = True
 
