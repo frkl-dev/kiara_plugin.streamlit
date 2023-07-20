@@ -30,7 +30,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11"
 ]
 dependencies = [
-    "kiara>=0.4.46",
+    "kiara>=0.4.48",
     "kiara_plugin.tabular>=0.4.29",
     "kiara_plugin.onboarding>=0.4.7",
     "kiara_plugin.html>=0.4.4",
