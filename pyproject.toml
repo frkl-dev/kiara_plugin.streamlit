@@ -17,7 +17,6 @@ requires-python = ">=3.8"
 keywords = ["kiara", "streamlit"]
 license = {text = "MPL-2.0"}
 classifiers = [
-    "Framework :: Django",
     "Programming Language :: Python :: 3",
     "Development Status :: 3 - Alpha",
     "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
@@ -66,6 +65,9 @@ dev_utils = [
 ]
 dev_all = [
     "kiara[dev_all]"
+]
+streamlit = [
+    "kiara_plugin.streamlit"
 ]
 
 [project.entry-points."kiara.plugin"]
