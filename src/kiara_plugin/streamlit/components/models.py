@@ -127,7 +127,7 @@ def create_recursive_table_from_model_object(
 
     props = model_cls.schema().get("properties", {})
 
-    for field_name in sorted(model_cls.__fields__.keys()):
+    for field_name in sorted(model_cls.model_fields.keys()):
 
         data = getattr(model, field_name)
         p = props.get(field_name, None)

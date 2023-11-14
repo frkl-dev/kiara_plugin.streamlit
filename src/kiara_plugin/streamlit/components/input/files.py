@@ -179,7 +179,7 @@ class FileOnboarding(InputComponent):
                 if file.file_extension in options.accepted_file_extensions:
                     _values[k] = v
 
-        value = self.get_component("pick_value").render(
+        value: Union[Value, None] = self.get_component("pick_value").render(
             st, values=_values, key=existing_key, show_preview=False
         )
 
@@ -195,7 +195,7 @@ class FileOnboarding(InputComponent):
         )
 
         last_value_key = f"{upload_key}_last_value"
-        last_value = st.session_state.get(last_value_key, None)  # type: ignore
+        last_value: Dict[str, any] = st.session_state.get(last_value_key, None)  # type: ignore
 
         file_types = options.accepted_file_extensions
         if not file_types:
@@ -281,7 +281,8 @@ class FileOnboarding(InputComponent):
 
         if not changed:
             if last_value:
-                return last_value["value"]
+                result_value: Union[Value, None] = last_value["value"]
+                return result_value
             else:
                 return None
 
@@ -289,7 +290,8 @@ class FileOnboarding(InputComponent):
 
         if not import_button:
             if last_value:
-                return last_value["value"]
+                result_value = last_value["value"]
+                return result_value
             else:
                 return None
 
@@ -318,7 +320,7 @@ class FileOnboarding(InputComponent):
             st.error(msg)
             return None
 
-        value = result.get_value_obj("file")
+        value: Value = result.get_value_obj("file")
         st.session_state[last_value_key] = {"url": url, "value": value}  # type: ignore
 
         return value

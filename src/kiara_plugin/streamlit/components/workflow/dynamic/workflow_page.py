@@ -112,7 +112,7 @@ class DynamicWorkflow(KiaraComponent):
             workflow_session.current_outputs = outputs
 
         comp = self._kiara_streamlit.get_component("current_values_preview")
-        selected_value = comp.render_func(st)(
+        selected_value: Union[None, Value] = comp.render_func(st)(
             key=f"{key}_preview_result_{step_id}",
             values=workflow_session.current_outputs,
         )
@@ -120,7 +120,7 @@ class DynamicWorkflow(KiaraComponent):
 
     def write_columns(self, st: "KiaraStreamlitAPI") -> List[DeltaGenerator]:
 
-        columns = st.columns((LEFT_COLUMN, RIGHT_COLUMN))
+        columns: List[DeltaGenerator] = st.columns((LEFT_COLUMN, RIGHT_COLUMN))
         return columns
 
     def write_separator(self, st: "KiaraStreamlitAPI") -> None:

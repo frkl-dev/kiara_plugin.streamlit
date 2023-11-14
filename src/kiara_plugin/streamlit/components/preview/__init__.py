@@ -168,7 +168,7 @@ class ValueList(KiaraComponent[PreviewListOptions]):
         values = self.api.list_aliases(data_types=data_types)
 
         _key = options.create_key("value_list")
-        selected_alias = create_list_component(
+        selected_alias: Union[str, None] = create_list_component(
             st=st, key=_key, title="Values", items=list(values.keys())
         )
 
@@ -191,7 +191,7 @@ class ValueListPreview(KiaraComponent[PreviewListOptions]):
         _key = options.create_key("data_list")
 
         comp = self.get_component("value_list")
-        selected_alias = comp.render_func(data_list_column)(
+        selected_alias: Union[str, None] = comp.render_func(data_list_column)(
             key=_key, data_types=options.data_types
         )
 

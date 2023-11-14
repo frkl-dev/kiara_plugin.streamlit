@@ -116,9 +116,9 @@ def init(
     from kiara_plugin.streamlit.components.modals import ModalRequest
 
     if page_config is not None:
-        st.set_page_config(**page_config)
+        st.set_page_config(**page_config)  # type: ignore[attr-defined]
 
-    @st.cache_resource
+    @st.cache_resource  # type: ignore[attr-defined]
     def get_ktx() -> "KiaraStreamlit":
         # print("CREATE KIARA STREAMLIT")
         ktx = KiaraStreamlit(
@@ -130,10 +130,10 @@ def init(
         ktx = get_ktx()
         setattr(st, "kiara", ktx)
 
-    if WANTS_MODAL_MARKER_KEY not in st.session_state.keys():
-        st.session_state[WANTS_MODAL_MARKER_KEY] = []
+    if WANTS_MODAL_MARKER_KEY not in st.session_state.keys():  # type: ignore[attr-defined]
+        st.session_state[WANTS_MODAL_MARKER_KEY] = []  # type: ignore[attr-defined]
 
-    modal_requests: List[ModalRequest] = st.session_state[WANTS_MODAL_MARKER_KEY]
+    modal_requests: List[ModalRequest] = st.session_state[WANTS_MODAL_MARKER_KEY]  # type: ignore[attr-defined]
 
     if modal_requests:
         modal_request = modal_requests[-1]
@@ -145,10 +145,10 @@ def init(
 
         modal_request.modal.show_modal(st=st, request=modal_request)  # type: ignore
         if modal_request.result.modal_finished:
-            st.session_state[WANTS_MODAL_MARKER_KEY].pop()
-            st.experimental_rerun()
+            st.session_state[WANTS_MODAL_MARKER_KEY].pop()  # type: ignore[attr-defined]
+            st.experimental_rerun()  # type: ignore[attr-defined]
         else:
-            st.stop()
+            st.stop()  # type: ignore[attr-defined]
 
     return st  # type: ignore
 

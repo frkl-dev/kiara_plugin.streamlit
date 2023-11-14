@@ -50,4 +50,4 @@ class KiaraStreamlitModal(Protocol):
         pass
 
 
-ModalRequest.update_forward_refs()
+ModalRequest.model_rebuild()

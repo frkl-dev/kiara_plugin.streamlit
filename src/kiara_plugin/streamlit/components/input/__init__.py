@@ -215,7 +215,10 @@ class DefaultInputComponent(InputComponent):
                 return inp_comp.render_input_field(st, options=copy_options)
 
         if not options.add_import_widget:
-            return self._render_default_selectbox(st, options, data_types=data_types)
+            result: Union[str, None] = self._render_default_selectbox(
+                st, options, data_types=data_types
+            )
+            return result
         else:
 
             if len(data_types) > 1:
@@ -258,7 +261,7 @@ class DefaultInputComponent(InputComponent):
         data_types: List[str],
         label: Union[str, None] = None,
         also_return_key: bool = False,
-    ):
+    ) -> Any:
 
         has_alias = options.value_has_alias
         if has_alias:
@@ -292,7 +295,7 @@ class DefaultInputComponent(InputComponent):
 
             def format_func(v: Any) -> str:
                 if v == NO_VALUE_MARKER:
-                    return v
+                    return v  # type: ignore
                 return f"{v} ({available_values[v].data_type_name})"
 
         if optional:
@@ -395,7 +398,10 @@ class PickValueComponent(InputComponent):
             if data_type not in data_types:
                 data_types.append(value.data_type_name)
 
-        return self._render_default_selectbox(st, options, data_types=data_types)
+        result: Union[str, None] = self._render_default_selectbox(
+            st, options, data_types=data_types
+        )
+        return result
 
     def _render_default_selectbox(
         self,
@@ -417,7 +423,7 @@ class PickValueComponent(InputComponent):
 
             def format_func(v: Any) -> str:
                 if v == NO_VALUE_MARKER:
-                    return v
+                    return v  # type: ignore
                 return f"{v} ({available_values[v].data_type_name})"
 
         _item_options = list(available_values.keys())

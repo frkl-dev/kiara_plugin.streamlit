@@ -16,7 +16,7 @@ from typing import (
 )
 
 from pydantic import BaseModel, Field
-from pydantic.fields import ModelField
+from pydantic.fields import FieldInfo
 
 import streamlit as st
 from kiara.interfaces.python_api.models.info import InfoItemGroup, ItemInfo
@@ -76,7 +76,7 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
         self._kiara_streamlit: KiaraStreamlit = kiara_streamlit
         self._component_name: str = component_name
         self._st: DeltaGenerator = st  # type: ignore
-        self._session_state: SessionStateProxy = st.session_state
+        self._session_state: SessionStateProxy = st.session_state  # type: ignore[attr-defined]
 
         self._info: Union[ComponentInfo, None] = None
         if doc is not None:
@@ -200,31 +200,35 @@ class KiaraComponent(abc.ABC, Generic[COMP_OPTIONS_TYPE]):
         pass
 
     def get_component(self, component_name: str) -> "KiaraComponent":
-        result = self._kiara_streamlit.get_component(component_name)
+        result: KiaraComponent = self._kiara_streamlit.get_component(component_name)
         return result
 
 
 class ArgInfo(BaseModel):
     @classmethod
-    def from_field(cls, field_info: ModelField):
+    def from_field(cls, field_info: FieldInfo):
 
-        python_type = field_info.outer_type_
-        desc = field_info.field_info.description
-        req = field_info.required
+        python_type = field_info.annotation
+
+        desc = field_info.description
+        req = field_info.is_required()
         default = field_info.default
 
         if not desc:
             desc = "-- n/a --"
 
-        if (
-            not field_info.is_complex()
-            and not field_info.required
-            and "Union" not in str(python_type)
-        ):
-            python_type_string = f"Union[None, {python_type.__name__}]"
-        else:
-            python_type_string = str(python_type)
-            if python_type_string.startswith("<class"):
+        # if (
+        #     not field_info.is_complex()
+        #     and not field_info.required
+        #     and "Union" not in str(python_type)
+        # ):
+        #     python_type_string = f"Union[None, {python_type.__name__}]"
+        # else:
+        python_type_string = str(python_type)
+        if python_type_string.startswith("<class"):
+            if python_type is None:
+                python_type_string = "-- no type info available --"
+            else:
                 python_type_string = python_type.__name__
 
         python_type_string = python_type_string.replace("NoneType", "None")
@@ -263,7 +267,9 @@ class ComponentInfo(ItemInfo):
         return KiaraComponent
 
     @classmethod
-    def create_from_instance(cls, kiara: "Kiara", instance: KiaraComponent, **kwargs):
+    def create_from_instance(
+        cls, kiara: "Kiara", instance: KiaraComponent, **kwargs
+    ) -> "ComponentInfo":
         authors_md = AuthorsMetadataModel.from_class(cls)
         doc = instance.doc()
         # python_class = PythonClass.from_class(cls)
@@ -275,7 +281,7 @@ class ComponentInfo(ItemInfo):
         field_names = list(options_cls.__fields__.keys())
         field_names.reverse()
         for field_name in field_names:
-            details = options_cls.__fields__[field_name]
+            details = options_cls.model_fields[field_name]
             args[field_name] = ArgInfo.from_field(details)
 
         if hasattr(instance, "_instance_examples"):

@@ -268,11 +268,14 @@ plugins = [
 [[tool.mypy.overrides]]
 module = [
     "appdirs.*",
+    "black.*",
     "boltons.*",
+    "networkx.*",
     "pyarrow.*",
-    "pygwalker",
+    "pygwalker.*",
     "ruamel.*",
     "st_aggrid.*",
-    "streamlit_scrollable_textbox",
+    "streamlit_scrollable_textbox.*",
+    "streamlit_tags.*"
 ]
 ignore_missing_imports = true

@@ -1,5 +1,14 @@
 # -*- coding: utf-8 -*-
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Set, Type, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    Mapping,
+    Set,
+    Type,
+    Union,
+)
 
 from jinja2 import Template
 
@@ -44,7 +53,7 @@ class PipelineRendererStreamlit(BaseJinjaRenderer[Pipeline, RenderInputsSchema])
         self, instance: Any, render_config: RenderInputsSchema
     ) -> Mapping[str, Any]:
 
-        inputs = render_config.model_dump()
+        inputs: Dict[str, Any] = render_config.model_dump()
         inputs["pipeline"] = instance
         return inputs
 
@@ -54,7 +63,7 @@ class PipelineRendererStreamlit(BaseJinjaRenderer[Pipeline, RenderInputsSchema])
             import black
             from black import Mode  # type: ignore
 
-            cleaned = black.format_str(rendered, mode=Mode())
+            cleaned: str = black.format_str(rendered, mode=Mode())
             return cleaned
 
         except Exception as e:
@@ -216,7 +225,7 @@ class KiaraStreamlitAPIClassRenderer(
             import black
             from black import Mode  # type: ignore
 
-            cleaned = black.format_str(rendered, mode=Mode())
+            cleaned: str = black.format_str(rendered, mode=Mode())
             return cleaned
 
         except Exception as e:

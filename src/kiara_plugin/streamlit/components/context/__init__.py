@@ -39,7 +39,7 @@ class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
         }
     ]
 
-    def _render(self, st: "KiaraStreamlitAPI", options: ContextSwitchOptions) -> bool:
+    def _render(self, st: "KiaraStreamlitAPI", options: ContextSwitchOptions) -> str:
 
         if not options.allow_create:
             context_names = self.api.list_context_names()
@@ -132,7 +132,7 @@ class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
         label: Union[str, None] = None,
         help: Union[str, None] = None,
         format_func: Callable[[Any], Any] = str,
-    ) -> Any:
+    ) -> str:
 
         value_state_key = options.get_session_key(*key)
         widget_key = options.create_key(*key, "selectbox")
@@ -153,7 +153,7 @@ class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
         def _set_current_value():
             self._session_state[value_state_key] = self._session_state[widget_key]
 
-        result = st.selectbox(
+        result: Union[str, None] = st.selectbox(
             label=label,
             options=items,
             key=widget_key,
@@ -162,5 +162,8 @@ class ContextSwitch(KiaraComponent[ContextSwitchOptions]):
             help=help,
             format_func=format_func,
         )
+
+        if result is None:
+            raise Exception("Unexpected result from selectbox: None")
 
         return result
