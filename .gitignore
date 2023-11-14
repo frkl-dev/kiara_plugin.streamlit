@@ -52,7 +52,6 @@ src/kiara_plugin/streamlit/version.txt
 public
 site
 .dephell_report
-.direnv
 .mypy_cache
 .env
 docs/api-documentation.md
@@ -65,4 +64,5 @@ ci/conda/**/build
 ci/conda/kiara_plugin.streamlit/meta.yaml
 other_pipelines
 .pixi
+pixi.lock
 dev.py
