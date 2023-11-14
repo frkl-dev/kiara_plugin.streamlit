@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING, Any, Dict, Union
 
-from pydantic import field_validator, Field
+from pydantic import Field, field_validator
 
 from kiara.api import ValueMap
 from kiara.exceptions import KiaraException

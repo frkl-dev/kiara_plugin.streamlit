@@ -2,7 +2,7 @@
 import abc
 from typing import TYPE_CHECKING, Protocol, Union, runtime_checkable
 
-from pydantic import ConfigDict, BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 if TYPE_CHECKING:
     from kiara_plugin.streamlit.api import KiaraStreamlitAPI

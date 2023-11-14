@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING
 
-from pydantic import ConfigDict, BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from kiara.interfaces.python_api import Workflow
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
