@@ -51,7 +51,7 @@ class InputOptions(ComponentOptions):
         description="The label to use for the input field.", default=NO_LABEL_MARKER
     )
     value_schema: Union[None, ValueSchema] = Field(
-        description="The schema for the value in question."
+        description="The schema for the value in question.", default=None
     )
 
     def get_default(self) -> Any:
