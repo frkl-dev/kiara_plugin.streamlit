@@ -2,7 +2,7 @@
 import abc
 from typing import TYPE_CHECKING, Protocol, Union, runtime_checkable
 
-from pydantic import BaseModel, Field
+from pydantic import ConfigDict, BaseModel, Field
 
 if TYPE_CHECKING:
     from kiara_plugin.streamlit.api import KiaraStreamlitAPI
@@ -32,8 +32,7 @@ class ModalResult(BaseModel):
 
 
 class ModalRequest(BaseModel):
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     modal: "KiaraStreamlitModal" = Field(description="The modal component to show.")
     config: ModalConfig = Field(

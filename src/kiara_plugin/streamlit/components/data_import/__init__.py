@@ -39,7 +39,7 @@ class DataImportOptions(ComponentOptions):
 
 class DataImportResult(BaseModel):
 
-    value: Union[Value, None] = Field(description="The value that was onboarded.")
+    value: Union[Value, None] = Field(None, description="The value that was onboarded.")
     is_finished: bool = Field(description="Whether the onboarding process is finished.")
 
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING, Any, Dict, Union
 
-from pydantic import Field, validator
+from pydantic import field_validator, Field
 
 from kiara.api import ValueMap
 from kiara.exceptions import KiaraException
@@ -106,7 +106,8 @@ class OperationProcessOptions(ComponentOptions):
     )
     operation_id: str = Field(description="The id of the operation to use.")
 
-    @validator("operation_id")
+    @field_validator("operation_id")
+    @classmethod
     def _validate_operation_id(cls, v: str) -> str:
 
         if isinstance(v, str):

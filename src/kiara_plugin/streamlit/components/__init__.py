@@ -237,13 +237,13 @@ class ArgInfo(BaseModel):
             python_type_string=python_type_string,
         )
 
-    python_type: Any = Field(description="The python type of this argument.")
+    python_type: Any = Field(None, description="The python type of this argument.")
     python_type_string: str = Field(
         description="The python type hint of this argument."
     )
     description: str = Field(description="The description of this argument.")
     required: bool = Field(description="Whether this argument is required.")
-    default: Any = Field(description="The default value for this argument.")
+    default: Any = Field(None, description="The default value for this argument.")
 
 
 class ComponentInfo(ItemInfo):

@@ -2,7 +2,7 @@
 import abc
 from typing import TYPE_CHECKING, Generic, List, Mapping, Tuple, Type, TypeVar, Union
 
-from pydantic import Field
+from pydantic import ConfigDict, Field
 
 from kiara.interfaces.python_api.models.info import ItemInfo
 from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
@@ -14,8 +14,7 @@ if TYPE_CHECKING:
 
 
 class InfoCompOptions(ComponentOptions):
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     columns: Union[
         Tuple[int, int], Tuple[DeltaGenerator, DeltaGenerator], None

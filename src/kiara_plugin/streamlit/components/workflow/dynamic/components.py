@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING, Dict, Mapping, Tuple, TypeVar, Union
 
-from pydantic import Field
+from pydantic import ConfigDict, Field
 
 from kiara.api import Value
 from kiara.models.module.operation import Operation
@@ -73,8 +73,7 @@ class WriteStepComponent(DynamicWorkflowComponent):
 
 
 class NextStepOptions(DynamicWorkflowOptions):
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     value: Value = Field(description="The value to use for the next step.")
     columns: Union[Tuple[int, int], Tuple[DeltaGenerator, DeltaGenerator]] = Field(
@@ -184,8 +183,7 @@ class NextStepComponent(DynamicWorkflowComponent):
 
 
 class StepInputFields(DynamicWorkflowComponent):
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     _component_name = "step_input_fields"
     _options = StepDetailsOptions

@@ -2,7 +2,7 @@
 from typing import TYPE_CHECKING, List, Literal, Union
 
 import networkx as nx
-from pydantic import Field
+from pydantic import ConfigDict, Field
 
 from kiara.interfaces.python_api import OperationInfo
 from kiara.models.module.operation import Operation
@@ -43,8 +43,7 @@ class PipelineSelect(KiaraComponent[PipelineSelectOptions]):
 
 
 class PipelineGraphOptions(ComponentOptions):
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     graph_type: Literal["execution", "data_flow", "data_flow_simple"] = Field(
         description="The type of graph to display.", default="execution"
