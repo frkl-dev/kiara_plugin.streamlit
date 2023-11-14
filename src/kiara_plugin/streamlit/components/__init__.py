@@ -246,7 +246,7 @@ class ArgInfo(BaseModel):
     default: Any = Field(description="The default value for this argument.")
 
 
-class ComponentInfo(ItemInfo[KiaraComponent]):
+class ComponentInfo(ItemInfo):
 
     arguments: Dict[str, ArgInfo] = Field(
         description="The arguments for this component."

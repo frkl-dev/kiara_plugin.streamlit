@@ -44,7 +44,7 @@ class PipelineRendererStreamlit(BaseJinjaRenderer[Pipeline, RenderInputsSchema])
         self, instance: Any, render_config: RenderInputsSchema
     ) -> Mapping[str, Any]:
 
-        inputs = render_config.dict()
+        inputs = render_config.model_dump()
         inputs["pipeline"] = instance
         return inputs
 
@@ -119,7 +119,7 @@ class KiaraStreamlitAPIClassRenderer(
         self, instance: Any, render_config: RenderInputsSchema
     ) -> Mapping[str, Any]:
 
-        render_config.dict()
+        render_config.model_dump()
 
         kiara_streamlit: KiaraStreamlit = instance
         components = kiara_streamlit.components
