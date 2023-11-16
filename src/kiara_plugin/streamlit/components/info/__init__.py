@@ -23,7 +23,7 @@ class InfoCompOptions(ComponentOptions):
         description="The height of the list component.", default=400
     )
     items: Union[str, List[str], None] = Field(
-        description="The item(s) to show info for."
+        description="The item(s) to show info for.", default=None
     )
 
 

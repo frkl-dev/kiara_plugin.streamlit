@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING, Any, Mapping, Union
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from kiara_plugin.streamlit.components import ComponentOptions
 
@@ -11,6 +11,9 @@ if TYPE_CHECKING:
 
 class ModelComponentOptions(ComponentOptions):
     """Options for rendering a generic model."""
+
+    # TODO: can this stay, or should I refactor the 'model_instance' attribute name?
+    model_config = ConfigDict(protected_namespaces=())
 
     model_instance: BaseModel = Field(description="The model to render.")
 
