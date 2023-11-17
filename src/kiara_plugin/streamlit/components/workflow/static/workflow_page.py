@@ -132,7 +132,7 @@ class WorkflowStatic(KiaraComponent[StaticWorkflowOptions]):
                     while new_stage in no_input_stages:
                         new_stage += 1
                     options.session.current_stage = new_stage
-                    self._st.experimental_rerun()
+                    self._st.rerun()
 
         with st.expander("Current stage outputs", expanded=True):
 
@@ -156,7 +156,7 @@ class WorkflowStatic(KiaraComponent[StaticWorkflowOptions]):
                 while new_stage in no_input_stages:
                     new_stage -= 1
                 options.session.current_stage = new_stage
-                self._st.experimental_rerun()
+                self._st.rerun()
 
         elif next:
             current = options.session.current_stage
@@ -165,7 +165,7 @@ class WorkflowStatic(KiaraComponent[StaticWorkflowOptions]):
                 while new_stage in no_input_stages:
                     new_stage += 1
                 options.session.current_stage = new_stage
-                self._st.experimental_rerun()
+                self._st.rerun()
 
         actual_stage = session.current_stage
         for s in no_input_stages:

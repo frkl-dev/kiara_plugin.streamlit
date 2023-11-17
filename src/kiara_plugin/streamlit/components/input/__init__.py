@@ -250,7 +250,7 @@ class DefaultInputComponent(InputComponent):
                     modal=import_comp, config=modal_config, result=modal_result
                 )
                 st.session_state[WANTS_MODAL_MARKER_KEY].append(modal_request)  # type: ignore
-                st.experimental_rerun()
+                st.rerun()
 
             return result
 

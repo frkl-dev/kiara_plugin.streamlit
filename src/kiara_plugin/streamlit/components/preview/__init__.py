@@ -295,6 +295,6 @@ class ValueMapPreview(KiaraComponent[ValueMapPreviewOptions]):
                             right.error(store_result.error)
                         else:
                             right.success("Value saved")
-                            st.experimental_rerun()
+                            st.rerun()
 
         return _values

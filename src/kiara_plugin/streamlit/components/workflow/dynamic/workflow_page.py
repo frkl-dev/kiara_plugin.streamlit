@@ -176,7 +176,7 @@ class DynamicWorkflow(KiaraComponent):
             if reset:
                 workflow = self.api.create_workflow()
                 options.session.reset(workflow)
-                st.experimental_rerun()
+                st.rerun()
 
         self.write_separator(st)
 
@@ -244,7 +244,7 @@ class DynamicWorkflow(KiaraComponent):
                     workflow_session=session,
                     operation=next_operation,
                 )
-                st.experimental_rerun()
+                st.rerun()
             else:
                 self.remove_last_step(workflow_session=session)
                 session.last_operation = next_operation
@@ -324,4 +324,4 @@ class DynamicWorkflow(KiaraComponent):
         if selected_value:
             session.current_value = selected_value
             session.last_operation = None
-            st.experimental_rerun()
+            st.rerun()

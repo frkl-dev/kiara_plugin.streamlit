@@ -146,7 +146,7 @@ def init(
         modal_request.modal.show_modal(st=st, request=modal_request)  # type: ignore
         if modal_request.result.modal_finished:
             st.session_state[WANTS_MODAL_MARKER_KEY].pop()  # type: ignore[attr-defined]
-            st.experimental_rerun()  # type: ignore[attr-defined]
+            st.rerun()  # type: ignore[attr-defined]
         else:
             st.stop()  # type: ignore[attr-defined]
 
