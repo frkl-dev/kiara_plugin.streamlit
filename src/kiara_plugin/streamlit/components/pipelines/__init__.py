@@ -7,8 +7,11 @@ from pydantic import ConfigDict, Field
 from kiara.interfaces.python_api import OperationInfo
 from kiara.models.module.operation import Operation
 from kiara.models.module.pipeline import PipelineConfig
-from kiara.models.module.pipeline.pipeline import Pipeline
-from kiara_plugin.streamlit.components import ComponentOptions, KiaraComponent
+from kiara.models.module.pipeline.structure import PipelineStructure
+from kiara_plugin.streamlit.components import (
+    ComponentOptions,
+    KiaraComponent,
+)
 
 if TYPE_CHECKING:
     from kiara_plugin.streamlit.api import KiaraStreamlitAPI
@@ -45,12 +48,12 @@ class PipelineSelect(KiaraComponent[PipelineSelectOptions]):
 class PipelineGraphOptions(ComponentOptions):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    graph_type: Literal["execution", "data_flow", "data_flow_simple"] = Field(
-        description="The type of graph to display.", default="execution"
-    )
-    pipeline: Union[str, Operation, OperationInfo, PipelineConfig, Pipeline] = Field(
-        description="The pipeline to display."
-    )
+    graph_type: Literal[
+        "execution", "data_flow", "data_flow_simple", "user_select"
+    ] = Field(description="The type of graph to display.", default="user_select")
+    pipeline: Union[
+        str, Operation, OperationInfo, PipelineConfig, PipelineStructure
+    ] = Field(description="The pipeline to display.")
 
 
 class PipelineGraph(KiaraComponent[PipelineGraphOptions]):
@@ -79,19 +82,66 @@ class PipelineGraph(KiaraComponent[PipelineGraphOptions]):
             structure = options.pipeline.pipeline_config.structure
         elif isinstance(options.pipeline, PipelineConfig):
             structure = options.pipeline.structure
-        elif isinstance(options.pipeline, Pipeline):
-            structure = options.pipeline.structure
+        elif isinstance(options.pipeline, PipelineStructure):
+            structure = options.pipeline
         else:
             raise Exception(f"Invalid type for pipeline: {type(options.pipeline)}.")
 
-        if options.graph_type == "execution":
-            dot = nx.nx_pydot.to_pydot(structure.execution_graph)
-        elif options.graph_type == "data_flow":
-            dot = nx.nx_pydot.to_pydot(structure.data_flow_graph)
-        elif options.graph_type == "data_flow_simple":
-            dot = nx.nx_pydot.to_pydot(structure.data_flow_graph_simple)
+        graph_type = options.graph_type
+        if graph_type == "user_select":
+            graph_type = st.radio(
+                "Select graph type",
+                ["execution", "data_flow_simple", "data_flow"],
+                index=0,
+                horizontal=True,
+            )
+
+        if graph_type == "execution":
+            graph = structure.execution_graph
+        elif graph_type == "data_flow":
+            graph = structure.data_flow_graph
+        elif graph_type == "data_flow_simple":
+            graph = structure.data_flow_graph_simple
         else:
             raise Exception("Invalid graph type: {options.graph_type}")
 
-        graph = dot.to_string()
-        st.graphviz_chart(graph)
+        def rename_node(node):
+            return f'"{str(node)}"'  # noqa
+
+        mapping = {node: rename_node(node) for node in graph.nodes()}
+        graph = graph.copy()
+        nx.relabel_nodes(graph, mapping, copy=False)
+
+        dot = nx.nx_pydot.to_pydot(graph)
+        st.graphviz_chart(dot.to_string())
+
+
+# class PipelineInfoPanelConfig(ComponentOptions):
+#
+#     pipeline: Union[str, Operation, OperationInfo, PipelineConfig, PipelineStructure] = Field(
+#         description="The pipeline to display."
+#     )
+# class PipelineInfoPanel(KiaraComponent[PipelineInfoPanelConfig]):
+#
+#     _component_name = "pipeline_info"
+#     _options = PipelineInfoPanelConfig
+#     _examples = []
+#
+#     def _render(self, st: "KiaraStreamlitAPI", options: PipelineInfoPanelConfig) -> None:
+#
+#         if isinstance(options.pipeline, str):
+#             op: Operation = self.api.get_operation(options.pipeline)
+#             structure = op.pipeline_config.structure
+#         elif isinstance(options.pipeline, OperationInfo):
+#             structure = options.pipeline.operation.pipeline_config.structure
+#         elif isinstance(options.pipeline, Operation):
+#             structure = options.pipeline.pipeline_config.structure
+#         elif isinstance(options.pipeline, PipelineConfig):
+#             structure = options.pipeline.structure
+#         elif isinstance(options.pipeline, PipelineStructure):
+#             structure = options.pipeline
+#         else:
+#             raise Exception(f"Invalid type for pipeline: {type(options.pipeline)}.")
+#
+#         st.write("xxx")
+#         st.write(structure.model_dump())

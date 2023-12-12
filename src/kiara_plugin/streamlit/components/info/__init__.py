@@ -137,12 +137,13 @@ class KiaraInfoComponent(KiaraComponent[InfoCompOptions], Generic[ITEM_TYPE]):
         if selected_op:
             item = items[selected_op]
 
-            self.render_info(
-                st=right,  # type: ignore
-                key=f"{key}__{info_type_name}_{selected_op}",
-                item=item,
-                options=options,
-            )
-            return item
+            with right:
+                self.render_info(
+                    st=st,
+                    key=f"{key}__{info_type_name}_{selected_op}",
+                    item=item,
+                    options=options,
+                )
+                return item
         else:
             return None
